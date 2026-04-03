@@ -6,7 +6,7 @@ interface IVerifyResponse {
 }
 
 export async function POST(req: NextRequest) {
-  const { payload, action } = await req.json();
+  const { payload } = await req.json();
   const rp_id = process.env.RP_ID;
 
   if (!rp_id) {
