@@ -9,6 +9,7 @@ contract WorldInPaper is ReceiverTemplate {
     // =====================================================
     // ---------------- TYPES ----------------
     // =====================================================
+
     enum Origin {
         Solana,
         Base,
@@ -257,9 +258,9 @@ contract WorldInPaper is ReceiverTemplate {
             revert InvalidTradeAmounts(amountIn, amountOut);
         }
 
-        tradeId = nextTradeToSettleId;
+        tradeId = nextTradeId;
         unchecked {
-            nextTradeToSettleId = tradeId + 1;
+            nextTradeId = tradeId + 1;
         }
 
         game.trades.push(
@@ -316,9 +317,9 @@ contract WorldInPaper is ReceiverTemplate {
 
         nullifierUsed[worldId.nullifier] = true;
 
-        tradeId = nextTradeId;
+        tradeId = nextTradeToSettleId;
         unchecked {
-            nextTradeId = tradeId + 1;
+            nextTradeToSettleId = tradeId + 1;
         }
 
         _tradesToSettle[tradeId] = TradeToSettle({

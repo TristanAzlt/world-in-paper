@@ -225,7 +225,7 @@ contract WorldInPaperTest is Test {
         worldInPaper.joinGame(999);
     }
 
-    function test_RecordTradeByJoinedPlayer() public {
+    function test_SubmitTradeGameByJoinedPlayer() public {
         uint256 gameId = _createGameAsCreator(3);
 
         vm.startPrank(PLAYER_1);
@@ -272,7 +272,7 @@ contract WorldInPaperTest is Test {
         assertEq(trades[0].isBuy, true);
     }
 
-    function test_RecordTradeIdsAreGlobalAcrossGames() public {
+    function test_SubmitTradeGameIdsAreGlobalAcrossGames() public {
         uint256 gameId1 = _createGameAsCreator(3);
         uint256 gameId2 = _createGameAsCreator(3);
 
@@ -306,7 +306,7 @@ contract WorldInPaperTest is Test {
         assertEq(worldInPaper.nextTradeId(), 3);
     }
 
-    function test_RevertWhen_RecordTradeFromNonPlayer() public {
+    function test_RevertWhen_SubmitTradeGameFromNonPlayer() public {
         uint256 gameId = _createGameAsCreator(3);
         uint256 startTime = worldInPaper.getGame(gameId).startTime;
         vm.warp(startTime + 1);
@@ -329,7 +329,7 @@ contract WorldInPaperTest is Test {
         );
     }
 
-    function test_RevertWhen_RecordTradeBeforeStart() public {
+    function test_RevertWhen_SubmitTradeGameBeforeStart() public {
         uint256 gameId = _createGameAsCreator(3);
         uint256 startTime = worldInPaper.getGame(gameId).startTime;
 
@@ -352,7 +352,7 @@ contract WorldInPaperTest is Test {
         );
     }
 
-    function test_RevertWhen_RecordTradeAfterEnd() public {
+    function test_RevertWhen_SubmitTradeGameAfterEnd() public {
         uint256 gameId = _createGameAsCreator(3);
         uint256 endTime = worldInPaper.getGame(gameId).endTime;
         vm.warp(endTime);
@@ -376,7 +376,7 @@ contract WorldInPaperTest is Test {
         );
     }
 
-    function test_RevertWhen_RecordTradeWithEmptyAssetAddress() public {
+    function test_RevertWhen_SubmitTradeGameWithEmptyAssetAddress() public {
         uint256 gameId = _createGameAsCreator(3);
         vm.warp(worldInPaper.getGame(gameId).startTime + 1);
 
@@ -392,7 +392,7 @@ contract WorldInPaperTest is Test {
         );
     }
 
-    function test_RevertWhen_RecordTradeWithInvalidAmounts() public {
+    function test_RevertWhen_SubmitTradeGameWithInvalidAmounts() public {
         uint256 gameId = _createGameAsCreator(3);
         vm.warp(worldInPaper.getGame(gameId).startTime + 1);
 
