@@ -25,7 +25,10 @@ const SETTLEMENT_REQUEST_SIG = keccak256(
 
 const encodeMockLogData = (assetId: string, origin: number, isBuy: boolean, amount: bigint) => {
   return encodeAbiParameters(parseAbiParameters("string, uint8, bool, uint256"), [
-    assetId, origin, isBuy, amount,
+    assetId,
+    origin,
+    isBuy,
+    amount,
   ]);
 };
 
@@ -128,15 +131,69 @@ describe("event signature", () => {
 
 describe("event encoding roundtrip", () => {
   const cases = [
-    { name: "BUY BTC on Hyperliquid", assetId: "BTC", origin: ORIGIN.HYPERLIQUID, isBuy: true, amount: 1000000000n },
-    { name: "SELL ETH on Hyperliquid", assetId: "ETH", origin: ORIGIN.HYPERLIQUID, isBuy: false, amount: 5000000000000000000n },
-    { name: "BUY @12 spot on Hyperliquid", assetId: "@12", origin: ORIGIN.HYPERLIQUID, isBuy: true, amount: 500000000n },
-    { name: "SELL xyz:AAPL tradfi", assetId: "xyz:AAPL", origin: ORIGIN.HYPERLIQUID, isBuy: false, amount: 100000000n },
-    { name: "BUY pippin on Solana", assetId: PIPPIN_SOL, origin: ORIGIN.SOLANA, isBuy: true, amount: 100000000n },
-    { name: "SELL KTA on Base", assetId: KTA_BASE, origin: ORIGIN.BASE, isBuy: false, amount: 1000000000000000000n },
-    { name: "BUY WETH on Ethereum", assetId: WETH, origin: ORIGIN.ETHEREUM, isBuy: true, amount: 2000000000n },
-    { name: "SELL token on BSC", assetId: "0x0000000000000000000000000000000000000042", origin: ORIGIN.BSC, isBuy: false, amount: 10000000000000000000n },
-    { name: "BUY token on World", assetId: "0x0000000000000000000000000000000000000099", origin: ORIGIN.WORLD, isBuy: true, amount: 50000000n },
+    {
+      name: "BUY BTC on Hyperliquid",
+      assetId: "BTC",
+      origin: ORIGIN.HYPERLIQUID,
+      isBuy: true,
+      amount: 1000000000n,
+    },
+    {
+      name: "SELL ETH on Hyperliquid",
+      assetId: "ETH",
+      origin: ORIGIN.HYPERLIQUID,
+      isBuy: false,
+      amount: 5000000000000000000n,
+    },
+    {
+      name: "BUY @12 spot on Hyperliquid",
+      assetId: "@12",
+      origin: ORIGIN.HYPERLIQUID,
+      isBuy: true,
+      amount: 500000000n,
+    },
+    {
+      name: "SELL xyz:AAPL tradfi",
+      assetId: "xyz:AAPL",
+      origin: ORIGIN.HYPERLIQUID,
+      isBuy: false,
+      amount: 100000000n,
+    },
+    {
+      name: "BUY pippin on Solana",
+      assetId: PIPPIN_SOL,
+      origin: ORIGIN.SOLANA,
+      isBuy: true,
+      amount: 100000000n,
+    },
+    {
+      name: "SELL KTA on Base",
+      assetId: KTA_BASE,
+      origin: ORIGIN.BASE,
+      isBuy: false,
+      amount: 1000000000000000000n,
+    },
+    {
+      name: "BUY WETH on Ethereum",
+      assetId: WETH,
+      origin: ORIGIN.ETHEREUM,
+      isBuy: true,
+      amount: 2000000000n,
+    },
+    {
+      name: "SELL token on BSC",
+      assetId: "0x0000000000000000000000000000000000000042",
+      origin: ORIGIN.BSC,
+      isBuy: false,
+      amount: 10000000000000000000n,
+    },
+    {
+      name: "BUY token on World",
+      assetId: "0x0000000000000000000000000000000000000099",
+      origin: ORIGIN.WORLD,
+      isBuy: true,
+      amount: 50000000n,
+    },
   ];
 
   for (const { name, assetId, origin, isBuy, amount } of cases) {
@@ -221,15 +278,22 @@ describe("report encoding", () => {
 
     expect(decodedTradeId).toBe(42n);
     // Float precision: allow tiny drift
-    const diff = decodedPrice > 2060450000000000000000n
-      ? decodedPrice - 2060450000000000000000n
-      : 2060450000000000000000n - decodedPrice;
+    const diff =
+      decodedPrice > 2060450000000000000000n
+        ? decodedPrice - 2060450000000000000000n
+        : 2060450000000000000000n - decodedPrice;
     expect(diff < 1000000000000n).toBe(true);
   });
 
   test("handles tradeId = 0", () => {
-    const encoded = encodeAbiParameters(parseAbiParameters("uint256, uint256"), [0n, 1000000000000000000n]);
-    const [tradeId, price] = decodeAbiParameters(parseAbiParameters("uint256, uint256"), encoded as Hex);
+    const encoded = encodeAbiParameters(parseAbiParameters("uint256, uint256"), [
+      0n,
+      1000000000000000000n,
+    ]);
+    const [tradeId, price] = decodeAbiParameters(
+      parseAbiParameters("uint256, uint256"),
+      encoded as Hex,
+    );
     expect(tradeId).toBe(0n);
     expect(price).toBe(1000000000000000000n);
   });
