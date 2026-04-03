@@ -1,0 +1,5 @@
+{
+  "contractAddress": "0x0000000000000000000000000000000000000000",
+  "chainSelectorName": "ethereum-mainnet-worldchain-1",
+  "gasLimit": "500000"
+}

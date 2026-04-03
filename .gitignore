@@ -37,3 +37,7 @@ venv/
 # Misc
 *.tmp
 *.bak
+
+# AI Files
+CLAUDE.md
+.claude
