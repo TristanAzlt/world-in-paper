@@ -116,7 +116,7 @@ contract WorldInPaperTest is Test {
         assertTrue(worldInPaper.hasJoined(gameId, CREATOR));
         assertEq(usdc.balanceOf(address(worldInPaper)), ENTRY_AMOUNT);
         assertEq(
-            worldInPaper.getWipBalance(gameId, CREATOR),
+            worldInPaper.getPlayerPortfolio(gameId, CREATOR).wipBalance,
             STARTING_WIP_BALANCE
         );
     }
@@ -134,7 +134,7 @@ contract WorldInPaperTest is Test {
         assertTrue(worldInPaper.hasJoined(gameId, PLAYER_1));
         assertEq(usdc.balanceOf(address(worldInPaper)), ENTRY_AMOUNT * 2);
         assertEq(
-            worldInPaper.getWipBalance(gameId, PLAYER_1),
+            worldInPaper.getPlayerPortfolio(gameId, PLAYER_1).wipBalance,
             STARTING_WIP_BALANCE
         );
     }
@@ -161,7 +161,7 @@ contract WorldInPaperTest is Test {
             "ETHUSD",
             WorldInPaper.Origin.Base,
             false,
-            50_000,
+            200_000,
             _nextWorldId()
         );
 
@@ -186,26 +186,46 @@ contract WorldInPaperTest is Test {
 
         assertEq(portfolio.gameId, gameId);
         assertEq(portfolio.player, PLAYER_1);
-        assertEq(portfolio.wipBalance, 4_760_000_000);
+        assertEq(portfolio.wipBalance, 4_940_000_000);
         assertFalse(portfolio.claimed);
         assertEq(portfolio.claimableAmount, 0);
         assertEq(portfolio.tokens.length, 2);
 
-        assertEq(portfolio.tokens[0].asset_address, "ETHUSD");
-        assertEq(uint8(portfolio.tokens[0].origin), uint8(WorldInPaper.Origin.Base));
-        assertEq(portfolio.tokens[0].balance, 150_000);
-        assertEq(portfolio.tokens[0].trades.length, 2);
-        assertEq(portfolio.tokens[0].trades[0].id, buyTradeId);
-        assertEq(portfolio.tokens[0].trades[1].id, sellTradeId);
-
-        assertEq(portfolio.tokens[1].asset_address, "BTCUSD");
+        WorldInPaper.PortfolioTokenView memory ethToken = _getPortfolioToken(
+            portfolio,
+            "ETHUSD"
+        );
+        assertEq(ethToken.asset_address, "ETHUSD");
+        assertEq(uint8(ethToken.origin), uint8(WorldInPaper.Origin.Base));
+        assertEq(ethToken.balance, 0);
+        assertEq(ethToken.trades.length, 2);
         assertEq(
-            uint8(portfolio.tokens[1].origin),
+            uint8(ethToken.trades[0].origin),
+            uint8(WorldInPaper.Origin.Base)
+        );
+        assertEq(ethToken.trades[0].id, buyTradeId);
+        assertEq(ethToken.trades[1].id, sellTradeId);
+        assertEq(
+            uint8(ethToken.trades[1].origin),
+            uint8(WorldInPaper.Origin.Base)
+        );
+
+        WorldInPaper.PortfolioTokenView memory btcToken = _getPortfolioToken(
+            portfolio,
+            "BTCUSD"
+        );
+        assertEq(btcToken.asset_address, "BTCUSD");
+        assertEq(
+            uint8(btcToken.origin),
             uint8(WorldInPaper.Origin.Hyperliquid)
         );
-        assertEq(portfolio.tokens[1].balance, 50_000);
-        assertEq(portfolio.tokens[1].trades.length, 1);
-        assertEq(portfolio.tokens[1].trades[0].id, btcTradeId);
+        assertEq(btcToken.balance, 50_000);
+        assertEq(btcToken.trades.length, 1);
+        assertEq(btcToken.trades[0].id, btcTradeId);
+        assertEq(
+            uint8(btcToken.trades[0].origin),
+            uint8(WorldInPaper.Origin.Hyperliquid)
+        );
     }
 
     function test_GetGameRankingReturnsPlayersSortedByWip() public {
@@ -462,10 +482,16 @@ contract WorldInPaperTest is Test {
         worldInPaper.onReport("", abi.encode(tradeId2, 1600 * 10 ** 18));
 
         assertEq(worldInPaper.getGameTradeCount(gameId), 2);
-        assertEq(worldInPaper.getWipBalance(gameId, PLAYER_1), 4_900_000_000);
-        assertEq(worldInPaper.getWipBalance(gameId, CREATOR), 4_950_000_000);
         assertEq(
-            worldInPaper.getTokenBalance(
+            worldInPaper.getPlayerPortfolio(gameId, PLAYER_1).wipBalance,
+            4_900_000_000
+        );
+        assertEq(
+            worldInPaper.getPlayerPortfolio(gameId, CREATOR).wipBalance,
+            4_950_000_000
+        );
+        assertEq(
+            _getPortfolioTokenBalance(
                 gameId,
                 PLAYER_1,
                 "0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
@@ -690,7 +716,7 @@ contract WorldInPaperTest is Test {
         worldInPaper.onReport("", abi.encode(buyTradeId, 1000 * 10 ** 18));
 
         assertEq(
-            worldInPaper.getTokenBalance(gameId, PLAYER_1, "ETHUSD"),
+            _getPortfolioTokenBalance(gameId, PLAYER_1, "ETHUSD"),
             200_000
         );
 
@@ -704,15 +730,17 @@ contract WorldInPaperTest is Test {
             _nextWorldId()
         );
 
-        assertEq(
-            worldInPaper.getTokenBalance(gameId, PLAYER_1, "ETHUSD"),
-            80_000
-        );
-
         vm.prank(FORWARDER);
         worldInPaper.onReport("", abi.encode(sellTradeId, 1200 * 10 ** 18));
 
-        assertEq(worldInPaper.getWipBalance(gameId, PLAYER_1), 4_944_000_000);
+        assertEq(
+            worldInPaper.getPlayerPortfolio(gameId, PLAYER_1).wipBalance,
+            4_944_000_000
+        );
+        assertEq(
+            _getPortfolioTokenBalance(gameId, PLAYER_1, "ETHUSD"),
+            80_000
+        );
         assertEq(worldInPaper.getGameTradeCount(gameId), 2);
     }
 
@@ -1009,7 +1037,7 @@ contract WorldInPaperTest is Test {
         assertEq(trades[0].id, tradeId);
         assertEq(trades[0].amountOut, 133_333);
         assertEq(
-            worldInPaper.getTokenBalance(gameId, PLAYER_1, "BTCUSD"),
+            _getPortfolioTokenBalance(gameId, PLAYER_1, "BTCUSD"),
             133_333
         );
 
@@ -1211,7 +1239,7 @@ contract WorldInPaperTest is Test {
     function test_GetClaimableAmountReturnsZeroBeforeEnd() public {
         uint256 gameId = _createGameAsCreator(3);
 
-        assertEq(worldInPaper.getClaimableAmount(gameId, CREATOR), 0);
+        assertEq(worldInPaper.getPlayerPortfolio(gameId, CREATOR).claimableAmount, 0);
     }
 
     function test_GetClaimableAmountMatchesClaimAndBecomesZeroAfterClaim()
@@ -1254,18 +1282,18 @@ contract WorldInPaperTest is Test {
         uint256 endTime = worldInPaper.getGame(gameId).endTime;
         vm.warp(endTime);
 
-        uint256 claimableCreator = worldInPaper.getClaimableAmount(
+        uint256 claimableCreator = worldInPaper.getPlayerPortfolio(
             gameId,
             CREATOR
-        );
-        uint256 claimablePlayer1 = worldInPaper.getClaimableAmount(
+        ).claimableAmount;
+        uint256 claimablePlayer1 = worldInPaper.getPlayerPortfolio(
             gameId,
             PLAYER_1
-        );
-        uint256 claimablePlayer2 = worldInPaper.getClaimableAmount(
+        ).claimableAmount;
+        uint256 claimablePlayer2 = worldInPaper.getPlayerPortfolio(
             gameId,
             PLAYER_2
-        );
+        ).claimableAmount;
 
         assertEq(claimableCreator, ENTRY_AMOUNT * 2);
         assertEq(claimablePlayer1, ENTRY_AMOUNT);
@@ -1274,7 +1302,39 @@ contract WorldInPaperTest is Test {
         vm.prank(CREATOR);
         uint256 claimed = worldInPaper.claimGame(gameId);
         assertEq(claimed, claimableCreator);
-        assertEq(worldInPaper.getClaimableAmount(gameId, CREATOR), 0);
+        assertEq(worldInPaper.getPlayerPortfolio(gameId, CREATOR).claimableAmount, 0);
+    }
+
+    function _getPortfolioToken(
+        WorldInPaper.PlayerPortfolioView memory portfolio,
+        string memory assetAddress
+    ) internal pure returns (WorldInPaper.PortfolioTokenView memory token) {
+        bytes32 assetHash = keccak256(bytes(assetAddress));
+
+        for (uint256 i = 0; i < portfolio.tokens.length; ) {
+            if (
+                keccak256(bytes(portfolio.tokens[i].asset_address)) == assetHash
+            ) {
+                return portfolio.tokens[i];
+            }
+
+            unchecked {
+                ++i;
+            }
+        }
+
+        revert("TOKEN_NOT_FOUND");
+    }
+
+    function _getPortfolioTokenBalance(
+        uint256 gameId,
+        address player,
+        string memory assetAddress
+    ) internal view returns (uint256) {
+        return _getPortfolioToken(
+            worldInPaper.getPlayerPortfolio(gameId, player),
+            assetAddress
+        ).balance;
     }
 
     function _createGameAsCreator(
