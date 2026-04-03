@@ -63,7 +63,9 @@ contract WorldInPaper is ReceiverTemplate {
         bool exists;
         address[] players;
         mapping(address player => bool joined) hasJoined;
+        mapping(address player => bool claimed) hasClaimed;
         mapping(address player => uint256 balance) wipBalances;
+        mapping(address player => mapping(string asset => uint256 balance)) tokenBalances;
         Trade[] trades;
     }
 
@@ -139,6 +141,11 @@ contract WorldInPaper is ReceiverTemplate {
         uint256 currentTimestamp
     );
     error GameEnded(uint256 gameId, uint256 endTime, uint256 currentTimestamp);
+    error GameNotEnded(
+        uint256 gameId,
+        uint256 endTime,
+        uint256 currentTimestamp
+    );
     error EmptyAssetAddress();
     error InvalidAmountIn();
     error InvalidTradeAmounts(uint256 amountIn, uint256 amountOut);
@@ -154,6 +161,13 @@ contract WorldInPaper is ReceiverTemplate {
         uint256 balance,
         uint256 required
     );
+    error InsufficientTokenBalance(
+        uint256 gameId,
+        address player,
+        uint256 balance,
+        uint256 required
+    );
+    error AlreadyClaimed(uint256 gameId, address player);
 
     // =====================================================
     // ---------------- EVENTS ----------------
@@ -199,6 +213,12 @@ contract WorldInPaper is ReceiverTemplate {
         uint256 amountIn,
         bool isBuy,
         uint256 executionPrice
+    );
+    event GameClaimed(
+        uint256 indexed gameId,
+        address indexed player,
+        uint256 payout,
+        uint256 rank
     );
 
     // =====================================================
@@ -318,6 +338,38 @@ contract WorldInPaper is ReceiverTemplate {
             unchecked {
                 game.wipBalances[trader] = currentBalance - amountIn;
             }
+        } else {
+            uint256 settledTokenBalance = _getSettledTokenBalanceFromTrades(
+                game,
+                trader,
+                asset_address
+            );
+            if (settledTokenBalance < amountIn) {
+                revert InsufficientTokenBalance(
+                    gameId,
+                    trader,
+                    settledTokenBalance,
+                    amountIn
+                );
+            }
+
+            uint256 currentTokenBalance = game.tokenBalances[trader][
+                asset_address
+            ];
+            if (currentTokenBalance < amountIn) {
+                revert InsufficientTokenBalance(
+                    gameId,
+                    trader,
+                    currentTokenBalance,
+                    amountIn
+                );
+            }
+
+            unchecked {
+                game.tokenBalances[trader][asset_address] =
+                    currentTokenBalance -
+                    amountIn;
+            }
         }
 
         _verifyAndConsumeWorldId(worldId);
@@ -345,6 +397,38 @@ contract WorldInPaper is ReceiverTemplate {
             isBuy,
             amountIn
         );
+    }
+
+    function claimGame(uint256 gameId) external returns (uint256 payout) {
+        Game storage game = _games[gameId];
+        address player = _msgSender();
+
+        if (!game.exists) {
+            revert GameNotFound(gameId);
+        }
+        if (!game.hasJoined[player]) {
+            revert NotGamePlayer(gameId, player);
+        }
+        if (block.timestamp < game.endTime) {
+            revert GameNotEnded(gameId, game.endTime, block.timestamp);
+        }
+        if (game.hasClaimed[player]) {
+            revert AlreadyClaimed(gameId, player);
+        }
+
+        uint256 rank;
+        (payout, rank) = _computeClaimPayout(game, player);
+
+        game.hasClaimed[player] = true;
+
+        if (payout > 0) {
+            bool success = USDC.transfer(player, payout);
+            if (!success) {
+                revert TransferFailed(address(this), payout);
+            }
+        }
+
+        emit GameClaimed(gameId, player, payout, rank);
     }
 
     // =====================================================
@@ -427,6 +511,48 @@ contract WorldInPaper is ReceiverTemplate {
             revert GameNotFound(gameId);
         }
         return _games[gameId].wipBalances[player];
+    }
+
+    function getTokenBalance(
+        uint256 gameId,
+        address player,
+        string calldata asset_address
+    ) external view returns (uint256) {
+        Game storage game = _games[gameId];
+        if (!game.exists) {
+            revert GameNotFound(gameId);
+        }
+
+        return game.tokenBalances[player][asset_address];
+    }
+
+    function hasClaimed(
+        uint256 gameId,
+        address player
+    ) external view returns (bool) {
+        if (!_games[gameId].exists) {
+            revert GameNotFound(gameId);
+        }
+        return _games[gameId].hasClaimed[player];
+    }
+
+    function getClaimableAmount(
+        uint256 gameId,
+        address player
+    ) external view returns (uint256 payout) {
+        Game storage game = _games[gameId];
+        if (!game.exists) {
+            revert GameNotFound(gameId);
+        }
+        if (!game.hasJoined[player]) {
+            revert NotGamePlayer(gameId, player);
+        }
+
+        if (block.timestamp < game.endTime || game.hasClaimed[player]) {
+            return 0;
+        }
+
+        (payout, ) = _computeClaimPayout(game, player);
     }
 
     // =====================================================
@@ -527,6 +653,128 @@ contract WorldInPaper is ReceiverTemplate {
         nullifierUsed[worldId.nullifier] = true;
     }
 
+    function _getSettledTokenBalanceFromTrades(
+        Game storage game,
+        address trader,
+        string memory asset_address
+    ) internal view returns (uint256 balance) {
+        uint256 tradesLength = game.trades.length;
+
+        for (uint256 i = 0; i < tradesLength; ) {
+            Trade storage trade = game.trades[i];
+            if (
+                trade.trader == trader &&
+                keccak256(bytes(trade.asset_address)) ==
+                keccak256(bytes(asset_address))
+            ) {
+                if (trade.isBuy) {
+                    balance += trade.amountOut;
+                } else if (balance >= trade.amountIn) {
+                    unchecked {
+                        balance -= trade.amountIn;
+                    }
+                } else {
+                    return 0;
+                }
+            }
+
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
+    function _getPlayerRank(
+        Game storage game,
+        address player
+    ) internal view returns (uint256 rank) {
+        uint256 playersLength = game.players.length;
+        address[] memory sortedPlayers = new address[](playersLength);
+
+        for (uint256 i = 0; i < playersLength; ) {
+            sortedPlayers[i] = game.players[i];
+            unchecked {
+                ++i;
+            }
+        }
+
+        for (uint256 i = 0; i < playersLength; ) {
+            uint256 bestIdx = i;
+            for (uint256 j = i + 1; j < playersLength; ) {
+                if (
+                    _isHigherRank(
+                        game,
+                        sortedPlayers[j],
+                        sortedPlayers[bestIdx]
+                    )
+                ) {
+                    bestIdx = j;
+                }
+                unchecked {
+                    ++j;
+                }
+            }
+
+            if (bestIdx != i) {
+                address tmp = sortedPlayers[i];
+                sortedPlayers[i] = sortedPlayers[bestIdx];
+                sortedPlayers[bestIdx] = tmp;
+            }
+
+            unchecked {
+                ++i;
+            }
+        }
+
+        for (uint256 i = 0; i < playersLength; ) {
+            if (sortedPlayers[i] == player) {
+                return i;
+            }
+            unchecked {
+                ++i;
+            }
+        }
+
+        revert NotGamePlayer(game.id, player);
+    }
+
+    function _computeClaimPayout(
+        Game storage game,
+        address player
+    ) internal view returns (uint256 payout, uint256 rank) {
+        rank = _getPlayerRank(game, player);
+        uint256 winnerCount = game.playerCount / 2;
+
+        if (rank < winnerCount) {
+            return (game.entryAmount * 2, rank);
+        }
+
+        if (game.playerCount % 2 == 1 && rank == winnerCount) {
+            return (game.entryAmount, rank);
+        }
+
+        return (0, rank);
+    }
+
+    function _isHigherRank(
+        Game storage game,
+        address candidate,
+        address current
+    ) internal view returns (bool) {
+        uint256 candidateWip = game.wipBalances[candidate];
+        uint256 currentWip = game.wipBalances[current];
+
+        if (candidateWip > currentWip) {
+            return true;
+        }
+        if (candidateWip < currentWip) {
+            return false;
+        }
+
+        // Deterministic tie-breaker so ranking is stable.
+        return candidate < current;
+    }
+
     // =====================================================
     // -------- CHAINLINK RECEIVER OVERRIDE --------
     // =====================================================
@@ -565,7 +813,11 @@ contract WorldInPaper is ReceiverTemplate {
             revert GameNotFound(tradeToSettle.gameId);
         }
 
-        if (!tradeToSettle.isBuy) {
+        if (tradeToSettle.isBuy) {
+            game.tokenBalances[tradeToSettle.trader][
+                tradeToSettle.asset_address
+            ] += amountOut;
+        } else {
             game.wipBalances[tradeToSettle.trader] += amountOut;
         }
 

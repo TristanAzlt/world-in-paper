@@ -49,6 +49,7 @@ contract WorldInPaperTest is Test {
     address private constant CREATOR = address(0xC0);
     address private constant PLAYER_1 = address(0xC1);
     address private constant PLAYER_2 = address(0xC2);
+    address private constant PLAYER_3 = address(0xC3);
 
     MockUSDC internal usdc;
     MockWorldIDVerifier internal verifier;
@@ -78,6 +79,7 @@ contract WorldInPaperTest is Test {
         usdc.mint(CREATOR, 1_000 * 10 ** 6);
         usdc.mint(PLAYER_1, 1_000 * 10 ** 6);
         usdc.mint(PLAYER_2, 1_000 * 10 ** 6);
+        usdc.mint(PLAYER_3, 1_000 * 10 ** 6);
     }
 
     function test_CreateGameAutoJoinsCreatorAndTransfersUSDC() public {
@@ -323,7 +325,7 @@ contract WorldInPaperTest is Test {
             gameId,
             "BTCUSD",
             WorldInPaper.Origin.Ethereum,
-            false,
+            true,
             50 * 10 ** 6,
             _nextWorldId()
         );
@@ -342,7 +344,15 @@ contract WorldInPaperTest is Test {
 
         assertEq(worldInPaper.getGameTradeCount(gameId), 2);
         assertEq(worldInPaper.getWipBalance(gameId, PLAYER_1), 4_900_000_000);
-        assertEq(worldInPaper.getWipBalance(gameId, CREATOR), 85_000_000_000);
+        assertEq(worldInPaper.getWipBalance(gameId, CREATOR), 4_950_000_000);
+        assertEq(
+            worldInPaper.getTokenBalance(
+                gameId,
+                PLAYER_1,
+                "0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+            ),
+            66_666
+        );
 
         WorldInPaper.Trade[] memory trades = worldInPaper.getGameTrades(gameId);
         assertEq(trades.length, 2);
@@ -380,7 +390,7 @@ contract WorldInPaperTest is Test {
             gameId2,
             "BTCUSD",
             WorldInPaper.Origin.Base,
-            false,
+            true,
             1,
             _nextWorldId()
         );
@@ -513,6 +523,124 @@ contract WorldInPaperTest is Test {
             WorldInPaper.Origin.Base,
             true,
             STARTING_WIP_BALANCE + 1,
+            _nextWorldId()
+        );
+    }
+
+    function test_RevertWhen_SubmitTradeGameSellWithInsufficientTokenBalance()
+        public
+    {
+        uint256 gameId = _createStartedGameWithPlayer(PLAYER_1);
+
+        vm.prank(PLAYER_1);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                WorldInPaper.InsufficientTokenBalance.selector,
+                gameId,
+                PLAYER_1,
+                0,
+                1
+            )
+        );
+        worldInPaper.submitTrade(
+            gameId,
+            "ETHUSD",
+            WorldInPaper.Origin.Base,
+            false,
+            1,
+            _nextWorldId()
+        );
+    }
+
+    function test_SubmitTradeSellDebitsTokenBalanceAndSettlementCreditsWip()
+        public
+    {
+        uint256 gameId = _createStartedGameWithPlayer(PLAYER_1);
+
+        vm.prank(PLAYER_1);
+        uint256 buyTradeId = worldInPaper.submitTrade(
+            gameId,
+            "ETHUSD",
+            WorldInPaper.Origin.Base,
+            true,
+            200 * 10 ** 6,
+            _nextWorldId()
+        );
+
+        vm.prank(FORWARDER);
+        worldInPaper.onReport("", abi.encode(buyTradeId, 1000 * 10 ** 18));
+
+        assertEq(
+            worldInPaper.getTokenBalance(gameId, PLAYER_1, "ETHUSD"),
+            200_000
+        );
+
+        vm.prank(PLAYER_1);
+        uint256 sellTradeId = worldInPaper.submitTrade(
+            gameId,
+            "ETHUSD",
+            WorldInPaper.Origin.Base,
+            false,
+            120_000,
+            _nextWorldId()
+        );
+
+        assertEq(
+            worldInPaper.getTokenBalance(gameId, PLAYER_1, "ETHUSD"),
+            80_000
+        );
+
+        vm.prank(FORWARDER);
+        worldInPaper.onReport("", abi.encode(sellTradeId, 1200 * 10 ** 18));
+
+        assertEq(worldInPaper.getWipBalance(gameId, PLAYER_1), 4_944_000_000);
+        assertEq(worldInPaper.getGameTradeCount(gameId), 2);
+    }
+
+    function test_RevertWhen_SubmitTradeSellExceedsAvailableAfterPendingSell()
+        public
+    {
+        uint256 gameId = _createStartedGameWithPlayer(PLAYER_1);
+
+        vm.prank(PLAYER_1);
+        uint256 buyTradeId = worldInPaper.submitTrade(
+            gameId,
+            "ETHUSD",
+            WorldInPaper.Origin.Base,
+            true,
+            200 * 10 ** 6,
+            _nextWorldId()
+        );
+
+        vm.prank(FORWARDER);
+        worldInPaper.onReport("", abi.encode(buyTradeId, 1000 * 10 ** 18));
+
+        vm.prank(PLAYER_1);
+        worldInPaper.submitTrade(
+            gameId,
+            "ETHUSD",
+            WorldInPaper.Origin.Base,
+            false,
+            150_000,
+            _nextWorldId()
+        );
+
+        vm.prank(PLAYER_1);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                WorldInPaper.InsufficientTokenBalance.selector,
+                gameId,
+                PLAYER_1,
+                50_000,
+                60_000
+            )
+        );
+        worldInPaper.submitTrade(
+            gameId,
+            "ETHUSD",
+            WorldInPaper.Origin.Base,
+            false,
+            60_000,
             _nextWorldId()
         );
     }
@@ -761,6 +889,10 @@ contract WorldInPaperTest is Test {
         WorldInPaper.Trade[] memory trades = worldInPaper.getGameTrades(gameId);
         assertEq(trades[0].id, tradeId);
         assertEq(trades[0].amountOut, 133_333);
+        assertEq(
+            worldInPaper.getTokenBalance(gameId, PLAYER_1, "BTCUSD"),
+            133_333
+        );
 
         assertEq(worldInPaper.getTradesToSettleCount(), 1);
         assertEq(worldInPaper.nextTradeToSettleId(), 2);
@@ -782,6 +914,248 @@ contract WorldInPaperTest is Test {
             )
         );
         worldInPaper.onReport("", abi.encode(uint256(999), uint256(123)));
+    }
+
+    function test_ClaimGameOddPlayersMiddleGetsEntryBack() public {
+        uint256 gameId = _createGameAsCreator(3);
+
+        vm.startPrank(PLAYER_1);
+        usdc.approve(address(worldInPaper), ENTRY_AMOUNT);
+        worldInPaper.joinGame(gameId);
+        vm.stopPrank();
+
+        vm.startPrank(PLAYER_2);
+        usdc.approve(address(worldInPaper), ENTRY_AMOUNT);
+        worldInPaper.joinGame(gameId);
+        vm.stopPrank();
+
+        vm.warp(worldInPaper.getGame(gameId).startTime + 1);
+
+        vm.prank(PLAYER_1);
+        worldInPaper.submitTrade(
+            gameId,
+            "ETHUSD",
+            WorldInPaper.Origin.Base,
+            true,
+            200 * 10 ** 6,
+            _nextWorldId()
+        );
+
+        vm.prank(PLAYER_2);
+        worldInPaper.submitTrade(
+            gameId,
+            "BTCUSD",
+            WorldInPaper.Origin.Base,
+            true,
+            100 * 10 ** 6,
+            _nextWorldId()
+        );
+
+        uint256 endTime = worldInPaper.getGame(gameId).endTime;
+        vm.warp(endTime);
+
+        uint256 creatorBefore = usdc.balanceOf(CREATOR);
+        uint256 player2Before = usdc.balanceOf(PLAYER_2);
+        uint256 player1Before = usdc.balanceOf(PLAYER_1);
+
+        vm.prank(CREATOR);
+        worldInPaper.claimGame(gameId);
+        vm.prank(PLAYER_2);
+        worldInPaper.claimGame(gameId);
+        vm.prank(PLAYER_1);
+        worldInPaper.claimGame(gameId);
+
+        assertEq(usdc.balanceOf(CREATOR), creatorBefore + ENTRY_AMOUNT * 2);
+        assertEq(usdc.balanceOf(PLAYER_2), player2Before + ENTRY_AMOUNT);
+        assertEq(usdc.balanceOf(PLAYER_1), player1Before);
+    }
+
+    function test_ClaimGameEvenPlayersTopHalfDoubleBottomHalfZero() public {
+        uint256 gameId = _createGameAsCreator(4);
+
+        vm.startPrank(PLAYER_1);
+        usdc.approve(address(worldInPaper), ENTRY_AMOUNT);
+        worldInPaper.joinGame(gameId);
+        vm.stopPrank();
+
+        vm.startPrank(PLAYER_2);
+        usdc.approve(address(worldInPaper), ENTRY_AMOUNT);
+        worldInPaper.joinGame(gameId);
+        vm.stopPrank();
+
+        vm.startPrank(PLAYER_3);
+        usdc.approve(address(worldInPaper), ENTRY_AMOUNT);
+        worldInPaper.joinGame(gameId);
+        vm.stopPrank();
+
+        vm.warp(worldInPaper.getGame(gameId).startTime + 1);
+
+        vm.prank(PLAYER_1);
+        worldInPaper.submitTrade(
+            gameId,
+            "ETHUSD",
+            WorldInPaper.Origin.Base,
+            true,
+            100 * 10 ** 6,
+            _nextWorldId()
+        );
+
+        vm.prank(PLAYER_2);
+        worldInPaper.submitTrade(
+            gameId,
+            "BTCUSD",
+            WorldInPaper.Origin.Base,
+            true,
+            200 * 10 ** 6,
+            _nextWorldId()
+        );
+
+        vm.prank(PLAYER_3);
+        worldInPaper.submitTrade(
+            gameId,
+            "SOLUSD",
+            WorldInPaper.Origin.Base,
+            true,
+            300 * 10 ** 6,
+            _nextWorldId()
+        );
+
+        uint256 endTime = worldInPaper.getGame(gameId).endTime;
+        vm.warp(endTime);
+
+        uint256 creatorBefore = usdc.balanceOf(CREATOR);
+        uint256 player1Before = usdc.balanceOf(PLAYER_1);
+        uint256 player2Before = usdc.balanceOf(PLAYER_2);
+        uint256 player3Before = usdc.balanceOf(PLAYER_3);
+
+        vm.prank(CREATOR);
+        worldInPaper.claimGame(gameId);
+        vm.prank(PLAYER_1);
+        worldInPaper.claimGame(gameId);
+        vm.prank(PLAYER_2);
+        worldInPaper.claimGame(gameId);
+        vm.prank(PLAYER_3);
+        worldInPaper.claimGame(gameId);
+
+        assertEq(usdc.balanceOf(CREATOR), creatorBefore + ENTRY_AMOUNT * 2);
+        assertEq(usdc.balanceOf(PLAYER_1), player1Before + ENTRY_AMOUNT * 2);
+        assertEq(usdc.balanceOf(PLAYER_2), player2Before);
+        assertEq(usdc.balanceOf(PLAYER_3), player3Before);
+    }
+
+    function test_RevertWhen_ClaimGameBeforeEnd() public {
+        uint256 gameId = _createGameAsCreator(3);
+
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                WorldInPaper.GameNotEnded.selector,
+                gameId,
+                worldInPaper.getGame(gameId).endTime,
+                block.timestamp
+            )
+        );
+        vm.prank(CREATOR);
+        worldInPaper.claimGame(gameId);
+    }
+
+    function test_RevertWhen_ClaimGameByNonPlayerAndWhenAlreadyClaimed()
+        public
+    {
+        uint256 gameId = _createGameAsCreator(3);
+        uint256 endTime = worldInPaper.getGame(gameId).endTime;
+        vm.warp(endTime);
+
+        vm.prank(address(0xBEEF));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                WorldInPaper.NotGamePlayer.selector,
+                gameId,
+                address(0xBEEF)
+            )
+        );
+        worldInPaper.claimGame(gameId);
+
+        vm.prank(CREATOR);
+        worldInPaper.claimGame(gameId);
+
+        vm.prank(CREATOR);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                WorldInPaper.AlreadyClaimed.selector,
+                gameId,
+                CREATOR
+            )
+        );
+        worldInPaper.claimGame(gameId);
+    }
+
+    function test_GetClaimableAmountReturnsZeroBeforeEnd() public {
+        uint256 gameId = _createGameAsCreator(3);
+
+        assertEq(worldInPaper.getClaimableAmount(gameId, CREATOR), 0);
+    }
+
+    function test_GetClaimableAmountMatchesClaimAndBecomesZeroAfterClaim()
+        public
+    {
+        uint256 gameId = _createGameAsCreator(3);
+
+        vm.startPrank(PLAYER_1);
+        usdc.approve(address(worldInPaper), ENTRY_AMOUNT);
+        worldInPaper.joinGame(gameId);
+        vm.stopPrank();
+
+        vm.startPrank(PLAYER_2);
+        usdc.approve(address(worldInPaper), ENTRY_AMOUNT);
+        worldInPaper.joinGame(gameId);
+        vm.stopPrank();
+
+        vm.warp(worldInPaper.getGame(gameId).startTime + 1);
+
+        vm.prank(PLAYER_1);
+        worldInPaper.submitTrade(
+            gameId,
+            "ETHUSD",
+            WorldInPaper.Origin.Base,
+            true,
+            100 * 10 ** 6,
+            _nextWorldId()
+        );
+
+        vm.prank(PLAYER_2);
+        worldInPaper.submitTrade(
+            gameId,
+            "BTCUSD",
+            WorldInPaper.Origin.Base,
+            true,
+            200 * 10 ** 6,
+            _nextWorldId()
+        );
+
+        uint256 endTime = worldInPaper.getGame(gameId).endTime;
+        vm.warp(endTime);
+
+        uint256 claimableCreator = worldInPaper.getClaimableAmount(
+            gameId,
+            CREATOR
+        );
+        uint256 claimablePlayer1 = worldInPaper.getClaimableAmount(
+            gameId,
+            PLAYER_1
+        );
+        uint256 claimablePlayer2 = worldInPaper.getClaimableAmount(
+            gameId,
+            PLAYER_2
+        );
+
+        assertEq(claimableCreator, ENTRY_AMOUNT * 2);
+        assertEq(claimablePlayer1, ENTRY_AMOUNT);
+        assertEq(claimablePlayer2, 0);
+
+        vm.prank(CREATOR);
+        uint256 claimed = worldInPaper.claimGame(gameId);
+        assertEq(claimed, claimableCreator);
+        assertEq(worldInPaper.getClaimableAmount(gameId, CREATOR), 0);
     }
 
     function _createGameAsCreator(
