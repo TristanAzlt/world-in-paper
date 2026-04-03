@@ -15,7 +15,7 @@ Based on origin (= chain), routes to the right provider:
   2 Ethereum   → Uniswap Trading API quote (chainId 1)
   3 BSC        → Uniswap Trading API quote (chainId 56)
   4 World      → Uniswap Trading API quote (chainId 480)
-  5 Hyperliquid → allMids mid price (perps + spot + tradfi auto-resolved)
+  5 Hyperliquid → allMids mid price (perps + spot + tradfi)
     |
 DON consensus (median aggregation across nodes)
     |
@@ -46,7 +46,7 @@ All quotes return **USD price per 1 token** with price impact baked in (except H
 ```solidity
 event SettlementRequest(
     uint256 indexed tradeId,
-    string assetId,      // token address or symbol ("BTC", "0xc063...", "Dfh5Dz...")
+    string assetId,      // token address, symbol, or @index ("BTC", "@12", "0xc063...", "Dfh5Dz...")
     uint8 origin,        // enum Origin
     bool isBuy,          // true = buy, false = sell
     uint256 amount       // buy: USDC amount (6 dec), sell: token amount (token dec)
@@ -57,18 +57,19 @@ event SettlementRequest(
 
 ```solidity
 function _processReport(bytes calldata report) internal override {
-    (uint256 tradeId, uint256 price) = abi.decode(report, (uint256, uint256));
-    // price = USD per 1 token, scaled to 8 decimals (1e8)
+    (uint256 tradeId, uint256 executionPrice) = abi.decode(report, (uint256, uint256));
+    // executionPrice = USD per 1 token, scaled to 18 decimals (1e18)
+    // Example: ETH at $2060.45 → executionPrice = 2060450000000000000000
 }
 ```
 
-## Hyperliquid resolution
+## Hyperliquid asset IDs
 
-For origin=5 (Hyperliquid), the workflow auto-resolves the asset across all Hyperliquid markets:
+For origin=5 (Hyperliquid), the assetId is looked up directly in allMids:
 
-1. Try crypto perps (`allMids`) — direct lookup: `"BTC"`, `"ETH"`, `"SOL"`
-2. Try spot tokens (`spotMeta`) — resolve name to `@index`: `"PEPE"` → `@12`
-3. Try tradfi (`allMids` dex:xyz) — auto-prefix: `"AAPL"` → `xyz:AAPL`
+- Crypto perps: `"BTC"`, `"ETH"`, `"SOL"` (direct name)
+- Spot tokens: `"@12"` for PEPE, `"@10"` for TRUMP (frontend resolves name → @index via spotMeta)
+- TradFi: `"xyz:AAPL"`, `"xyz:GOLD"` or just `"AAPL"` (auto-prefixed)
 
 ## Network
 
@@ -83,10 +84,11 @@ For origin=5 (Hyperliquid), the workflow auto-resolves the asset across all Hype
 {
   "contractAddress": "0x...",
   "chainSelectorName": "ethereum-mainnet-worldchain-1",
-  "gasLimit": "500000",
-  "uniswapApiKey": "${UNISWAP_API_KEY}"
+  "gasLimit": "500000"
 }
 ```
+
+Uniswap API key is read from CRE secrets (`UNISWAP_API_KEY`).
 
 ## .env
 
@@ -94,3 +96,13 @@ For origin=5 (Hyperliquid), the workflow auto-resolves the asset across all Hype
 CRE_ETH_PRIVATE_KEY=<your_private_key_funded_on_worldchain>
 UNISWAP_API_KEY=<your_uniswap_api_key>
 ```
+
+## CRE limits
+
+| Limit | Value |
+|-------|-------|
+| HTTP response size | 100 KB max |
+| HTTP request size | 10 KB max |
+| HTTP calls per execution | 5 max |
+| Connection timeout | 10 seconds |
+| Total workflow timeout | 5 minutes |

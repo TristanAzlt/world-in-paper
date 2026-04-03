@@ -9,7 +9,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "types": []
+    "types": ["bun-types"]
   },
-  "include": ["main.ts"]
+  "include": ["main.ts", "workflow.ts", "workflow.test.ts"]
 }
