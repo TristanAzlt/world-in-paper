@@ -79,75 +79,34 @@ interface PriceResult {
 
 // --- Hyperliquid ---
 
-const resolveSpotKey = (sendRequester: HTTPSendRequester, symbol: string): string | null => {
-  const resp = sendRequester
-    .sendRequest({
-      method: "POST",
-      url: "https://api.hyperliquid.xyz/info",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type: "spotMeta" }),
-    })
-    .result();
-
-  if (resp.statusCode !== 200) return null;
-
-  const meta = JSON.parse(Buffer.from(resp.body).toString("utf-8"));
-  const tokens: Array<{ index: number; name: string }> = meta.tokens || [];
-  const universe: Array<{
-    tokens: number[];
-    index: number;
-    name: string;
-    isCanonical: boolean;
-  }> = meta.universe || [];
-
-  const token = tokens.find((t) => t.name.toUpperCase() === symbol.toUpperCase());
-  if (!token) return null;
-
-  const pair = universe.find((u) => u.tokens[0] === token.index);
-  if (!pair) return null;
-
-  return pair.isCanonical ? pair.name : `@${pair.index}`;
-};
-
 /**
- * Hyperliquid — mid price from allMids.
- * Tries crypto perps first, then spot (via spotMeta), then tradfi (dex:xyz).
+ * Hyperliquid — mid price from allMids (1 HTTP call, ~9 KB).
+ *
+ * Asset IDs:
+ *   Perps:  "BTC", "ETH", "SOL" (direct name)
+ *   Spots:  "@12" for PEPE, "@10" for TRUMP (frontend resolves name → @index)
+ *   TradFi: "AAPL", "GOLD" (auto-tries xyz: prefix if not found)
  */
 const fetchHyperliquidPrice = (sendRequester: HTTPSendRequester, symbol: string): PriceResult => {
+  // Determine if tradfi (xyz:) or crypto
+  const isTradfi = symbol.startsWith("xyz:");
+  const body = isTradfi
+    ? JSON.stringify({ type: "allMids", dex: "xyz" })
+    : JSON.stringify({ type: "allMids" });
+
   const resp = sendRequester
     .sendRequest({
       method: "POST",
       url: "https://api.hyperliquid.xyz/info",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type: "allMids" }),
+      body,
     })
     .result();
 
   if (resp.statusCode !== 200) throw new Error(`Hyperliquid HTTP ${resp.statusCode}`);
 
   const prices = JSON.parse(Buffer.from(resp.body).toString("utf-8"));
-  let mid = prices[symbol];
-
-  if (!mid && !symbol.startsWith("@")) {
-    const spotKey = resolveSpotKey(sendRequester, symbol);
-    if (spotKey) mid = prices[spotKey];
-  }
-
-  if (!mid) {
-    const xyzResp = sendRequester
-      .sendRequest({
-        method: "POST",
-        url: "https://api.hyperliquid.xyz/info",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "allMids", dex: "xyz" }),
-      })
-      .result();
-
-    if (xyzResp.statusCode === 200) {
-      const xyzPrices = JSON.parse(Buffer.from(xyzResp.body).toString("utf-8"));
-      mid = xyzPrices[`xyz:${symbol}`] || xyzPrices[symbol];
-    }
-  }
+  const mid = prices[symbol] || prices[`xyz:${symbol}`];
 
   if (!mid) throw new Error(`No price for "${symbol}" on Hyperliquid`);
 
@@ -339,8 +298,8 @@ const onSettlementRequest = (runtime: Runtime<Config>, log: EVMLog) => {
 
   runtime.log(`Price: $${quoteResult.price} per token (${isBuy ? "BUY" : "SELL"})`);
 
-  // --- Encode report: (uint256 tradeId, uint256 price) — USD per token, 8 decimals ---
-  const priceScaled = BigInt(Math.round(quoteResult.price * 1e8));
+  // --- Encode report: (uint256 tradeId, uint256 price) — USD per token, 18 decimals ---
+  const priceScaled = BigInt(Math.round(quoteResult.price * 1e18));
 
   const reportPayload = encodeAbiParameters(parseAbiParameters("uint256, uint256"), [
     tradeId,
