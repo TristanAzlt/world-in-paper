@@ -52,6 +52,7 @@ contract WorldInPaperTest is Test {
     MockUSDC internal usdc;
     MockWorldIDVerifier internal verifier;
     WorldInPaper internal worldInPaper;
+    uint256 internal nextNullifier;
 
     event TradeSettled(
         uint256 indexed tradeId,
@@ -65,7 +66,13 @@ contract WorldInPaperTest is Test {
     function setUp() public {
         usdc = new MockUSDC();
         verifier = new MockWorldIDVerifier();
-        worldInPaper = new WorldInPaper(FORWARDER, address(usdc), verifier);
+        worldInPaper = new WorldInPaper(
+            FORWARDER,
+            address(usdc),
+            verifier,
+            true
+        );
+        nextNullifier = 1;
 
         usdc.mint(CREATOR, 1_000 * 10 ** 6);
         usdc.mint(PLAYER_1, 1_000 * 10 ** 6);
@@ -243,7 +250,8 @@ contract WorldInPaperTest is Test {
             WorldInPaper.Origin.Base,
             true,
             100 * 10 ** 6,
-            95 * 10 ** 6
+            95 * 10 ** 6,
+            _nextWorldId()
         );
 
         vm.prank(CREATOR);
@@ -253,7 +261,8 @@ contract WorldInPaperTest is Test {
             WorldInPaper.Origin.Ethereum,
             false,
             50 * 10 ** 6,
-            51 * 10 ** 6
+            51 * 10 ** 6,
+            _nextWorldId()
         );
 
         assertEq(tradeId1, 1);
@@ -288,7 +297,8 @@ contract WorldInPaperTest is Test {
             WorldInPaper.Origin.Ethereum,
             true,
             1,
-            1
+            1,
+            _nextWorldId()
         );
 
         vm.prank(CREATOR);
@@ -298,7 +308,8 @@ contract WorldInPaperTest is Test {
             WorldInPaper.Origin.Base,
             false,
             1,
-            1
+            1,
+            _nextWorldId()
         );
 
         assertEq(tradeId1, 1);
@@ -325,7 +336,8 @@ contract WorldInPaperTest is Test {
             WorldInPaper.Origin.Base,
             true,
             1,
-            1
+            1,
+            _nextWorldId()
         );
     }
 
@@ -348,7 +360,8 @@ contract WorldInPaperTest is Test {
             WorldInPaper.Origin.Base,
             true,
             1,
-            1
+            1,
+            _nextWorldId()
         );
     }
 
@@ -372,7 +385,8 @@ contract WorldInPaperTest is Test {
             WorldInPaper.Origin.Base,
             true,
             1,
-            1
+            1,
+            _nextWorldId()
         );
     }
 
@@ -388,7 +402,8 @@ contract WorldInPaperTest is Test {
             WorldInPaper.Origin.Base,
             true,
             1,
-            1
+            1,
+            _nextWorldId()
         );
     }
 
@@ -410,7 +425,8 @@ contract WorldInPaperTest is Test {
             WorldInPaper.Origin.Base,
             true,
             0,
-            10
+            10,
+            _nextWorldId()
         );
     }
 
@@ -432,6 +448,7 @@ contract WorldInPaperTest is Test {
         uint256 tradeId = worldInPaper.submitTrade(
             "BTCUSD",
             WorldInPaper.Origin.Hyperliquid,
+            true,
             150 * 10 ** 6,
             worldId
         );
@@ -471,6 +488,7 @@ contract WorldInPaperTest is Test {
         worldInPaper.submitTrade(
             "ETHUSD",
             WorldInPaper.Origin.Ethereum,
+            true,
             10,
             worldId
         );
@@ -481,6 +499,7 @@ contract WorldInPaperTest is Test {
         worldInPaper.submitTrade(
             "SOLUSD",
             WorldInPaper.Origin.Solana,
+            true,
             10,
             worldId
         );
@@ -502,7 +521,13 @@ contract WorldInPaperTest is Test {
 
         vm.prank(PLAYER_1);
         vm.expectRevert(WorldInPaper.EmptyAssetAddress.selector);
-        worldInPaper.submitTrade("", WorldInPaper.Origin.Base, 100, worldId);
+        worldInPaper.submitTrade(
+            "",
+            WorldInPaper.Origin.Base,
+            true,
+            100,
+            worldId
+        );
 
         worldId.nullifier = 1001;
         vm.prank(PLAYER_1);
@@ -510,6 +535,7 @@ contract WorldInPaperTest is Test {
         worldInPaper.submitTrade(
             "XAUUSD",
             WorldInPaper.Origin.Base,
+            true,
             0,
             worldId
         );
@@ -535,9 +561,37 @@ contract WorldInPaperTest is Test {
         worldInPaper.submitTrade(
             "BTCUSD",
             WorldInPaper.Origin.Base,
+            true,
             10,
             worldId
         );
+    }
+
+    function test_SubmitTradeWorksWhenWorldIdVerificationDisabled() public {
+        verifier.setShouldRevert(true);
+
+        WorldInPaper worldInPaperNoVerify = new WorldInPaper(
+            FORWARDER,
+            address(usdc),
+            verifier,
+            false
+        );
+
+        WorldInPaper.WorldIdVerification memory worldId = _nextWorldId();
+
+        vm.prank(PLAYER_1);
+        uint256 tradeId = worldInPaperNoVerify.submitTrade(
+            "ETHUSD",
+            WorldInPaper.Origin.Ethereum,
+            true,
+            10,
+            worldId
+        );
+
+        assertEq(tradeId, 1);
+        assertEq(worldInPaperNoVerify.getTradesToSettleCount(), 1);
+        assertFalse(worldInPaperNoVerify.nullifierUsed(worldId.nullifier));
+        assertFalse(worldInPaperNoVerify.worldIdVerificationEnabled());
     }
 
     function test_SettleTradeDeletesFromMapping() public {
@@ -558,6 +612,7 @@ contract WorldInPaperTest is Test {
         uint256 tradeId = worldInPaper.submitTrade(
             "BTCUSD",
             WorldInPaper.Origin.Hyperliquid,
+            true,
             200 * 10 ** 6,
             worldId
         );
@@ -615,5 +670,26 @@ contract WorldInPaperTest is Test {
             endTime
         );
         vm.stopPrank();
+    }
+
+    function _nextWorldId()
+        internal
+        returns (WorldInPaper.WorldIdVerification memory worldId)
+    {
+        worldId = WorldInPaper.WorldIdVerification({
+            nullifier: nextNullifier,
+            action: 1,
+            rpId: 1,
+            nonce: 1,
+            signalHash: 1,
+            expiresAtMin: 999_999,
+            issuerSchemaId: 1,
+            credentialGenesisIssuedAtMin: 1,
+            zeroKnowledgeProof: [uint256(0), 0, 0, 0, 0]
+        });
+
+        unchecked {
+            nextNullifier += 1;
+        }
     }
 }

@@ -70,6 +70,7 @@ contract WorldInPaper is ReceiverTemplate {
 
     IERC20 public immutable USDC;
     IWorldIDVerifier public immutable verifier;
+    bool public immutable worldIdVerificationEnabled;
     uint256 public nextGameId = 1;
     uint256 public nextTradeId = 1;
     uint256 public nextTradeToSettleId = 1;
@@ -154,7 +155,9 @@ contract WorldInPaper is ReceiverTemplate {
     event SettlementRequest(
         uint256 indexed tradeId,
         string asset_address,
-        Origin origin
+        Origin origin,
+        bool isBuy,
+        uint256 amount
     );
     event TradeSettled(
         uint256 indexed tradeId,
@@ -172,16 +175,18 @@ contract WorldInPaper is ReceiverTemplate {
     constructor(
         address _forwarderAddress,
         address _usdcAddress,
-        IWorldIDVerifier _verifier
+        IWorldIDVerifier _verifier,
+        bool _worldIdVerificationEnabled
     ) ReceiverTemplate(_forwarderAddress) {
         if (_usdcAddress == address(0)) {
             revert InvalidUSDCAddress();
         }
-        if (address(_verifier) == address(0)) {
+        if (_worldIdVerificationEnabled && address(_verifier) == address(0)) {
             revert InvalidVerifierAddress();
         }
         USDC = IERC20(_usdcAddress);
         verifier = _verifier;
+        worldIdVerificationEnabled = _worldIdVerificationEnabled;
     }
 
     // =====================================================
@@ -234,7 +239,8 @@ contract WorldInPaper is ReceiverTemplate {
         Origin origin,
         bool isBuy,
         uint256 amountIn,
-        uint256 amountOut
+        uint256 amountOut,
+        WorldIdVerification calldata worldId
     ) external returns (uint256 tradeId) {
         Game storage game = _games[gameId];
         address trader = _msgSender();
@@ -257,6 +263,8 @@ contract WorldInPaper is ReceiverTemplate {
         if (amountIn == 0 || amountOut == 0) {
             revert InvalidTradeAmounts(amountIn, amountOut);
         }
+
+        _verifyAndConsumeWorldId(worldId);
 
         tradeId = nextTradeId;
         unchecked {
@@ -290,12 +298,10 @@ contract WorldInPaper is ReceiverTemplate {
     function submitTrade(
         string calldata asset_address,
         Origin origin,
+        bool isBuy,
         uint256 amountIn,
         WorldIdVerification calldata worldId
     ) external returns (uint256 tradeId) {
-        if (nullifierUsed[worldId.nullifier]) {
-            revert InvalidNullifier();
-        }
         if (bytes(asset_address).length == 0) {
             revert EmptyAssetAddress();
         }
@@ -303,19 +309,7 @@ contract WorldInPaper is ReceiverTemplate {
             revert InvalidAmountIn();
         }
 
-        verifier.verify(
-            worldId.nullifier,
-            worldId.action,
-            worldId.rpId,
-            worldId.nonce,
-            worldId.signalHash,
-            worldId.expiresAtMin,
-            worldId.issuerSchemaId,
-            worldId.credentialGenesisIssuedAtMin,
-            worldId.zeroKnowledgeProof
-        );
-
-        nullifierUsed[worldId.nullifier] = true;
+        _verifyAndConsumeWorldId(worldId);
 
         tradeId = nextTradeToSettleId;
         unchecked {
@@ -330,7 +324,7 @@ contract WorldInPaper is ReceiverTemplate {
             amountIn: amountIn
         });
 
-        emit SettlementRequest(tradeId, asset_address, origin);
+        emit SettlementRequest(tradeId, asset_address, origin, isBuy, amountIn);
     }
 
     // =====================================================
@@ -452,6 +446,32 @@ contract WorldInPaper is ReceiverTemplate {
         game.playerCount += 1;
 
         emit GameJoined(gameId, player, game.playerCount);
+    }
+
+    function _verifyAndConsumeWorldId(
+        WorldIdVerification calldata worldId
+    ) internal {
+        if (!worldIdVerificationEnabled) {
+            return;
+        }
+
+        if (nullifierUsed[worldId.nullifier]) {
+            revert InvalidNullifier();
+        }
+
+        verifier.verify(
+            worldId.nullifier,
+            worldId.action,
+            worldId.rpId,
+            worldId.nonce,
+            worldId.signalHash,
+            worldId.expiresAtMin,
+            worldId.issuerSchemaId,
+            worldId.credentialGenesisIssuedAtMin,
+            worldId.zeroKnowledgeProof
+        );
+
+        nullifierUsed[worldId.nullifier] = true;
     }
 
     // =====================================================

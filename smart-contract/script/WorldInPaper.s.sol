@@ -14,13 +14,17 @@ contract WorldInPaperScript is Script {
         address forwarder = vm.envAddress("FORWARDER_ADDRESS");
         address usdc = vm.envAddress("USDC_ADDRESS");
         address worldIdVerifier = vm.envAddress("WORLD_ID_VERIFIER_ADDRESS");
+        bool worldIdVerificationEnabled = vm.envBool(
+            "WORLD_ID_VERIFICATION_ENABLED"
+        );
 
         vm.startBroadcast();
 
         worldInPaper = new WorldInPaper(
             forwarder,
             usdc,
-            IWorldIDVerifier(worldIdVerifier)
+            IWorldIDVerifier(worldIdVerifier),
+            worldIdVerificationEnabled
         );
 
         vm.stopBroadcast();
