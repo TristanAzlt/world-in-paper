@@ -139,6 +139,125 @@ contract WorldInPaperTest is Test {
         );
     }
 
+    function test_GetPlayerPortfolioReturnsTokensAndTrades() public {
+        uint256 gameId = _createStartedGameWithPlayer(PLAYER_1);
+
+        vm.prank(PLAYER_1);
+        uint256 buyTradeId = worldInPaper.submitTrade(
+            gameId,
+            "ETHUSD",
+            WorldInPaper.Origin.Base,
+            true,
+            200 * 10 ** 6,
+            _nextWorldId()
+        );
+
+        vm.prank(FORWARDER);
+        worldInPaper.onReport("", abi.encode(buyTradeId, 1000 * 10 ** 18));
+
+        vm.prank(PLAYER_1);
+        uint256 sellTradeId = worldInPaper.submitTrade(
+            gameId,
+            "ETHUSD",
+            WorldInPaper.Origin.Base,
+            false,
+            50_000,
+            _nextWorldId()
+        );
+
+        vm.prank(FORWARDER);
+        worldInPaper.onReport("", abi.encode(sellTradeId, 1200 * 10 ** 18));
+
+        vm.prank(PLAYER_1);
+        uint256 btcTradeId = worldInPaper.submitTrade(
+            gameId,
+            "BTCUSD",
+            WorldInPaper.Origin.Hyperliquid,
+            true,
+            100 * 10 ** 6,
+            _nextWorldId()
+        );
+
+        vm.prank(FORWARDER);
+        worldInPaper.onReport("", abi.encode(btcTradeId, 2000 * 10 ** 18));
+
+        WorldInPaper.PlayerPortfolioView memory portfolio = worldInPaper
+            .getPlayerPortfolio(gameId, PLAYER_1);
+
+        assertEq(portfolio.gameId, gameId);
+        assertEq(portfolio.player, PLAYER_1);
+        assertEq(portfolio.wipBalance, 4_760_000_000);
+        assertFalse(portfolio.claimed);
+        assertEq(portfolio.claimableAmount, 0);
+        assertEq(portfolio.tokens.length, 2);
+
+        assertEq(portfolio.tokens[0].asset_address, "ETHUSD");
+        assertEq(uint8(portfolio.tokens[0].origin), uint8(WorldInPaper.Origin.Base));
+        assertEq(portfolio.tokens[0].balance, 150_000);
+        assertEq(portfolio.tokens[0].trades.length, 2);
+        assertEq(portfolio.tokens[0].trades[0].id, buyTradeId);
+        assertEq(portfolio.tokens[0].trades[1].id, sellTradeId);
+
+        assertEq(portfolio.tokens[1].asset_address, "BTCUSD");
+        assertEq(
+            uint8(portfolio.tokens[1].origin),
+            uint8(WorldInPaper.Origin.Hyperliquid)
+        );
+        assertEq(portfolio.tokens[1].balance, 50_000);
+        assertEq(portfolio.tokens[1].trades.length, 1);
+        assertEq(portfolio.tokens[1].trades[0].id, btcTradeId);
+    }
+
+    function test_GetGameRankingReturnsPlayersSortedByWip() public {
+        uint256 gameId = _createGameAsCreator(3);
+
+        vm.startPrank(PLAYER_1);
+        usdc.approve(address(worldInPaper), ENTRY_AMOUNT);
+        worldInPaper.joinGame(gameId);
+        vm.stopPrank();
+
+        vm.startPrank(PLAYER_2);
+        usdc.approve(address(worldInPaper), ENTRY_AMOUNT);
+        worldInPaper.joinGame(gameId);
+        vm.stopPrank();
+
+        vm.warp(worldInPaper.getGame(gameId).startTime + 1);
+
+        vm.prank(PLAYER_1);
+        worldInPaper.submitTrade(
+            gameId,
+            "ETHUSD",
+            WorldInPaper.Origin.Base,
+            true,
+            100 * 10 ** 6,
+            _nextWorldId()
+        );
+
+        vm.prank(PLAYER_2);
+        worldInPaper.submitTrade(
+            gameId,
+            "BTCUSD",
+            WorldInPaper.Origin.Base,
+            true,
+            300 * 10 ** 6,
+            _nextWorldId()
+        );
+
+        WorldInPaper.GameRankingEntryView[] memory ranking = worldInPaper
+            .getGameRanking(gameId);
+
+        assertEq(ranking.length, 3);
+        assertEq(ranking[0].player, CREATOR);
+        assertEq(ranking[0].place, 1);
+        assertEq(ranking[0].wipBalance, 5_000_000_000);
+        assertEq(ranking[1].player, PLAYER_1);
+        assertEq(ranking[1].place, 2);
+        assertEq(ranking[1].wipBalance, 4_900_000_000);
+        assertEq(ranking[2].player, PLAYER_2);
+        assertEq(ranking[2].place, 3);
+        assertEq(ranking[2].wipBalance, 4_700_000_000);
+    }
+
     function test_RevertWhen_JoinWithoutEnoughAllowance() public {
         uint256 gameId = _createGameAsCreator(3);
 
@@ -679,7 +798,7 @@ contract WorldInPaperTest is Test {
         );
 
         assertEq(tradeId, 1);
-        assertEq(worldInPaper.getTradesToSettleCount(), 1);
+        assertEq(worldInPaper.getTotalSettlementRequestsCreated(), 1);
         assertEq(worldInPaper.nextTradeToSettleId(), 2);
 
         WorldInPaper.TradeToSettle memory tradeToSettle = worldInPaper
@@ -848,7 +967,7 @@ contract WorldInPaperTest is Test {
         );
 
         assertEq(tradeId, 1);
-        assertEq(worldInPaperNoVerify.getTradesToSettleCount(), 1);
+        assertEq(worldInPaperNoVerify.getTotalSettlementRequestsCreated(), 1);
         assertFalse(worldInPaperNoVerify.nullifierUsed(worldId.nullifier));
         assertFalse(worldInPaperNoVerify.worldIdVerificationEnabled());
     }
@@ -879,7 +998,7 @@ contract WorldInPaperTest is Test {
             worldId
         );
 
-        assertEq(worldInPaper.getTradesToSettleCount(), 1);
+        assertEq(worldInPaper.getTotalSettlementRequestsCreated(), 1);
         assertEq(worldInPaper.nextTradeToSettleId(), 2);
 
         vm.prank(FORWARDER);
@@ -894,7 +1013,7 @@ contract WorldInPaperTest is Test {
             133_333
         );
 
-        assertEq(worldInPaper.getTradesToSettleCount(), 1);
+        assertEq(worldInPaper.getTotalSettlementRequestsCreated(), 1);
         assertEq(worldInPaper.nextTradeToSettleId(), 2);
         vm.expectRevert(
             abi.encodeWithSelector(

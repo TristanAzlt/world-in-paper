@@ -82,6 +82,28 @@ contract WorldInPaper is ReceiverTemplate {
         bool exists;
     }
 
+    struct PortfolioTokenView {
+        string asset_address;
+        Origin origin;
+        uint256 balance;
+        Trade[] trades;
+    }
+
+    struct PlayerPortfolioView {
+        uint256 gameId;
+        address player;
+        uint256 wipBalance;
+        bool claimed;
+        uint256 claimableAmount;
+        PortfolioTokenView[] tokens;
+    }
+
+    struct GameRankingEntryView {
+        address player;
+        uint256 place;
+        uint256 wipBalance;
+    }
+
     // =====================================================
     // -------------- CONSTANTS/STORAGE --------------
     // =====================================================
@@ -339,20 +361,6 @@ contract WorldInPaper is ReceiverTemplate {
                 game.wipBalances[trader] = currentBalance - amountIn;
             }
         } else {
-            uint256 settledTokenBalance = _getSettledTokenBalanceFromTrades(
-                game,
-                trader,
-                asset_address
-            );
-            if (settledTokenBalance < amountIn) {
-                revert InsufficientTokenBalance(
-                    gameId,
-                    trader,
-                    settledTokenBalance,
-                    amountIn
-                );
-            }
-
             uint256 currentTokenBalance = game.tokenBalances[trader][
                 asset_address
             ];
@@ -499,7 +507,7 @@ contract WorldInPaper is ReceiverTemplate {
         return tradeToSettle;
     }
 
-    function getTradesToSettleCount() external view returns (uint256) {
+    function getTotalSettlementRequestsCreated() external view returns (uint256) {
         return nextTradeToSettleId - 1;
     }
 
@@ -548,11 +556,53 @@ contract WorldInPaper is ReceiverTemplate {
             revert NotGamePlayer(gameId, player);
         }
 
-        if (block.timestamp < game.endTime || game.hasClaimed[player]) {
-            return 0;
+        payout = _getClaimableAmount(game, player);
+    }
+
+    function getPlayerPortfolio(
+        uint256 gameId,
+        address player
+    ) external view returns (PlayerPortfolioView memory portfolio) {
+        Game storage game = _games[gameId];
+        if (!game.exists) {
+            revert GameNotFound(gameId);
+        }
+        if (!game.hasJoined[player]) {
+            revert NotGamePlayer(gameId, player);
         }
 
-        (payout, ) = _computeClaimPayout(game, player);
+        portfolio.gameId = gameId;
+        portfolio.player = player;
+        portfolio.wipBalance = game.wipBalances[player];
+        portfolio.claimed = game.hasClaimed[player];
+        portfolio.claimableAmount = _getClaimableAmount(game, player);
+        portfolio.tokens = _getPortfolioTokens(game, player);
+    }
+
+    function getGameRanking(
+        uint256 gameId
+    ) external view returns (GameRankingEntryView[] memory ranking) {
+        Game storage game = _games[gameId];
+        if (!game.exists) {
+            revert GameNotFound(gameId);
+        }
+
+        address[] memory sortedPlayers = _getSortedPlayers(game);
+        uint256 playersLength = sortedPlayers.length;
+        ranking = new GameRankingEntryView[](playersLength);
+
+        for (uint256 i = 0; i < playersLength; ) {
+            address player = sortedPlayers[i];
+            ranking[i] = GameRankingEntryView({
+                player: player,
+                place: i + 1,
+                wipBalance: game.wipBalances[player]
+            });
+
+            unchecked {
+                ++i;
+            }
+        }
     }
 
     // =====================================================
@@ -653,28 +703,107 @@ contract WorldInPaper is ReceiverTemplate {
         nullifierUsed[worldId.nullifier] = true;
     }
 
-    function _getSettledTokenBalanceFromTrades(
+    function _getClaimableAmount(
         Game storage game,
-        address trader,
-        string memory asset_address
-    ) internal view returns (uint256 balance) {
+        address player
+    ) internal view returns (uint256 payout) {
+        if (block.timestamp < game.endTime || game.hasClaimed[player]) {
+            return 0;
+        }
+
+        (payout, ) = _computeClaimPayout(game, player);
+    }
+
+    function _getPortfolioTokens(
+        Game storage game,
+        address player
+    ) internal view returns (PortfolioTokenView[] memory tokens) {
         uint256 tradesLength = game.trades.length;
+        string[] memory assetAddresses = new string[](tradesLength);
+        Origin[] memory origins = new Origin[](tradesLength);
+        uint256 uniqueAssetsLength;
 
         for (uint256 i = 0; i < tradesLength; ) {
             Trade storage trade = game.trades[i];
-            if (
-                trade.trader == trader &&
-                keccak256(bytes(trade.asset_address)) ==
-                keccak256(bytes(asset_address))
-            ) {
-                if (trade.isBuy) {
-                    balance += trade.amountOut;
-                } else if (balance >= trade.amountIn) {
-                    unchecked {
-                        balance -= trade.amountIn;
+            if (trade.trader == player) {
+                uint256 balance = game.tokenBalances[player][trade.asset_address];
+                if (balance > 0) {
+                    (bool found, ) = _findAssetIndex(
+                        assetAddresses,
+                        uniqueAssetsLength,
+                        trade.asset_address
+                    );
+                    if (!found) {
+                        assetAddresses[uniqueAssetsLength] = trade.asset_address;
+                        origins[uniqueAssetsLength] = trade.origin;
+                        unchecked {
+                            ++uniqueAssetsLength;
+                        }
                     }
-                } else {
-                    return 0;
+                }
+            }
+
+            unchecked {
+                ++i;
+            }
+        }
+
+        tokens = new PortfolioTokenView[](uniqueAssetsLength);
+        uint256[] memory tradeCounts = new uint256[](uniqueAssetsLength);
+
+        for (uint256 i = 0; i < uniqueAssetsLength; ) {
+            tokens[i].asset_address = assetAddresses[i];
+            tokens[i].origin = origins[i];
+            tokens[i].balance = game.tokenBalances[player][assetAddresses[i]];
+
+            unchecked {
+                ++i;
+            }
+        }
+
+        for (uint256 i = 0; i < tradesLength; ) {
+            Trade storage trade = game.trades[i];
+            if (trade.trader == player) {
+                (bool found, uint256 assetIndex) = _findAssetIndex(
+                    assetAddresses,
+                    uniqueAssetsLength,
+                    trade.asset_address
+                );
+                if (found) {
+                    unchecked {
+                        ++tradeCounts[assetIndex];
+                    }
+                }
+            }
+
+            unchecked {
+                ++i;
+            }
+        }
+
+        for (uint256 i = 0; i < uniqueAssetsLength; ) {
+            tokens[i].trades = new Trade[](tradeCounts[i]);
+
+            unchecked {
+                ++i;
+            }
+        }
+
+        uint256[] memory fillIndexes = new uint256[](uniqueAssetsLength);
+        for (uint256 i = 0; i < tradesLength; ) {
+            Trade storage trade = game.trades[i];
+            if (trade.trader == player) {
+                (bool found, uint256 assetIndex) = _findAssetIndex(
+                    assetAddresses,
+                    uniqueAssetsLength,
+                    trade.asset_address
+                );
+                if (found) {
+                    uint256 fillIndex = fillIndexes[assetIndex];
+                    tokens[assetIndex].trades[fillIndex] = trade;
+                    unchecked {
+                        fillIndexes[assetIndex] = fillIndex + 1;
+                    }
                 }
             }
 
@@ -684,15 +813,33 @@ contract WorldInPaper is ReceiverTemplate {
         }
     }
 
-    function _getPlayerRank(
-        Game storage game,
-        address player
-    ) internal view returns (uint256 rank) {
+    function _findAssetIndex(
+        string[] memory assetAddresses,
+        uint256 length,
+        string memory assetAddress
+    ) internal pure returns (bool found, uint256 index) {
+        bytes32 assetHash = keccak256(bytes(assetAddress));
+
+        for (uint256 i = 0; i < length; ) {
+            if (keccak256(bytes(assetAddresses[i])) == assetHash) {
+                return (true, i);
+            }
+
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
+    function _getSortedPlayers(
+        Game storage game
+    ) internal view returns (address[] memory sortedPlayers) {
         uint256 playersLength = game.players.length;
-        address[] memory sortedPlayers = new address[](playersLength);
+        sortedPlayers = new address[](playersLength);
 
         for (uint256 i = 0; i < playersLength; ) {
             sortedPlayers[i] = game.players[i];
+
             unchecked {
                 ++i;
             }
@@ -710,6 +857,7 @@ contract WorldInPaper is ReceiverTemplate {
                 ) {
                     bestIdx = j;
                 }
+
                 unchecked {
                     ++j;
                 }
@@ -725,6 +873,14 @@ contract WorldInPaper is ReceiverTemplate {
                 ++i;
             }
         }
+    }
+
+    function _getPlayerRank(
+        Game storage game,
+        address player
+    ) internal view returns (uint256 rank) {
+        address[] memory sortedPlayers = _getSortedPlayers(game);
+        uint256 playersLength = sortedPlayers.length;
 
         for (uint256 i = 0; i < playersLength; ) {
             if (sortedPlayers[i] == player) {
