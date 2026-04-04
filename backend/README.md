@@ -64,7 +64,7 @@ Returns assets for a given origin.
 
 ### Behavior
 
--   Redis cache by origin for `60` seconds (`assets:origin:<origin>`).
+-   Redis cache by origin for `60` seconds (`assets:v2:origin:<origin>`).
 -   If `origin = hyperliquid`:
     -   Response includes both `tokens` and `categories`.
     -   Categories are controlled by a local whitelist (`hyperliquid-assets.json`).
@@ -83,6 +83,7 @@ Returns assets for a given origin.
 			"address": "0x...",
 			"name": "Token Name",
 			"symbol": "TKN",
+			"decimals": 18,
 			"image": "https://...",
 			"price": 1.234,
 			"market_cap": 1234567.89
@@ -119,6 +120,8 @@ Returns assets for a given origin.
 
 Notes:
 
+-   Non-Hyperliquid assets include `decimals`.
+-   Hyperliquid assets intentionally do not include `decimals`.
 -   Hyperliquid `address` stays compatible with `allMids` keys (`BTC`, `ETH`, `xyz:TSLA`, `@12`, etc.).
 -   Tokens without valid image/price/market cap are ignored.
 

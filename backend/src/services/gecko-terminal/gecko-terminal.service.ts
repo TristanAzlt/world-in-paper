@@ -67,6 +67,7 @@ export class GeckoTerminalService {
                 address: token.attributes.address,
                 name: token.attributes.name,
                 symbol: token.attributes.symbol,
+                decimals: token.attributes.decimals,
                 image,
                 price,
                 market_cap: marketCap

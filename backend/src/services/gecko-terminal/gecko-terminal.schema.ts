@@ -8,6 +8,7 @@ export const geckoTokenIncludedSchema = z.object({
         address: z.string().min(1),
         name: z.string().min(1),
         symbol: z.string().min(1),
+        decimals: z.number().int().nonnegative().max(255),
         image_url: z.string().url().nullable().optional()
     })
 });
@@ -46,6 +47,7 @@ export const outputAssetSchema = z.object({
     address: z.string().min(1),
     name: z.string().min(1),
     symbol: z.string().min(1),
+    decimals: z.number().int().nonnegative().max(255),
     image: z.string().url(),
     price: z.number().finite(),
     market_cap: z.number().finite()
