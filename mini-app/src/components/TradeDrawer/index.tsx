@@ -9,8 +9,9 @@ import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { NavArrowLeft, Xmark, Search } from 'iconoir-react';
 import { LoadingSpinner, SuccessState } from '@/components/LoadingState';
 import { haptic } from '@/lib/haptics';
+import { api } from '@/lib/api';
 import { useState, useMemo } from 'react';
-import type { AssetToken, OriginKey } from '@/types';
+import type { AssetToken, OriginKey, PlayerPortfolio } from '@/types';
 import { useAssets } from '@/hooks/useAssets';
 import { useContract } from '@/hooks/useContract';
 import { AnimatedText } from '@/components/AnimatedText';
@@ -28,11 +29,12 @@ interface TradeDrawerProps {
   onClose: () => void;
   availableBalance: number;
   gameId: string;
+  walletAddress?: string;
   positions?: Array<{ symbol: string; quantity: number }>;
   onTradeSuccess?: () => void;
 }
 
-type Step = 'select' | 'order' | 'confirming' | 'success';
+type Step = 'select' | 'order' | 'confirming' | 'settling' | 'success';
 type MainTab = 'crypto' | 'tradfi';
 
 const CRYPTO_SUBS: { key: OriginKey | 'top'; label: string }[] = [
@@ -78,7 +80,7 @@ function AssetRowItem({ asset, onSelect }: { asset: AssetToken; onSelect: (a: As
   );
 }
 
-export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, positions = [], onTradeSuccess }: TradeDrawerProps) {
+export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletAddress, positions = [], onTradeSuccess }: TradeDrawerProps) {
   const [step, setStep] = useState<Step>('select');
   const [mainTab, setMainTab] = useState<MainTab>('crypto');
   const [cryptoSub, setCryptoSub] = useState<OriginKey | 'top'>('top');
@@ -146,6 +148,19 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, positio
     setSelectedAsset(null);
   };
 
+  const waitForSettlement = async (tradeCountBefore: number) => {
+    if (!walletAddress) return;
+    const maxAttempts = 12;
+    for (let i = 0; i < maxAttempts; i++) {
+      await new Promise((r) => setTimeout(r, 3000));
+      try {
+        const p = await api<PlayerPortfolio>(`/games/portfolio?gameId=${gameId}&user=${walletAddress}`);
+        const totalTrades = p.tokens.reduce((sum, t) => sum + t.trades.length, 0);
+        if (totalTrades > tradeCountBefore) return;
+      } catch { /* keep polling */ }
+    }
+  };
+
   const handleConfirm = async () => {
     if (!selectedAsset || !gameId) return;
     haptic.medium();
@@ -162,6 +177,11 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, positio
       );
 
       if (result?.data?.userOpHash) {
+        // Count current trades to detect settlement
+        const currentTrades = positions.reduce((sum, p) => sum + 1, 0);
+        setStep('settling');
+        await waitForSettlement(currentTrades);
+
         haptic.success();
         setStep('success');
         onTradeSuccess?.();
@@ -437,12 +457,11 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, positio
           </div>
         )}
 
-        {(step === 'confirming' || step === 'success') && (
+        {(step === 'confirming' || step === 'settling' || step === 'success') && (
           <div className="min-h-[400px] flex items-center justify-center px-5">
-            {step === 'confirming'
-              ? <LoadingSpinner label="Submitting trade..." />
-              : <SuccessState title="Trade confirmed" subtitle="Your position has been updated" />
-            }
+            {step === 'confirming' && <LoadingSpinner label="Submitting trade..." />}
+            {step === 'settling' && <LoadingSpinner label="Waiting for settlement..." />}
+            {step === 'success' && <SuccessState title="Trade confirmed" subtitle="Your position has been updated" />}
           </div>
         )}
       </DrawerContent>

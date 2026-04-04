@@ -278,7 +278,9 @@ export default function GameViewPage() {
                     <div className="text-[15px] font-bold" style={{ color: playerPnl >= 0 ? '#34c759' : '#ff6b6b' }}>
                       {playerPnl >= 0 ? '+' : ''}{playerPnl.toFixed(1)}%
                     </div>
-                    <div className="text-xs" style={{ color: '#9898aa' }}>${Math.abs(playerWip - startingWip).toLocaleString()}</div>
+                    <div className="text-xs" style={{ color: playerPnl >= 0 ? '#34c759' : '#ff6b6b' }}>
+                      {playerPnl >= 0 ? '+' : '-'}${Math.abs(playerWip - startingWip).toLocaleString()}
+                    </div>
                   </div>
                 </div>
               );
@@ -306,6 +308,7 @@ export default function GameViewPage() {
         onClose={() => setTradeOpen(false)}
         availableBalance={currentWip}
         gameId={gameId}
+        walletAddress={walletAddress}
         positions={portfolio?.tokens.map((t) => ({
           symbol: t.asset_address,
           quantity: formatWipBalance(t.balance),
