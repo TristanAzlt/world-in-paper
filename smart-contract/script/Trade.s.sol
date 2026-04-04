@@ -23,9 +23,8 @@ contract TradeScript is Script {
     // WorldInPaper.Origin.Hyperliquid
     // "BTC"
     WorldInPaper.Origin internal constant TRADE_ORIGIN =
-        WorldInPaper.Origin.Solana;
-    string internal constant TRADE_ASSET =
-        "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb";
+        WorldInPaper.Origin.Hyperliquid;
+    string internal constant TRADE_ASSET = "BTC";
 
     // World ID payload (nullifier auto-incremented per run).
     uint256 internal constant INITIAL_NULLIFIER = 1;
