@@ -20,6 +20,8 @@ const TOKEN_ICONS: Record<string, string> = {
   WETH: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
   WLD: 'https://app.hyperliquid.xyz/coins/WLD.svg',
   WBTC: 'https://app.hyperliquid.xyz/coins/BTC.svg',
+  uXRP: 'https://app.hyperliquid.xyz/coins/XRP.svg',
+  uSOL: 'https://app.hyperliquid.xyz/coins/SOL.svg',
   USDC: '/usd-coin-usdc-logo.svg',
 };
 
@@ -85,14 +87,21 @@ export function UsdcBalance() {
     haptic.medium();
     setState('swapping');
 
-    const tokenAmount = parseUnits(amount, selectedToken.decimals).toString();
+    // If max, use raw balance to avoid float precision issues
+    const isMax = amount === selectedToken.formatted.toString();
+    const tokenAmount = isMax
+      ? selectedToken.balance.toString()
+      : parseUnits(amount, selectedToken.decimals).toString();
+    console.log('Swap amount:', amount, 'isMax:', isMax, 'raw:', tokenAmount);
     const result = await executeSwap(selectedToken.address, tokenAmount);
 
     if (result?.data?.userOpHash) {
       haptic.success();
       setState('done');
-      refetch();
-      setTimeout(() => resetAndClose(), 2000);
+      // Wait for tx to be mined then refetch
+      setTimeout(() => refetch(), 5000);
+      setTimeout(() => refetch(), 10000);
+      setTimeout(() => resetAndClose(), 3000);
     } else {
       haptic.error();
       setState('error');
@@ -143,11 +152,13 @@ export function UsdcBalance() {
                 </div>
 
                 <div className="space-y-2 mb-4">
-                  {balances.filter((t) => t.symbol !== 'USDC').map((token) => (
+                  {balances.filter((t) => t.symbol !== 'USDC' && t.symbol !== 'ETH').map((token) => {
+                    const canSwap = token.formatted > 0.001 && token.symbol !== 'ETH';
+                    return (
                     <button
                       key={token.symbol}
-                      onClick={() => token.formatted > 0 ? handleSelectToken(token) : null}
-                      disabled={token.formatted === 0}
+                      onClick={() => canSwap ? handleSelectToken(token) : null}
+                      disabled={!canSwap}
                       className="flex w-full items-center justify-between rounded-2xl active:scale-[0.98] transition-all disabled:opacity-60"
                       style={{ backgroundColor: '#1c1c24', padding: '16px' }}
                     >
@@ -162,12 +173,13 @@ export function UsdcBalance() {
                         <div className="text-[15px] font-bold" style={{ color: token.formatted > 0 ? '#ffffff' : '#6a6a7a' }}>
                           {token.formatted.toLocaleString(undefined, { maximumFractionDigits: 4 })}
                         </div>
-                        <div className="text-xs" style={{ color: token.formatted > 0 ? '#2470ff' : '#6a6a7a' }}>
-                          {token.formatted > 0 ? 'Swap →' : 'No balance'}
+                        <div className="text-xs" style={{ color: canSwap ? '#2470ff' : '#6a6a7a' }}>
+                          {canSwap ? 'Swap →' : token.formatted > 0 ? '' : 'No balance'}
                         </div>
                       </div>
                     </button>
-                  ))}
+                    );
+                  })}
 
                   {loading && (
                     <div className="py-6 text-center">
