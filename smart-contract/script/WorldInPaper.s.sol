@@ -13,14 +13,21 @@ contract WorldInPaperScript is Script {
     function run() public {
         address forwarder = vm.envAddress("FORWARDER_ADDRESS");
         address usdc = vm.envAddress("USDC_ADDRESS");
-        address worldIdRouter = vm.envOr("WORLD_ID_ROUTER_ADDRESS", vm.envAddress("WORLD_ID_VERIFIER_ADDRESS"));
-        bool worldIdVerificationEnabled = vm.envBool("WORLD_ID_VERIFICATION_ENABLED");
+        address worldIdRouter = vm.envAddress("WORLD_ID_ROUTER_ADDRESS");
+        bool worldIdVerificationEnabled = vm.envBool(
+            "WORLD_ID_VERIFICATION_ENABLED"
+        );
 
         uint256 deployerPrivateKey = vm.envUint("CREATOR_PRIVATE_KEY");
 
         vm.startBroadcast(deployerPrivateKey);
 
-        worldInPaper = new WorldInPaper(forwarder, usdc, IWorldID(worldIdRouter), worldIdVerificationEnabled);
+        worldInPaper = new WorldInPaper(
+            forwarder,
+            usdc,
+            IWorldID(worldIdRouter),
+            worldIdVerificationEnabled
+        );
 
         console2.log("WorldInPaper deployed at:", address(worldInPaper));
 

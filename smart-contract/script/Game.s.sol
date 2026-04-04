@@ -8,8 +8,8 @@ import {WorldInPaper} from "../src/WorldInPaper.sol";
 contract GameScript is Script {
     string internal constant GAME_NAME = "EthGlobal Whale Game";
     uint256 internal constant ENTRY_AMOUNT = 1 * 1e4;
-    uint256 internal constant STARTING_WIP_BALANCE = 5_000 * 1e6;
-    uint16 internal constant MAX_PLAYERS = 2;
+    uint256 internal constant STARTING_WIP_BALANCE = 10_000 * 1e6;
+    uint16 internal constant MAX_PLAYERS = 5;
     uint256 internal constant CREATOR_NULLIFIER = 1;
     uint256 internal constant JOINER_NULLIFIER = 2;
 
@@ -30,12 +30,14 @@ contract GameScript is Script {
         _checkUsdcBalances(usdc, keys.creator, keys.joiner);
 
         // Keep a buffer to avoid StartTimeMustBeFuture reverts during broadcast.
-        uint256 startTime = block.timestamp + 5 minutes;
+        uint256 startTime = block.timestamp + 10 minutes;
         uint256 endTime = startTime + 1 days;
 
         vm.startBroadcast(keys.creatorPk);
         usdc.approve(address(worldInPaper), ENTRY_AMOUNT);
-        WorldInPaper.WorldIdVerification memory creatorWorldId = _worldId(CREATOR_NULLIFIER);
+        WorldInPaper.WorldIdVerification memory creatorWorldId = _worldId(
+            CREATOR_NULLIFIER
+        );
         uint256 gameId = worldInPaper.createGame(
             GAME_NAME,
             ENTRY_AMOUNT,
@@ -49,7 +51,9 @@ contract GameScript is Script {
 
         vm.startBroadcast(keys.joinerPk);
         usdc.approve(address(worldInPaper), ENTRY_AMOUNT);
-        WorldInPaper.WorldIdVerification memory joinerWorldId = _worldId(JOINER_NULLIFIER);
+        WorldInPaper.WorldIdVerification memory joinerWorldId = _worldId(
+            JOINER_NULLIFIER
+        );
         worldInPaper.joinGame(gameId, joinerWorldId);
         vm.stopBroadcast();
 
