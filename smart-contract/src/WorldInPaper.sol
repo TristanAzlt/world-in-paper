@@ -447,18 +447,27 @@ contract WorldInPaper is ReceiverTemplate {
         if (!game.exists) {
             revert GameNotFound(gameId);
         }
-        return
-            GameView({
-                id: game.id,
-                entryAmount: game.entryAmount,
-                startingWIPBalance: game.startingWIPBalance,
-                startTime: game.startTime,
-                endTime: game.endTime,
-                maxPlayers: game.maxPlayers,
-                playerCount: game.playerCount,
-                creator: game.creator,
-                exists: game.exists
-            });
+        return _toGameView(game);
+    }
+
+    function getRecentGames(
+        uint256 limit
+    ) external view returns (GameView[] memory games) {
+        return _collectGamesByMode(address(0), limit, 0);
+    }
+
+    function getCreatedGames(
+        address creator,
+        uint256 limit
+    ) external view returns (GameView[] memory games) {
+        return _collectGamesByMode(creator, limit, 1);
+    }
+
+    function getJoinedGames(
+        address player,
+        uint256 limit
+    ) external view returns (GameView[] memory games) {
+        return _collectGamesByMode(player, limit, 2);
     }
 
     function getGamePlayers(
@@ -506,7 +515,11 @@ contract WorldInPaper is ReceiverTemplate {
         return tradeToSettle;
     }
 
-    function getTotalSettlementRequestsCreated() external view returns (uint256) {
+    function getTotalSettlementRequestsCreated()
+        external
+        view
+        returns (uint256)
+    {
         return nextTradeToSettleId - 1;
     }
 
@@ -762,6 +775,85 @@ contract WorldInPaper is ReceiverTemplate {
                 return (true, i);
             }
 
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
+    function _toGameView(
+        Game storage game
+    ) internal view returns (GameView memory gameView) {
+        gameView = GameView({
+            id: game.id,
+            entryAmount: game.entryAmount,
+            startingWIPBalance: game.startingWIPBalance,
+            startTime: game.startTime,
+            endTime: game.endTime,
+            maxPlayers: game.maxPlayers,
+            playerCount: game.playerCount,
+            creator: game.creator,
+            exists: game.exists
+        });
+    }
+
+    // mode: 0=recent, 1=created, 2=joined
+    function _collectGamesByMode(
+        address user,
+        uint256 limit,
+        uint8 mode
+    ) internal view returns (GameView[] memory games) {
+        if (limit == 0) {
+            return new GameView[](0);
+        }
+
+        uint256 maxGameId;
+        unchecked {
+            maxGameId = nextGameId - 1;
+        }
+
+        if (maxGameId == 0) {
+            return new GameView[](0);
+        }
+
+        if (limit > maxGameId) {
+            limit = maxGameId;
+        }
+
+        GameView[] memory temp = new GameView[](limit);
+        uint256 count;
+
+        for (uint256 gameId = maxGameId; gameId >= 1 && count < limit; ) {
+            Game storage game = _games[gameId];
+
+            bool include;
+            if (mode == 0) {
+                include = game.exists;
+            } else if (mode == 1) {
+                include = game.exists && game.creator == user;
+            } else {
+                include = game.exists && game.hasJoined[user];
+            }
+
+            if (include) {
+                temp[count] = _toGameView(game);
+                unchecked {
+                    ++count;
+                }
+            }
+
+            if (gameId == 1) {
+                break;
+            }
+
+            unchecked {
+                --gameId;
+            }
+        }
+
+        games = new GameView[](count);
+        for (uint256 i = 0; i < count; ) {
+            games[i] = temp[i];
             unchecked {
                 ++i;
             }
