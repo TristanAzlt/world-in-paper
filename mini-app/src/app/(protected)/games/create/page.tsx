@@ -102,7 +102,7 @@ export default function CreateGamePage() {
     const capitalRaw = BigInt(Math.round(capital * 1e6));
 
     try {
-      const result = await createGame(entryAmountRaw, capitalRaw, maxPlayers, startTime, endTime);
+      const result = await createGame(gameName, entryAmountRaw, capitalRaw, maxPlayers, startTime, endTime);
       if (result?.data?.userOpHash) {
         haptic.success();
         setState('success');
