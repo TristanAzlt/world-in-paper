@@ -318,7 +318,16 @@ export function UsdcBalance() {
             )}
 
             {state === 'swapping' && <LoadingSpinner label="Swapping..." />}
-            {state === 'done' && <SuccessState title={`+$${usdcOut.toFixed(2)} USDC`} subtitle="Added to your balance" />}
+            {state === 'done' && (
+              <SuccessState
+                title={
+                  <span className="flex items-center justify-center gap-2">
+                    +${usdcOut.toFixed(2)} <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={24} height={24} />
+                  </span>
+                }
+                subtitle="Added to your balance"
+              />
+            )}
             {state === 'error' && (
               <div className="flex flex-col items-center justify-center gap-4 py-16">
                 <div className="flex h-20 w-20 items-center justify-center rounded-full" style={{ backgroundColor: '#ff6b6b20' }}>

@@ -24,7 +24,7 @@ export function LoadingSpinner({ label }: { label?: string }) {
   );
 }
 
-export function SuccessState({ title, subtitle }: { title: string; subtitle?: string }) {
+export function SuccessState({ title, subtitle }: { title: React.ReactNode; subtitle?: string }) {
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-16">
       <div

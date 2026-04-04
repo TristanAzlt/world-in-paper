@@ -373,7 +373,7 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
             </div>
 
             {/* Asset list */}
-            <div className="flex-1 overflow-y-auto px-5 pb-8">
+            <div className="flex-1 overflow-y-auto px-5 pb-24">
               {assetsLoading ? (
                 <div className="space-y-2.5">
                   {[1,2,3,4,5,6,7,8].map(i => (
@@ -441,14 +441,14 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
                 />
                 <button
                   onClick={() => { setSide('buy'); setAmount(''); haptic.selection(); }}
-                  className="relative z-10 flex-1 text-base font-bold"
+                  className="relative z-10 flex-1 text-[15px] font-extrabold tracking-wide"
                   style={{ color: side === 'buy' ? '#ffffff' : '#6a6a7a' }}
                 >
                   BUY
                 </button>
                 <button
                   onClick={() => { setSide('sell'); setAmount(''); haptic.selection(); }}
-                  className="relative z-10 flex-1 text-base font-bold"
+                  className="relative z-10 flex-1 text-[15px] font-extrabold tracking-wide"
                   style={{ color: side === 'sell' ? '#ffffff' : '#6a6a7a' }}
                 >
                   SELL
