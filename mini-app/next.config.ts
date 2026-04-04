@@ -2,9 +2,13 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['static.usernames.app-backend.toolsforhumanity.com'],
+    remotePatterns: [
+      { hostname: 'static.usernames.app-backend.toolsforhumanity.com' },
+      { hostname: 'app.hyperliquid.xyz' },
+      { hostname: 'assets.coingecko.com' },
+    ],
   },
-  allowedDevOrigins: ['*'], // Add your dev origin here
+  allowedDevOrigins: ['world-in-paper.ngrok.dev'],
   reactStrictMode: false,
 };
 
