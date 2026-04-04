@@ -26,6 +26,18 @@ export const TOKENS = {
     symbol: 'WBTC',
     name: 'Wrapped Bitcoin',
   },
+  UXRP: {
+    address: '0x2615a94df961278DcbC41Fb0a54fEc5f10a693aE' as `0x${string}`,
+    decimals: 18,
+    symbol: 'uXRP',
+    name: 'Universal XRP',
+  },
+  USOL: {
+    address: '0x9B8Df6E244526ab5F6e6400d331DB28C8fdDdb55' as `0x${string}`,
+    decimals: 18,
+    symbol: 'uSOL',
+    name: 'Universal SOL',
+  },
 } as const;
 
 export const UNISWAP_API_KEY = process.env.NEXT_PUBLIC_UNISWAP_API_KEY || '';

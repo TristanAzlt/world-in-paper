@@ -2,11 +2,17 @@
 
 import { useState } from 'react';
 import { MiniKit } from '@worldcoin/minikit-js';
-import { encodeFunctionData } from 'viem';
+import { encodeFunctionData, parseAbi, encodePacked } from 'viem';
 import { TOKENS, WORLD_CHAIN_ID } from '@/lib/constants';
 
-const PERMIT2 = '0x000000000022D473030F116dDEE9F6B43aC78BA3';
-const MAX_UINT256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
+// Uniswap V3 SwapRouter on World Chain (real deployment)
+const SWAP_ROUTER = '0x091AD9e2e6e5eD44c1c66dB50e49A601F9f36cF6';
+
+// Tokens that need multi-hop via WETH (no direct pool to USDC)
+const MULTI_HOP_TOKENS = new Set([
+  TOKENS.USOL.address.toLowerCase(),
+  TOKENS.UXRP.address.toLowerCase(),
+]);
 
 interface SwapQuote {
   amountOut: string;
@@ -64,25 +70,53 @@ export function useSwap(walletAddress?: string) {
     setLoading(true);
 
     try {
-      // Get quote + swap calldata in one server call to minimize deadline issues
-      const res = await fetch('/api/swap-quote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          _quoteAndSwap: true,
-          type: 'EXACT_INPUT',
-          amount,
-          tokenIn: tokenInAddress,
-          tokenOut: TOKENS.USDC.address,
-          tokenInChainId: WORLD_CHAIN_ID,
-          tokenOutChainId: WORLD_CHAIN_ID,
-          swapper: walletAddress,
-        }),
-      });
-      const swapData = await res.json();
-      if (!swapData.swap) throw new Error('No swap data: ' + JSON.stringify(swapData));
+      const quoteData = await getQuote(tokenInAddress, TOKENS.USDC.address, amount);
+      if (!quoteData?.quote) throw new Error('No quote');
 
-      const routerAddress = swapData.swap.to;
+      const minOut = BigInt(quoteData.quote.output.amount);
+      const minAmountOut = (minOut * 95n) / 100n;
+
+      const isMultiHop = MULTI_HOP_TOKENS.has(tokenInAddress.toLowerCase());
+
+      let swapData: string;
+
+      if (isMultiHop) {
+        // Multi-hop: token → WETH (fee 3000) → USDC (fee 500)
+        const path = encodePacked(
+          ['address', 'uint24', 'address', 'uint24', 'address'],
+          [tokenInAddress as `0x${string}`, 3000, TOKENS.WETH.address, 500, TOKENS.USDC.address],
+        );
+
+        swapData = encodeFunctionData({
+          abi: parseAbi([
+            'function exactInput((bytes path, address recipient, uint256 amountIn, uint256 amountOutMinimum)) external payable returns (uint256 amountOut)',
+          ]),
+          functionName: 'exactInput',
+          args: [{
+            path,
+            recipient: walletAddress as `0x${string}`,
+            amountIn: BigInt(amount),
+            amountOutMinimum: minAmountOut,
+          }],
+        });
+      } else {
+        // Single hop: token → USDC (fee 500)
+        swapData = encodeFunctionData({
+          abi: parseAbi([
+            'function exactInputSingle((address tokenIn, address tokenOut, uint24 fee, address recipient, uint256 amountIn, uint256 amountOutMinimum, uint160 sqrtPriceLimitX96)) external payable returns (uint256 amountOut)',
+          ]),
+          functionName: 'exactInputSingle',
+          args: [{
+            tokenIn: tokenInAddress as `0x${string}`,
+            tokenOut: TOKENS.USDC.address,
+            fee: 500,
+            recipient: walletAddress as `0x${string}`,
+            amountIn: BigInt(amount),
+            amountOutMinimum: minAmountOut,
+            sqrtPriceLimitX96: 0n,
+          }],
+        });
+      }
 
       const result = await MiniKit.sendTransaction({
         chainId: WORLD_CHAIN_ID,
@@ -90,42 +124,14 @@ export function useSwap(walletAddress?: string) {
           {
             to: tokenInAddress,
             data: encodeFunctionData({
-              abi: [{
-                name: 'approve',
-                type: 'function',
-                inputs: [
-                  { name: 'spender', type: 'address' },
-                  { name: 'amount', type: 'uint256' },
-                ],
-                outputs: [{ name: '', type: 'bool' }],
-                stateMutability: 'nonpayable',
-              }],
+              abi: parseAbi(['function approve(address spender, uint256 amount) returns (bool)']),
               functionName: 'approve',
-              args: [PERMIT2, MAX_UINT256],
+              args: [SWAP_ROUTER, BigInt(amount)],
             }),
           },
           {
-            to: PERMIT2,
-            data: encodeFunctionData({
-              abi: [{
-                name: 'approve',
-                type: 'function',
-                inputs: [
-                  { name: 'token', type: 'address' },
-                  { name: 'spender', type: 'address' },
-                  { name: 'amount', type: 'uint160' },
-                  { name: 'expiration', type: 'uint48' },
-                ],
-                outputs: [],
-                stateMutability: 'nonpayable',
-              }],
-              functionName: 'approve',
-              args: [tokenInAddress, routerAddress, BigInt(amount), 0],
-            }),
-          },
-          {
-            to: routerAddress,
-            data: swapData.swap.data,
+            to: SWAP_ROUTER,
+            data: swapData,
           },
         ],
       });
