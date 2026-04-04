@@ -1,6 +1,7 @@
 'use client';
 
 import { Marble, TopBar, VerificationBadge } from '@worldcoin/mini-apps-ui-kit-react';
+import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { MOCK_USER } from '@/lib/mock-data';
@@ -37,8 +38,10 @@ export default function ProfilePage() {
         {/* Earnings */}
         <div className="mb-8 text-center">
           <div className="text-sm font-semibold uppercase tracking-wider mb-1" style={{ color: '#6a6a7a' }}>Earnings</div>
-          <div className="text-4xl font-extrabold" style={{ color: '#ffffff' }}>${user.totalEarnings}</div>
-          <div className="text-sm" style={{ color: '#9898aa' }}>USDC</div>
+          <div className="flex items-center justify-center gap-2">
+            <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={28} height={28} />
+            <span className="text-4xl font-extrabold" style={{ color: '#ffffff' }}>${user.totalEarnings}</span>
+          </div>
         </div>
 
         {/* Stats */}
@@ -82,7 +85,7 @@ export default function ProfilePage() {
                       color: isWin ? '#34c759' : '#ff6b6b',
                     }}
                   >
-                    #{entry.rank}
+                    {isWin ? 'W' : 'L'}
                   </span>
                   <div className="text-left">
                     <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>{entry.gameName}</div>
@@ -91,16 +94,11 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div
-                    className="text-[15px] font-bold"
-                    style={{ color: entry.pnlPercent >= 0 ? '#34c759' : '#ff6b6b' }}
-                  >
-                    {entry.pnlPercent >= 0 ? '+' : ''}{entry.pnlPercent}%
-                  </div>
-                  {entry.payout > 0 && (
-                    <div className="text-xs font-semibold" style={{ color: '#34c759' }}>+${entry.payout}</div>
-                  )}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[15px] font-bold" style={{ color: '#ffffff' }}>
+                    {isWin ? `+$${entry.payout}` : `-$${entry.payout || 10}`}
+                  </span>
+                  <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={16} height={16} />
                 </div>
               </button>
             );
