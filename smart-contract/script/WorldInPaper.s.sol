@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import {Script} from "forge-std/Script.sol";
+import {Script, console2} from "forge-std/Script.sol";
 import {WorldInPaper} from "../src/WorldInPaper.sol";
 import {IWorldIDVerifier} from "../src/interfaces/IWorldIDVerifier.sol";
 
@@ -18,7 +18,9 @@ contract WorldInPaperScript is Script {
             "WORLD_ID_VERIFICATION_ENABLED"
         );
 
-        vm.startBroadcast();
+        uint256 deployerPrivateKey = vm.envUint("CREATOR_PRIVATE_KEY");
+
+        vm.startBroadcast(deployerPrivateKey);
 
         worldInPaper = new WorldInPaper(
             forwarder,
@@ -26,6 +28,8 @@ contract WorldInPaperScript is Script {
             IWorldIDVerifier(worldIdVerifier),
             worldIdVerificationEnabled
         );
+
+        console2.log("WorldInPaper deployed at:", address(worldInPaper));
 
         vm.stopBroadcast();
     }

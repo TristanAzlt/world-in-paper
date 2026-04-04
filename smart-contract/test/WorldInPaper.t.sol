@@ -4,6 +4,7 @@ pragma solidity ^0.8.13;
 import {Test} from "forge-std/Test.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {WorldInPaper} from "../src/WorldInPaper.sol";
+import {WorldInPaperObserver} from "../src/WorldInPaperObserver.sol";
 import {IWorldIDVerifier} from "../src/interfaces/IWorldIDVerifier.sol";
 
 contract MockUSDC is ERC20 {
@@ -54,6 +55,7 @@ contract WorldInPaperTest is Test {
     MockUSDC internal usdc;
     MockWorldIDVerifier internal verifier;
     WorldInPaper internal worldInPaper;
+    WorldInPaperObserver internal observer;
     uint256 internal nextNullifier;
 
     event TradeSettled(
@@ -74,6 +76,7 @@ contract WorldInPaperTest is Test {
             verifier,
             true
         );
+        observer = new WorldInPaperObserver();
         nextNullifier = 1;
 
         usdc.mint(CREATOR, 1_000 * 10 ** 6);
@@ -116,7 +119,9 @@ contract WorldInPaperTest is Test {
         assertTrue(worldInPaper.hasJoined(gameId, CREATOR));
         assertEq(usdc.balanceOf(address(worldInPaper)), ENTRY_AMOUNT);
         assertEq(
-            worldInPaper.getPlayerPortfolio(gameId, CREATOR).wipBalance,
+            observer
+                .getPlayerPortfolio(worldInPaper, gameId, CREATOR)
+                .wipBalance,
             STARTING_WIP_BALANCE
         );
     }
@@ -134,7 +139,9 @@ contract WorldInPaperTest is Test {
         assertTrue(worldInPaper.hasJoined(gameId, PLAYER_1));
         assertEq(usdc.balanceOf(address(worldInPaper)), ENTRY_AMOUNT * 2);
         assertEq(
-            worldInPaper.getPlayerPortfolio(gameId, PLAYER_1).wipBalance,
+            observer
+                .getPlayerPortfolio(worldInPaper, gameId, PLAYER_1)
+                .wipBalance,
             STARTING_WIP_BALANCE
         );
     }
@@ -181,8 +188,8 @@ contract WorldInPaperTest is Test {
         vm.prank(FORWARDER);
         worldInPaper.onReport("", abi.encode(btcTradeId, 2000 * 10 ** 18));
 
-        WorldInPaper.PlayerPortfolioView memory portfolio = worldInPaper
-            .getPlayerPortfolio(gameId, PLAYER_1);
+        WorldInPaper.PlayerPortfolioView memory portfolio = observer
+            .getPlayerPortfolio(worldInPaper, gameId, PLAYER_1);
 
         assertEq(portfolio.gameId, gameId);
         assertEq(portfolio.player, PLAYER_1);
@@ -263,8 +270,8 @@ contract WorldInPaperTest is Test {
             _nextWorldId()
         );
 
-        WorldInPaper.GameRankingEntryView[] memory ranking = worldInPaper
-            .getGameRanking(gameId);
+        WorldInPaper.GameRankingEntryView[] memory ranking = observer
+            .getGameRanking(worldInPaper, gameId);
 
         assertEq(ranking.length, 3);
         assertEq(ranking[0].player, CREATOR);
@@ -483,11 +490,15 @@ contract WorldInPaperTest is Test {
 
         assertEq(worldInPaper.getGameTradeCount(gameId), 2);
         assertEq(
-            worldInPaper.getPlayerPortfolio(gameId, PLAYER_1).wipBalance,
+            observer
+                .getPlayerPortfolio(worldInPaper, gameId, PLAYER_1)
+                .wipBalance,
             4_900_000_000
         );
         assertEq(
-            worldInPaper.getPlayerPortfolio(gameId, CREATOR).wipBalance,
+            observer
+                .getPlayerPortfolio(worldInPaper, gameId, CREATOR)
+                .wipBalance,
             4_950_000_000
         );
         assertEq(
@@ -734,13 +745,12 @@ contract WorldInPaperTest is Test {
         worldInPaper.onReport("", abi.encode(sellTradeId, 1200 * 10 ** 18));
 
         assertEq(
-            worldInPaper.getPlayerPortfolio(gameId, PLAYER_1).wipBalance,
+            observer
+                .getPlayerPortfolio(worldInPaper, gameId, PLAYER_1)
+                .wipBalance,
             4_944_000_000
         );
-        assertEq(
-            _getPortfolioTokenBalance(gameId, PLAYER_1, "ETHUSD"),
-            80_000
-        );
+        assertEq(_getPortfolioTokenBalance(gameId, PLAYER_1, "ETHUSD"), 80_000);
         assertEq(worldInPaper.getGameTradeCount(gameId), 2);
     }
 
@@ -1239,7 +1249,12 @@ contract WorldInPaperTest is Test {
     function test_GetClaimableAmountReturnsZeroBeforeEnd() public {
         uint256 gameId = _createGameAsCreator(3);
 
-        assertEq(worldInPaper.getPlayerPortfolio(gameId, CREATOR).claimableAmount, 0);
+        assertEq(
+            observer
+                .getPlayerPortfolio(worldInPaper, gameId, CREATOR)
+                .claimableAmount,
+            0
+        );
     }
 
     function test_GetClaimableAmountMatchesClaimAndBecomesZeroAfterClaim()
@@ -1282,18 +1297,15 @@ contract WorldInPaperTest is Test {
         uint256 endTime = worldInPaper.getGame(gameId).endTime;
         vm.warp(endTime);
 
-        uint256 claimableCreator = worldInPaper.getPlayerPortfolio(
-            gameId,
-            CREATOR
-        ).claimableAmount;
-        uint256 claimablePlayer1 = worldInPaper.getPlayerPortfolio(
-            gameId,
-            PLAYER_1
-        ).claimableAmount;
-        uint256 claimablePlayer2 = worldInPaper.getPlayerPortfolio(
-            gameId,
-            PLAYER_2
-        ).claimableAmount;
+        uint256 claimableCreator = observer
+            .getPlayerPortfolio(worldInPaper, gameId, CREATOR)
+            .claimableAmount;
+        uint256 claimablePlayer1 = observer
+            .getPlayerPortfolio(worldInPaper, gameId, PLAYER_1)
+            .claimableAmount;
+        uint256 claimablePlayer2 = observer
+            .getPlayerPortfolio(worldInPaper, gameId, PLAYER_2)
+            .claimableAmount;
 
         assertEq(claimableCreator, ENTRY_AMOUNT * 2);
         assertEq(claimablePlayer1, ENTRY_AMOUNT);
@@ -1302,7 +1314,12 @@ contract WorldInPaperTest is Test {
         vm.prank(CREATOR);
         uint256 claimed = worldInPaper.claimGame(gameId);
         assertEq(claimed, claimableCreator);
-        assertEq(worldInPaper.getPlayerPortfolio(gameId, CREATOR).claimableAmount, 0);
+        assertEq(
+            observer
+                .getPlayerPortfolio(worldInPaper, gameId, CREATOR)
+                .claimableAmount,
+            0
+        );
     }
 
     function _getPortfolioToken(
@@ -1331,10 +1348,11 @@ contract WorldInPaperTest is Test {
         address player,
         string memory assetAddress
     ) internal view returns (uint256) {
-        return _getPortfolioToken(
-            worldInPaper.getPlayerPortfolio(gameId, player),
-            assetAddress
-        ).balance;
+        return
+            _getPortfolioToken(
+                observer.getPlayerPortfolio(worldInPaper, gameId, player),
+                assetAddress
+            ).balance;
     }
 
     function _createGameAsCreator(

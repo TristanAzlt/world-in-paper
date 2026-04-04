@@ -450,26 +450,6 @@ contract WorldInPaper is ReceiverTemplate {
         return _toGameView(game);
     }
 
-    function getRecentGames(
-        uint256 limit
-    ) external view returns (GameView[] memory games) {
-        return _collectGamesByMode(address(0), limit, 0);
-    }
-
-    function getCreatedGames(
-        address creator,
-        uint256 limit
-    ) external view returns (GameView[] memory games) {
-        return _collectGamesByMode(creator, limit, 1);
-    }
-
-    function getJoinedGames(
-        address player,
-        uint256 limit
-    ) external view returns (GameView[] memory games) {
-        return _collectGamesByMode(player, limit, 2);
-    }
-
     function getGamePlayers(
         uint256 gameId
     ) external view returns (address[] memory) {
@@ -487,6 +467,30 @@ contract WorldInPaper is ReceiverTemplate {
             revert GameNotFound(gameId);
         }
         return _games[gameId].hasJoined[player];
+    }
+
+    function hasClaimed(
+        uint256 gameId,
+        address player
+    ) external view returns (bool) {
+        if (!_games[gameId].exists) {
+            revert GameNotFound(gameId);
+        }
+        return _games[gameId].hasClaimed[player];
+    }
+
+    function getPlayerWipBalance(
+        uint256 gameId,
+        address player
+    ) external view returns (uint256) {
+        Game storage game = _games[gameId];
+        if (!game.exists) {
+            revert GameNotFound(gameId);
+        }
+        if (!game.hasJoined[player]) {
+            revert NotGamePlayer(gameId, player);
+        }
+        return game.wipBalances[player];
     }
 
     function getGameTrades(
@@ -521,52 +525,6 @@ contract WorldInPaper is ReceiverTemplate {
         returns (uint256)
     {
         return nextTradeToSettleId - 1;
-    }
-
-    function getPlayerPortfolio(
-        uint256 gameId,
-        address player
-    ) external view returns (PlayerPortfolioView memory portfolio) {
-        Game storage game = _games[gameId];
-        if (!game.exists) {
-            revert GameNotFound(gameId);
-        }
-        if (!game.hasJoined[player]) {
-            revert NotGamePlayer(gameId, player);
-        }
-
-        portfolio.gameId = gameId;
-        portfolio.player = player;
-        portfolio.wipBalance = game.wipBalances[player];
-        portfolio.claimed = game.hasClaimed[player];
-        portfolio.claimableAmount = _getClaimableAmount(game, player);
-        portfolio.tokens = _getPortfolioTokens(game, player);
-    }
-
-    function getGameRanking(
-        uint256 gameId
-    ) external view returns (GameRankingEntryView[] memory ranking) {
-        Game storage game = _games[gameId];
-        if (!game.exists) {
-            revert GameNotFound(gameId);
-        }
-
-        address[] memory sortedPlayers = _getSortedPlayers(game);
-        uint256 playersLength = sortedPlayers.length;
-        ranking = new GameRankingEntryView[](playersLength);
-
-        for (uint256 i = 0; i < playersLength; ) {
-            address player = sortedPlayers[i];
-            ranking[i] = GameRankingEntryView({
-                player: player,
-                place: i + 1,
-                wipBalance: game.wipBalances[player]
-            });
-
-            unchecked {
-                ++i;
-            }
-        }
     }
 
     // =====================================================
@@ -667,120 +625,6 @@ contract WorldInPaper is ReceiverTemplate {
         nullifierUsed[worldId.nullifier] = true;
     }
 
-    function _getClaimableAmount(
-        Game storage game,
-        address player
-    ) internal view returns (uint256 payout) {
-        if (block.timestamp < game.endTime || game.hasClaimed[player]) {
-            return 0;
-        }
-
-        (payout, ) = _computeClaimPayout(game, player);
-    }
-
-    function _getPortfolioTokens(
-        Game storage game,
-        address player
-    ) internal view returns (PortfolioTokenView[] memory tokens) {
-        uint256 tradesLength = game.trades.length;
-        bytes32[] memory assetKeys = new bytes32[](tradesLength);
-        string[] memory assetAddresses = new string[](tradesLength);
-        Origin[] memory origins = new Origin[](tradesLength);
-        uint256[] memory balances = new uint256[](tradesLength);
-        uint256[] memory tradeCounts = new uint256[](tradesLength);
-        uint256[] memory tradeAssetIndexes = new uint256[](tradesLength);
-        uint256 uniqueAssetsLength;
-
-        for (uint256 i = 0; i < tradesLength; ) {
-            Trade storage trade = game.trades[i];
-            if (trade.trader == player) {
-                bytes32 assetHash = keccak256(
-                    abi.encodePacked(trade.asset_address, trade.origin)
-                );
-                (bool found, uint256 assetIndex) = _findAssetIndex(
-                    assetKeys,
-                    uniqueAssetsLength,
-                    assetHash
-                );
-
-                if (!found) {
-                    assetKeys[uniqueAssetsLength] = assetHash;
-                    assetAddresses[uniqueAssetsLength] = trade.asset_address;
-                    origins[uniqueAssetsLength] = trade.origin;
-                    assetIndex = uniqueAssetsLength;
-                    unchecked {
-                        ++uniqueAssetsLength;
-                    }
-                }
-
-                tradeAssetIndexes[i] = assetIndex + 1;
-                if (trade.isBuy) {
-                    balances[assetIndex] += trade.amountOut;
-                } else if (balances[assetIndex] >= trade.amountIn) {
-                    unchecked {
-                        balances[assetIndex] -= trade.amountIn;
-                    }
-                } else {
-                    balances[assetIndex] = 0;
-                }
-
-                unchecked {
-                    ++tradeCounts[assetIndex];
-                }
-            }
-
-            unchecked {
-                ++i;
-            }
-        }
-
-        tokens = new PortfolioTokenView[](uniqueAssetsLength);
-        for (uint256 i = 0; i < uniqueAssetsLength; ) {
-            tokens[i].asset_address = assetAddresses[i];
-            tokens[i].origin = origins[i];
-            tokens[i].balance = balances[i];
-            tokens[i].trades = new Trade[](tradeCounts[i]);
-
-            unchecked {
-                ++i;
-            }
-        }
-
-        uint256[] memory fillIndexes = new uint256[](uniqueAssetsLength);
-        for (uint256 i = 0; i < tradesLength; ) {
-            uint256 assetIndexPlusOne = tradeAssetIndexes[i];
-            if (assetIndexPlusOne != 0) {
-                uint256 assetIndex = assetIndexPlusOne - 1;
-                uint256 fillIndex = fillIndexes[assetIndex];
-                tokens[assetIndex].trades[fillIndex] = game.trades[i];
-
-                unchecked {
-                    fillIndexes[assetIndex] = fillIndex + 1;
-                }
-            }
-
-            unchecked {
-                ++i;
-            }
-        }
-    }
-
-    function _findAssetIndex(
-        bytes32[] memory assetKeys,
-        uint256 length,
-        bytes32 assetKey
-    ) internal pure returns (bool found, uint256 index) {
-        for (uint256 i = 0; i < length; ) {
-            if (assetKeys[i] == assetKey) {
-                return (true, i);
-            }
-
-            unchecked {
-                ++i;
-            }
-        }
-    }
-
     function _toGameView(
         Game storage game
     ) internal view returns (GameView memory gameView) {
@@ -795,69 +639,6 @@ contract WorldInPaper is ReceiverTemplate {
             creator: game.creator,
             exists: game.exists
         });
-    }
-
-    // mode: 0=recent, 1=created, 2=joined
-    function _collectGamesByMode(
-        address user,
-        uint256 limit,
-        uint8 mode
-    ) internal view returns (GameView[] memory games) {
-        if (limit == 0) {
-            return new GameView[](0);
-        }
-
-        uint256 maxGameId;
-        unchecked {
-            maxGameId = nextGameId - 1;
-        }
-
-        if (maxGameId == 0) {
-            return new GameView[](0);
-        }
-
-        if (limit > maxGameId) {
-            limit = maxGameId;
-        }
-
-        GameView[] memory temp = new GameView[](limit);
-        uint256 count;
-
-        for (uint256 gameId = maxGameId; gameId >= 1 && count < limit; ) {
-            Game storage game = _games[gameId];
-
-            bool include;
-            if (mode == 0) {
-                include = game.exists;
-            } else if (mode == 1) {
-                include = game.exists && game.creator == user;
-            } else {
-                include = game.exists && game.hasJoined[user];
-            }
-
-            if (include) {
-                temp[count] = _toGameView(game);
-                unchecked {
-                    ++count;
-                }
-            }
-
-            if (gameId == 1) {
-                break;
-            }
-
-            unchecked {
-                --gameId;
-            }
-        }
-
-        games = new GameView[](count);
-        for (uint256 i = 0; i < count; ) {
-            games[i] = temp[i];
-            unchecked {
-                ++i;
-            }
-        }
     }
 
     function _getSortedPlayers(
