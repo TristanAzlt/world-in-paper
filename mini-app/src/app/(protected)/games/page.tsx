@@ -7,7 +7,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { type GameView, GameStatus, getGameStatus, formatWipBalance } from '@/types';
-import { useExploreGames } from '@/hooks/useGames';
+import { useExploreGames, useMyGames } from '@/hooks/useGames';
+import { useSession } from 'next-auth/react';
 import { useContract } from '@/hooks/useContract';
 import { CountdownTimer } from '@/components/CountdownTimer';
 import { SkeletonList } from '@/components/Skeleton';
@@ -72,10 +73,15 @@ function ExploreCard({ game, onClick }: { game: GameView; onClick: () => void })
 
 export default function ExplorePage() {
   const router = useRouter();
+  const session = useSession();
+  const walletAddress = session?.data?.user?.walletAddress;
   const { games, loading } = useExploreGames();
+  const { games: myGames } = useMyGames(walletAddress);
   const { joinGame } = useContract();
   const [joinTarget, setJoinTarget] = useState<GameView | null>(null);
   const [joining, setJoining] = useState(false);
+
+  const myGameIds = new Set(myGames.map((g) => g.id));
 
   const handleJoin = async () => {
     if (!joinTarget) return;
@@ -164,14 +170,14 @@ export default function ExplorePage() {
         {loading ? (
           <SkeletonList count={3} />
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-3 animate-fade-in">
             {games.map((game) => (
               <ExploreCard
                 key={game.id}
                 game={game}
                 onClick={() => {
                   haptic.light();
-                  if (getGameStatus(game) === GameStatus.Active) {
+                  if (myGameIds.has(game.id) || getGameStatus(game) === GameStatus.Active) {
                     router.push(`/my-games/${game.id}`);
                   } else {
                     setJoinTarget(game);

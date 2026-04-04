@@ -111,7 +111,7 @@ export default function GameViewPage() {
         />
       </Page.Header>
 
-      <Page.Main>
+      <Page.Main className="animate-fade-in">
         {/* Status banner */}
         {isUpcoming && (
           <div className="rounded-2xl px-4 py-3 mb-4 flex items-center gap-3" style={{ backgroundColor: '#f59e0b15', border: '1px solid #f59e0b30' }}>
