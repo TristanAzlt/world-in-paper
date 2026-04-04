@@ -22,37 +22,18 @@ contract TradeScript is Script {
     // Option Hyperliquid:
     // WorldInPaper.Origin.Hyperliquid
     // "BTC"
-    WorldInPaper.Origin internal constant TRADE_ORIGIN =
-        WorldInPaper.Origin.Hyperliquid;
-    string internal constant TRADE_ASSET = "BTC";
-
-    // World ID payload (nullifier auto-incremented per run).
-    uint256 internal constant INITIAL_NULLIFIER = 1;
+    WorldInPaper.Origin internal constant TRADE_ORIGIN = WorldInPaper.Origin.Solana;
+    string internal constant TRADE_ASSET = "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb";
 
     function run() external {
-        uint256 traderPk = vm.envOr(
-            "TRADER_PRIVATE_KEY",
-            vm.envUint("CREATOR_PRIVATE_KEY")
-        );
+        uint256 traderPk = vm.envOr("TRADER_PRIVATE_KEY", vm.envUint("CREATOR_PRIVATE_KEY"));
         address worldInPaperAddress = vm.envAddress("WORLD_IN_PAPER_ADDRESS");
         address trader = vm.addr(traderPk);
 
         WorldInPaper worldInPaper = WorldInPaper(worldInPaperAddress);
 
-        uint256 nextNullifier = INITIAL_NULLIFIER;
-        WorldInPaper.WorldIdVerification memory worldId = _worldId(
-            nextNullifier
-        );
-
         vm.startBroadcast(traderPk);
-        uint256 tradeId = worldInPaper.submitTrade(
-            GAME_ID,
-            TRADE_ASSET,
-            TRADE_ORIGIN,
-            IS_BUY,
-            AMOUNT_IN,
-            worldId
-        );
+        uint256 tradeId = worldInPaper.submitTrade(GAME_ID, TRADE_ASSET, TRADE_ORIGIN, IS_BUY, AMOUNT_IN);
         vm.stopBroadcast();
 
         console2.log("Trader:", trader);
@@ -64,21 +45,5 @@ contract TradeScript is Script {
         console2.log("Origin enum:", uint256(uint8(TRADE_ORIGIN)));
         console2.log("Amount in:", AMOUNT_IN);
         console2.log("No onReport call in this script.");
-    }
-
-    function _worldId(
-        uint256 nullifier
-    ) internal pure returns (WorldInPaper.WorldIdVerification memory worldId) {
-        worldId = WorldInPaper.WorldIdVerification({
-            nullifier: nullifier,
-            action: 1,
-            rpId: 1,
-            nonce: 1,
-            signalHash: 1,
-            expiresAtMin: 999_999,
-            issuerSchemaId: 1,
-            credentialGenesisIssuedAtMin: 1,
-            zeroKnowledgeProof: [uint256(0), 0, 0, 0, 0]
-        });
     }
 }

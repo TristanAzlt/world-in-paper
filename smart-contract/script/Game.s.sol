@@ -6,9 +6,12 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {WorldInPaper} from "../src/WorldInPaper.sol";
 
 contract GameScript is Script {
-    uint256 internal constant ENTRY_AMOUNT = 1 * 1e6;
+    string internal constant GAME_NAME = "EthGlobal Whale Game";
+    uint256 internal constant ENTRY_AMOUNT = 1 * 1e4;
     uint256 internal constant STARTING_WIP_BALANCE = 5_000 * 1e6;
     uint16 internal constant MAX_PLAYERS = 2;
+    uint256 internal constant CREATOR_NULLIFIER = 1;
+    uint256 internal constant JOINER_NULLIFIER = 2;
 
     struct Keys {
         uint256 creatorPk;
@@ -32,22 +35,27 @@ contract GameScript is Script {
 
         vm.startBroadcast(keys.creatorPk);
         usdc.approve(address(worldInPaper), ENTRY_AMOUNT);
+        WorldInPaper.WorldIdVerification memory creatorWorldId = _worldId(CREATOR_NULLIFIER);
         uint256 gameId = worldInPaper.createGame(
+            GAME_NAME,
             ENTRY_AMOUNT,
             STARTING_WIP_BALANCE,
             MAX_PLAYERS,
             startTime,
-            endTime
+            endTime,
+            creatorWorldId
         );
         vm.stopBroadcast();
 
         vm.startBroadcast(keys.joinerPk);
         usdc.approve(address(worldInPaper), ENTRY_AMOUNT);
-        worldInPaper.joinGame(gameId);
+        WorldInPaper.WorldIdVerification memory joinerWorldId = _worldId(JOINER_NULLIFIER);
+        worldInPaper.joinGame(gameId, joinerWorldId);
         vm.stopBroadcast();
 
         console2.log("WorldInPaper:", address(worldInPaper));
         console2.log("Game ID:", gameId);
+        console2.log("Game name:", GAME_NAME);
         console2.log("Creator:", keys.creator);
         console2.log("Joiner:", keys.joiner);
         console2.log("Entry amount:", ENTRY_AMOUNT);
@@ -83,5 +91,17 @@ contract GameScript is Script {
             joinerUsdc >= ENTRY_AMOUNT,
             "Joiner does not have enough USDC for entry"
         );
+    }
+
+    function _worldId(
+        uint256 nullifier
+    ) internal pure returns (WorldInPaper.WorldIdVerification memory worldId) {
+        worldId = WorldInPaper.WorldIdVerification({
+            root: 1,
+            signalHash: 1,
+            nullifierHash: nullifier,
+            externalNullifierHash: 1,
+            proof: [uint256(0), 0, 0, 0, 0, 0, 0, 0]
+        });
     }
 }

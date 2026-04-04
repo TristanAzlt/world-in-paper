@@ -2,7 +2,6 @@
 pragma solidity ^0.8.13;
 
 import {Script, console2} from "forge-std/Script.sol";
-import {IWorldIDVerifier} from "../src/interfaces/IWorldIDVerifier.sol";
 import {WorldInPaperObserver} from "../src/WorldInPaperObserver.sol";
 
 contract WorldInPaperObserverScript is Script {
@@ -17,10 +16,7 @@ contract WorldInPaperObserverScript is Script {
 
         worldInPaperObserver = new WorldInPaperObserver();
 
-        console2.log(
-            "WorldInPaperObserver deployed at:",
-            address(worldInPaperObserver)
-        );
+        console2.log("WorldInPaperObserver deployed at:", address(worldInPaperObserver));
 
         vm.stopBroadcast();
     }
