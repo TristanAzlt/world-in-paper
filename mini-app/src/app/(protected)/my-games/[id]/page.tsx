@@ -242,7 +242,7 @@ export default function GameViewPage() {
             <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: '#6a6a7a' }}>Leaderboard</span>
             {myRank && (
               <span className="text-sm font-bold" style={{ color: '#ffffff' }}>
-                Your rank: #{myRank.place}/{game.playerCount}
+                Your rank: {myRank.place}/{game.playerCount}
               </span>
             )}
           </div>

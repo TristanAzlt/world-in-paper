@@ -80,10 +80,10 @@ export default function ExplorePage() {
   const handleJoin = async () => {
     if (!joinTarget) return;
     haptic.medium();
-    setJoining(true);
     try {
       const worldIdProof = await getWorldIdProof('join-game', '');
 
+      setJoining(true);
       const result = await joinGame(BigInt(joinTarget.id), BigInt(joinTarget.entryAmount), worldIdProof);
       if (result?.data?.userOpHash) {
         haptic.success();

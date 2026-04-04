@@ -94,10 +94,13 @@ export default function CreateGamePage() {
 
   const handleCreate = async () => {
     haptic.medium();
-    setState('pending');
 
     try {
+      // Step 1: World ID verification (user sees the IDKit flow, not a spinner)
       const worldIdProof = await getWorldIdProof('create-game', '');
+
+      // Step 2: Now show spinner while tx is processing
+      setState('pending');
 
       const capital = customCapital ? Number(customCapital) : startingCapital;
       const startTime = BigInt(Math.floor(Date.now() / 1000) + startDelay * 60);
