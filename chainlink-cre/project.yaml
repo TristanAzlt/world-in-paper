@@ -18,7 +18,7 @@
 staging-settings:
     rpcs:
         - chain-name: ethereum-mainnet-worldchain-1
-          url: http://localhost:8550
+          url: https://worldchain-mainnet.g.alchemy.com/public
 
 # ==========================================================================
 production-settings:

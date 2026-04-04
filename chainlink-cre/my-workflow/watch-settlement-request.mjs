@@ -30,7 +30,8 @@ Options:
   --from-block <number>        Start polling from a specific block number
   --poll-interval-ms <ms>      Polling interval in milliseconds (default: ${DEFAULT_POLL_INTERVAL_MS})
   --trigger-index <index>      CRE trigger index (default: ${DEFAULT_TRIGGER_INDEX})
-  --fixed-log-index <index>    Force the EVM log index sent to CRE (useful if you really want 0)
+  --fixed-event-index <index>  Force the EVM event index sent to CRE (transaction-relative, 0-based)
+  --fixed-log-index <index>    Deprecated alias for --fixed-event-index
   --cre-bin <path>             CRE binary to execute (default: ${DEFAULT_CRE_BINARY})
   --no-broadcast               Run CRE simulation without --broadcast
   --once                       Exit after the first detected event is processed
@@ -38,7 +39,7 @@ Options:
 
 Examples:
   node ./watch-settlement-request.mjs
-  node ./watch-settlement-request.mjs --fixed-log-index 0
+  node ./watch-settlement-request.mjs --fixed-event-index 0
   node ./watch-settlement-request.mjs --target production-settings --rpc-url https://worldchain-mainnet.g.alchemy.com/public
 `);
 }
@@ -99,8 +100,9 @@ function parseArgs(argv) {
       case "--trigger-index":
         options.triggerIndex = Number.parseInt(nextValue, 10);
         break;
+      case "--fixed-event-index":
       case "--fixed-log-index":
-        options.fixedLogIndex = Number.parseInt(nextValue, 10);
+        options.fixedEventIndex = Number.parseInt(nextValue, 10);
         break;
       case "--cre-bin":
         options.creBin = nextValue;
@@ -119,10 +121,10 @@ function parseArgs(argv) {
     throw new Error(`Invalid --trigger-index value: ${options.triggerIndex}`);
   }
   if (
-    options.fixedLogIndex !== undefined &&
-    (!Number.isInteger(options.fixedLogIndex) || options.fixedLogIndex < 0)
+    options.fixedEventIndex !== undefined &&
+    (!Number.isInteger(options.fixedEventIndex) || options.fixedEventIndex < 0)
   ) {
-    throw new Error(`Invalid --fixed-log-index value: ${options.fixedLogIndex}`);
+    throw new Error(`Invalid fixed event index value: ${options.fixedEventIndex}`);
   }
 
   return options;
@@ -199,8 +201,28 @@ function queueKey(log) {
   return `${log.transactionHash}:${log.logIndex}`;
 }
 
-async function runSimulation(options, item) {
-  const eventIndex = options.fixedLogIndex ?? Number(item.logIndex);
+async function resolveEventIndex(client, item, cache) {
+  let receiptLogs = cache.get(item.transactionHash);
+  if (!receiptLogs) {
+    const receipt = await client.getTransactionReceipt({ hash: item.transactionHash });
+    receiptLogs = receipt.logs;
+    cache.set(item.transactionHash, receiptLogs);
+  }
+
+  const txLogIndex = receiptLogs.findIndex((receiptLog) => receiptLog.logIndex === item.logIndex);
+
+  if (txLogIndex < 0) {
+    throw new Error(
+      `Could not map tx=${item.transactionHash} logIndex=${item.logIndex} to a receipt log position`,
+    );
+  }
+
+  return txLogIndex;
+}
+
+async function runSimulation(client, options, item, receiptCache) {
+  const eventIndex =
+    options.fixedEventIndex ?? (await resolveEventIndex(client, item, receiptCache));
   const args = [
     "workflow",
     "simulate",
@@ -221,7 +243,7 @@ async function runSimulation(options, item) {
   }
 
   logWithTimestamp(
-    `Launching CRE simulation for tx=${item.transactionHash} eventIndex=${eventIndex} block=${item.blockNumber}`,
+    `Launching CRE simulation for tx=${item.transactionHash} eventIndex=${eventIndex} block=${item.blockNumber} rawLogIndex=${item.logIndex}`,
   );
 
   await new Promise((resolvePromise, rejectPromise) => {
@@ -276,6 +298,7 @@ async function main() {
   }
 
   const queue = [];
+  const receiptCache = new Map();
   const seen = new Set();
   let processing = false;
   let shuttingDown = false;
@@ -298,7 +321,7 @@ async function main() {
       }
 
       try {
-        await runSimulation(options, item);
+        await runSimulation(client, options, item, receiptCache);
       } catch (error) {
         console.error(error);
       }
@@ -350,9 +373,9 @@ async function main() {
   logWithTimestamp(`RPC URL: ${rpcUrl}`);
   logWithTimestamp(`CRE target: ${options.target}`);
   logWithTimestamp(
-    options.fixedLogIndex === undefined
-      ? "CRE will use each event's real logIndex."
-      : `CRE will force evm-event-index=${options.fixedLogIndex}.`,
+    options.fixedEventIndex === undefined
+      ? "CRE will map each detected log to its transaction-relative event index."
+      : `CRE will force evm-event-index=${options.fixedEventIndex}.`,
   );
 
   while (!shuttingDown) {

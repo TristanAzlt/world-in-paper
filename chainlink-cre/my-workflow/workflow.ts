@@ -65,6 +65,8 @@ const CHAIN_ID: Record<number, number> = {
 const USDC_SOL = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const SOLANA_RPC = "https://api.mainnet-beta.solana.com";
 const DUMMY_SWAPPER = "0x0000000000000000000000000000000000000001";
+const UNISWAP_PROTOCOLS = ["V2", "V3", "V4"] as const;
+const UNISWAP_ROUTING_PREFERENCE = "BEST_PRICE" as const;
 
 // SettlementRequest(uint256 indexed tradeId, uint256 indexed gameId, string assetId, uint8 origin, bool isBuy, uint256 amount)
 const SETTLEMENT_REQUEST_SIG = keccak256(
@@ -151,6 +153,8 @@ const fetchUniswapQuote = (
         tokenInChainId: chainId,
         tokenOutChainId: chainId,
         swapper: DUMMY_SWAPPER,
+        protocols: [...UNISWAP_PROTOCOLS],
+        routingPreference: UNISWAP_ROUTING_PREFERENCE,
       }),
     })
     .result();

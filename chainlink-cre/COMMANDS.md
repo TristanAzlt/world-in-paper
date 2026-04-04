@@ -74,13 +74,13 @@ By default the watcher:
 - listens to `SettlementRequest` on the contract from `config.staging.json`
 - reads the RPC URL from `../project.yaml` for `staging-settings`
 - runs `cre workflow simulate my-workflow -T staging-settings --broadcast --non-interactive`
-- uses the real `logIndex` from the detected event
+- maps the detected log to CRE's transaction-relative `evm-event-index`
 
-If you really want to force the log index to `0`:
+If you really want to force the event index to `0`:
 
 ```bash
 cd my-workflow
-node ./watch-settlement-request.mjs --fixed-log-index 0
+node ./watch-settlement-request.mjs --fixed-event-index 0
 ```
 
 ## Testing data sources manually

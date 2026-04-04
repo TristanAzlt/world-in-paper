@@ -113,12 +113,12 @@ This watcher:
 - listens to the `SettlementRequest` event on the configured `contractAddress`
 - launches `cre workflow simulate my-workflow -T staging-settings --broadcast --non-interactive`
 - passes the detected transaction hash automatically
-- passes the detected `logIndex` automatically
+- resolves the detected log to CRE's transaction-relative `evm-event-index` automatically
 
-If you need to mimic the manual flow with index `0`, run:
+If you need to mimic the manual flow with event index `0`, run:
 
 ```bash
-node ./watch-settlement-request.mjs --fixed-log-index 0
+node ./watch-settlement-request.mjs --fixed-event-index 0
 ```
 
 ## CRE limits

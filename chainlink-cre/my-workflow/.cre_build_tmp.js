@@ -17154,6 +17154,8 @@ var CHAIN_ID = {
 var USDC_SOL = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 var SOLANA_RPC = "https://api.mainnet-beta.solana.com";
 var DUMMY_SWAPPER = "0x0000000000000000000000000000000000000001";
+var UNISWAP_PROTOCOLS = ["V2", "V3", "V4"];
+var UNISWAP_ROUTING_PREFERENCE = "BEST_PRICE";
 var SETTLEMENT_REQUEST_SIG = keccak256(toHex("SettlementRequest(uint256,uint256,string,uint8,bool,uint256)"));
 var encodeJsonBody = (payload) => Buffer.from(JSON.stringify(payload), "utf-8").toString("base64");
 var fetchHyperliquidPrice = (sendRequester, symbol2) => {
@@ -17194,7 +17196,9 @@ var fetchUniswapQuote = (sendRequester, tokenAddress, isBuy, amount, apiKey, ori
       tokenOut,
       tokenInChainId: chainId,
       tokenOutChainId: chainId,
-      swapper: DUMMY_SWAPPER
+      swapper: DUMMY_SWAPPER,
+      protocols: [...UNISWAP_PROTOCOLS],
+      routingPreference: UNISWAP_ROUTING_PREFERENCE
     })
   }).result();
   if (resp.statusCode !== 200) {
