@@ -7,12 +7,15 @@ export function middleware(request: NextRequest) {
     request.cookies.has('authjs.session-token') ||
     request.cookies.has('__Secure-authjs.session-token');
 
-  const isProtected = request.nextUrl.pathname.startsWith('/games') ||
-    request.nextUrl.pathname.startsWith('/my-games') ||
-    request.nextUrl.pathname.startsWith('/profile') ||
-    request.nextUrl.pathname.startsWith('/home');
+  const path = request.nextUrl.pathname;
 
-  if (isProtected && !hasSession) {
+  // Public routes — no auth needed
+  if (path === '/' || path.startsWith('/api')) {
+    return NextResponse.next();
+  }
+
+  // Protected routes — redirect to login if no session
+  if (!hasSession) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 
@@ -20,5 +23,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.png|.*\\.svg|.*\\.ico).*)'],
 };
