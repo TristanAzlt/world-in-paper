@@ -291,11 +291,10 @@ export default function GameViewPage() {
               {/* Cash */}
               <div className="flex items-center justify-between rounded-2xl p-4" style={{ backgroundColor: '#1c1c24' }}>
                 <div className="flex items-center gap-3">
-                  <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={40} height={40} />
-                  <div>
-                    <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>Cash</div>
-                    <div className="text-xs" style={{ color: '#9898aa' }}>USDC</div>
+                  <div className="flex items-center justify-center rounded-full" style={{ width: 40, height: 40, backgroundColor: '#24242e' }}>
+                    <span className="text-lg font-extrabold" style={{ color: '#ffffff' }}>$</span>
                   </div>
+                  <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>Cash</div>
                 </div>
                 <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>${cashBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
               </div>
@@ -455,11 +454,10 @@ export default function GameViewPage() {
                   {/* Cash */}
                   <div className="flex items-center justify-between rounded-2xl p-4" style={{ backgroundColor: '#1c1c24' }}>
                     <div className="flex items-center gap-3">
-                      <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={40} height={40} />
-                      <div>
-                        <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>Cash</div>
-                        <div className="text-xs" style={{ color: '#9898aa' }}>USDC</div>
+                      <div className="flex items-center justify-center rounded-full" style={{ width: 40, height: 40, backgroundColor: '#24242e' }}>
+                        <span className="text-lg font-extrabold" style={{ color: '#ffffff' }}>$</span>
                       </div>
+                      <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>Cash</div>
                     </div>
                     <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>${wip.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                   </div>
