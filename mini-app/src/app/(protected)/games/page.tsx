@@ -6,18 +6,19 @@ import { Plus, Group } from 'iconoir-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { type GameView, getGameStatus, formatWipBalance } from '@/types';
+import { type GameView, GameStatus, getGameStatus, formatWipBalance } from '@/types';
 import { useExploreGames } from '@/hooks/useGames';
 import { useContract } from '@/hooks/useContract';
 import { CountdownTimer } from '@/components/CountdownTimer';
 import { SkeletonList } from '@/components/Skeleton';
 import { UsdcBalance } from '@/components/UsdcBalance';
 import { haptic } from '@/lib/haptics';
+import { getWorldIdProof } from '@/lib/worldid';
 import { Page } from '@/components/PageLayout';
 
 function ExploreCard({ game, onClick }: { game: GameView; onClick: () => void }) {
   const status = getGameStatus(game);
-  const isActive = status === 'active';
+  const isActive = status === GameStatus.Active;
   const entryAmount = formatWipBalance(game.entryAmount);
   const startingCapital = formatWipBalance(game.startingWIPBalance);
 
@@ -29,7 +30,7 @@ function ExploreCard({ game, onClick }: { game: GameView; onClick: () => void })
     >
       <div className="p-5 pb-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-extrabold" style={{ color: '#ffffff' }}>Game #{game.id}</h3>
+          <h3 className="text-lg font-extrabold" style={{ color: '#ffffff' }}>{game.name || `Game #${game.id}`}</h3>
           <div className="flex items-center gap-1.5">
             <div
               className="h-2 w-2 rounded-full"
@@ -81,7 +82,9 @@ export default function ExplorePage() {
     haptic.medium();
     setJoining(true);
     try {
-      const result = await joinGame(BigInt(joinTarget.id), BigInt(joinTarget.entryAmount));
+      const worldIdProof = await getWorldIdProof('join-game', '');
+
+      const result = await joinGame(BigInt(joinTarget.id), BigInt(joinTarget.entryAmount), worldIdProof);
       if (result?.data?.userOpHash) {
         haptic.success();
         router.push(`/my-games/${joinTarget.id}`);
@@ -196,7 +199,7 @@ export default function ExplorePage() {
           <div className="px-5 pt-6 pb-10">
             <div className="text-center mb-6">
               <h2 className="text-2xl font-extrabold mb-2" style={{ color: '#ffffff' }}>
-                Game #{joinTarget?.id}
+                {joinTarget?.name || `Game #${joinTarget?.id}`}
               </h2>
               <div className="flex items-center justify-center gap-4 text-sm" style={{ color: '#9898aa' }}>
                 <span className="flex items-center gap-1.5">

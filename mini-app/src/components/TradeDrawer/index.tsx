@@ -12,15 +12,24 @@ import { haptic } from '@/lib/haptics';
 import { useState, useMemo } from 'react';
 import type { AssetToken, OriginKey } from '@/types';
 import { useAssets } from '@/hooks/useAssets';
+import { useContract } from '@/hooks/useContract';
 import { AnimatedText } from '@/components/AnimatedText';
 import { TokenIcon } from '@/components/TokenIcon';
+
+function originToNum(origin: string): number {
+  const map: Record<string, number> = {
+    solana: 0, base: 1, ethereum: 2, bsc: 3, worldchain: 4, world: 4, hyperliquid: 5,
+  };
+  return map[origin.toLowerCase()] ?? 5;
+}
 
 interface TradeDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   availableBalance: number;
-  gameId?: string;
+  gameId: string;
   positions?: Array<{ symbol: string; quantity: number }>;
+  onTradeSuccess?: () => void;
 }
 
 type Step = 'select' | 'order' | 'confirming' | 'success';
@@ -69,7 +78,7 @@ function AssetRowItem({ asset, onSelect }: { asset: AssetToken; onSelect: (a: As
   );
 }
 
-export function TradeDrawer({ isOpen, onClose, availableBalance, gameId: _gameId, positions = [] }: TradeDrawerProps) {
+export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, positions = [], onTradeSuccess }: TradeDrawerProps) {
   const [step, setStep] = useState<Step>('select');
   const [mainTab, setMainTab] = useState<MainTab>('crypto');
   const [cryptoSub, setCryptoSub] = useState<OriginKey | 'top'>('top');
@@ -78,6 +87,8 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId: _gameId
   const [selectedAsset, setSelectedAsset] = useState<AssetToken | null>(null);
   const [side, setSide] = useState<'buy' | 'sell'>('buy');
   const [amount, setAmount] = useState('');
+
+  const { submitTrade } = useContract();
 
   // Fetch assets based on current selection
   const activeOrigin: OriginKey = mainTab === 'crypto'
@@ -135,14 +146,34 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId: _gameId
     setSelectedAsset(null);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
+    if (!selectedAsset || !gameId) return;
     haptic.medium();
     setStep('confirming');
-    setTimeout(() => {
-      haptic.success();
-      setStep('success');
-      setTimeout(() => resetAndClose(), 1200);
-    }, 1500);
+
+    try {
+      const amountIn = BigInt(Math.round(amountNum * 1e6));
+      const result = await submitTrade(
+        BigInt(gameId),
+        selectedAsset.address,
+        originToNum(selectedAsset.origin),
+        side === 'buy',
+        amountIn,
+      );
+
+      if (result?.data?.userOpHash) {
+        haptic.success();
+        setStep('success');
+        onTradeSuccess?.();
+        setTimeout(() => resetAndClose(), 1200);
+      } else {
+        throw new Error('Transaction failed');
+      }
+    } catch (e) {
+      console.error('Trade failed:', e);
+      haptic.error();
+      setStep('order');
+    }
   };
 
   const resetAndClose = () => {

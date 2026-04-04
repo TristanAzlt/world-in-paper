@@ -3,10 +3,21 @@
 import { MiniKit } from '@worldcoin/minikit-js';
 import { encodeFunctionData, parseAbi } from 'viem';
 import { TOKENS, WORLD_CHAIN_ID } from '@/lib/constants';
+import type { WorldIdProof } from '@/lib/worldid';
 import WorldInPaperAbi from '@/lib/WorldInPaper.abi.json';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '';
 const ABI = WorldInPaperAbi as readonly unknown[];
+
+function worldIdTuple(proof: WorldIdProof) {
+  return {
+    root: proof.root,
+    signalHash: proof.signalHash,
+    nullifierHash: proof.nullifierHash,
+    externalNullifierHash: proof.externalNullifierHash,
+    proof: proof.proof,
+  };
+}
 
 export function useContract() {
   const createGame = async (
@@ -16,6 +27,7 @@ export function useContract() {
     maxPlayers: number,
     startTime: bigint,
     endTime: bigint,
+    worldId: WorldIdProof,
   ) => {
     const result = await MiniKit.sendTransaction({
       chainId: WORLD_CHAIN_ID,
@@ -33,7 +45,7 @@ export function useContract() {
           data: encodeFunctionData({
             abi: ABI,
             functionName: 'createGame',
-            args: [name, entryAmount, startingWIPBalance, maxPlayers, startTime, endTime],
+            args: [name, entryAmount, startingWIPBalance, maxPlayers, startTime, endTime, worldIdTuple(worldId)],
           }),
         },
       ],
@@ -41,7 +53,7 @@ export function useContract() {
     return result;
   };
 
-  const joinGame = async (gameId: bigint, entryAmount: bigint) => {
+  const joinGame = async (gameId: bigint, entryAmount: bigint, worldId: WorldIdProof) => {
     const result = await MiniKit.sendTransaction({
       chainId: WORLD_CHAIN_ID,
       transactions: [
@@ -58,7 +70,7 @@ export function useContract() {
           data: encodeFunctionData({
             abi: ABI,
             functionName: 'joinGame',
-            args: [gameId],
+            args: [gameId, worldIdTuple(worldId)],
           }),
         },
       ],

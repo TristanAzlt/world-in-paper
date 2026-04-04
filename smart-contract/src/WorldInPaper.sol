@@ -118,7 +118,7 @@ contract WorldInPaper is ReceiverTemplate {
     bool public immutable worldIdVerificationEnabled;
     uint256 public nextGameId = 1;
     uint256 public nextTradeToSettleId = 1;
-    mapping(uint256 => bool) public nullifierUsed;
+    mapping(uint256 gameId => mapping(uint256 nullifierHash => bool)) public nullifierUsed;
 
     mapping(uint256 gameId => Game game) private _games;
     mapping(uint256 tradeId => TradeToSettle tradeToSettle) private _tradesToSettle;
@@ -467,7 +467,7 @@ contract WorldInPaper is ReceiverTemplate {
             revert GameFull(gameId, game.maxPlayers);
         }
 
-        _verifyAndConsumeWorldId(worldId);
+        _verifyAndConsumeWorldId(gameId, worldId);
 
         uint256 allowance = USDC.allowance(player, address(this));
         if (allowance < game.entryAmount) {
@@ -487,12 +487,12 @@ contract WorldInPaper is ReceiverTemplate {
         emit GameJoined(gameId, player, game.playerCount);
     }
 
-    function _verifyAndConsumeWorldId(WorldIdVerification calldata worldId) internal {
+    function _verifyAndConsumeWorldId(uint256 gameId, WorldIdVerification calldata worldId) internal {
         if (!worldIdVerificationEnabled) {
             return;
         }
 
-        if (nullifierUsed[worldId.nullifierHash]) {
+        if (nullifierUsed[gameId][worldId.nullifierHash]) {
             revert InvalidNullifier();
         }
 
@@ -505,7 +505,7 @@ contract WorldInPaper is ReceiverTemplate {
             worldId.proof
         );
 
-        nullifierUsed[worldId.nullifierHash] = true;
+        nullifierUsed[gameId][worldId.nullifierHash] = true;
     }
 
     function _toGameView(Game storage game) internal view returns (GameView memory gameView) {

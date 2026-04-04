@@ -28,7 +28,7 @@ function MyGameCard({ game, onClick }: { game: GameView; onClick: () => void }) 
     >
       <div className="p-5 pb-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-extrabold" style={{ color: '#ffffff' }}>Game #{game.id}</h3>
+          <h3 className="text-lg font-extrabold" style={{ color: '#ffffff' }}>{game.name || `Game #${game.id}`}</h3>
           <div className="flex items-center gap-1.5">
             <div
               className="h-2 w-2 rounded-full"

@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { haptic } from '@/lib/haptics';
+import { getWorldIdProof } from '@/lib/worldid';
 import { useContract } from '@/hooks/useContract';
 import { Page } from '@/components/PageLayout';
 
@@ -95,14 +96,16 @@ export default function CreateGamePage() {
     haptic.medium();
     setState('pending');
 
-    const capital = customCapital ? Number(customCapital) : startingCapital;
-    const startTime = BigInt(Math.floor(Date.now() / 1000) + startDelay * 60);
-    const endTime = BigInt(Math.floor(Date.now() / 1000) + startDelay * 60 + duration * 60);
-    const entryAmountRaw = BigInt(Math.round(buyInNum * 1e6));
-    const capitalRaw = BigInt(Math.round(capital * 1e6));
-
     try {
-      const result = await createGame(gameName, entryAmountRaw, capitalRaw, maxPlayers, startTime, endTime);
+      const worldIdProof = await getWorldIdProof('create-game', '');
+
+      const capital = customCapital ? Number(customCapital) : startingCapital;
+      const startTime = BigInt(Math.floor(Date.now() / 1000) + startDelay * 60);
+      const endTime = BigInt(Math.floor(Date.now() / 1000) + startDelay * 60 + duration * 60);
+      const entryAmountRaw = BigInt(Math.round(buyInNum * 1e6));
+      const capitalRaw = BigInt(Math.round(capital * 1e6));
+
+      const result = await createGame(gameName, entryAmountRaw, capitalRaw, maxPlayers, startTime, endTime, worldIdProof);
       if (result?.data?.userOpHash) {
         haptic.success();
         setState('success');
