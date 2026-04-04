@@ -31,7 +31,7 @@ export function useContract() {
         {
           to: CONTRACT_ADDRESS,
           data: encodeFunctionData({
-            abi: WorldInPaperAbi as any,
+            abi: WorldInPaperAbi as readonly unknown[],
             functionName: 'createGame',
             args: [entryAmount, startingWIPBalance, maxPlayers, startTime, endTime],
           }),
@@ -58,7 +58,7 @@ export function useContract() {
         {
           to: CONTRACT_ADDRESS,
           data: encodeFunctionData({
-            abi: WorldInPaperAbi as any,
+            abi: WorldInPaperAbi as readonly unknown[],
             functionName: 'joinGame',
             args: [gameId],
           }),
@@ -92,7 +92,7 @@ export function useContract() {
         {
           to: CONTRACT_ADDRESS,
           data: encodeFunctionData({
-            abi: WorldInPaperAbi as any,
+            abi: WorldInPaperAbi as readonly unknown[],
             functionName: 'submitTrade',
             args: [gameId, assetAddress, origin, isBuy, amountIn, worldIdProof],
           }),
@@ -109,7 +109,7 @@ export function useContract() {
         {
           to: CONTRACT_ADDRESS,
           data: encodeFunctionData({
-            abi: WorldInPaperAbi as any,
+            abi: WorldInPaperAbi as readonly unknown[],
             functionName: 'claimGame',
             args: [gameId],
           }),

@@ -20,6 +20,7 @@ interface TradeDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   availableBalance: number;
+  gameId?: string;
   positions?: Array<{ symbol: string; quantity: number }>;
 }
 
@@ -39,7 +40,7 @@ function formatPrice(price: number): string {
   return `$${price.toPrecision(4)}`;
 }
 
-export function TradeDrawer({ isOpen, onClose, availableBalance, positions = [] }: TradeDrawerProps) {
+export function TradeDrawer({ isOpen, onClose, availableBalance, gameId: _gameId, positions = [] }: TradeDrawerProps) {
   const [step, setStep] = useState<Step>('select');
   const [category, setCategory] = useState<AssetCategory>('crypto');
   const [searchQuery, setSearchQuery] = useState('');

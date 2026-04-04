@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { api } from '@/lib/api';
-import { type AssetToken, type HyperliquidAssets, type OriginKey } from '@/types';
+import { type AssetToken, type OriginKey } from '@/types';
 
 interface AssetsResult {
   tokens: AssetToken[];

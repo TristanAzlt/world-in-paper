@@ -5,25 +5,20 @@ import { Group } from 'iconoir-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { GameStatus, type Game, type Player } from '@/types';
-import { getMyGames, getMyPlayer } from '@/lib/mock-data';
+import { useSession } from 'next-auth/react';
+import { type GameView, GameStatus, getGameStatus, formatWipBalance } from '@/types';
+import { useMyGames } from '@/hooks/useGames';
 import { CountdownTimer } from '@/components/CountdownTimer';
+import { LoadingSpinner } from '@/components/LoadingState';
 import { UsdcBalance } from '@/components/UsdcBalance';
 import { Page } from '@/components/PageLayout';
 
-function MyGameCard({
-  game,
-  player,
-  onClick,
-}: {
-  game: Game;
-  player?: Player;
-  onClick: () => void;
-}) {
-  const isActive = game.status === GameStatus.Active;
-  const isEnded = game.status === GameStatus.Ended;
-  const isUpcoming = game.status === GameStatus.Upcoming;
-  const pnl = player?.pnlPercent ?? 0;
+function MyGameCard({ game, onClick }: { game: GameView; onClick: () => void }) {
+  const status = getGameStatus(game);
+  const isActive = status === GameStatus.Active;
+  const isEnded = status === GameStatus.Ended;
+  const isUpcoming = status === GameStatus.Upcoming;
+  const entryAmount = formatWipBalance(game.entryAmount);
 
   return (
     <button
@@ -33,13 +28,13 @@ function MyGameCard({
     >
       <div className="p-5 pb-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-extrabold" style={{ color: '#ffffff' }}>{game.name}</h3>
+          <h3 className="text-lg font-extrabold" style={{ color: '#ffffff' }}>Game #{game.id}</h3>
           <div className="flex items-center gap-1.5">
             <div
               className="h-2 w-2 rounded-full"
-              style={{ backgroundColor: isActive ? '#34c759' : isEnded ? '#ccc' : '#f59e0b' }}
+              style={{ backgroundColor: isActive ? '#34c759' : isEnded ? '#6a6a7a' : '#f59e0b' }}
             />
-            <span className="text-sm font-semibold" style={{ color: isActive ? '#34c759' : isEnded ? '#aaa' : '#f59e0b' }}>
+            <span className="text-sm font-semibold" style={{ color: isActive ? '#34c759' : isEnded ? '#6a6a7a' : '#f59e0b' }}>
               {isActive ? 'Live' : isEnded ? 'Ended' : 'Soon'}
             </span>
           </div>
@@ -48,38 +43,24 @@ function MyGameCard({
         <div className="mt-2 flex items-center gap-5 text-sm" style={{ color: '#9898aa' }}>
           <span className="flex items-center gap-1.5">
             <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={14} height={14} />
-            <strong style={{ color: '#ffffff' }}>{game.entryAmount}</strong> USDC
+            <strong style={{ color: '#ffffff' }}>{entryAmount}</strong> USDC
           </span>
           <span className="flex items-center gap-1.5">
             <Group width={14} height={14} />
             <strong style={{ color: '#ffffff' }}>{game.playerCount}</strong>/{game.maxPlayers}
           </span>
         </div>
-
-        {player && (
-          <div className="mt-3 flex items-center justify-between">
-            <span
-              className="text-lg font-extrabold"
-              style={{ color: pnl >= 0 ? '#34c759' : '#ff6b6b' }}
-            >
-              {pnl >= 0 ? '+' : ''}{pnl.toFixed(1)}%
-            </span>
-            <span className="text-sm font-semibold" style={{ color: '#9898aa' }}>
-              #{player.rank} of {game.playerCount}
-            </span>
-          </div>
-        )}
       </div>
 
       <div
         className="flex items-center justify-between px-5 py-3"
         style={{ backgroundColor: '#24242e' }}
       >
-        {isActive && <CountdownTimer targetTime={game.endTime} label="Ends in" />}
-        {isUpcoming && <CountdownTimer targetTime={game.startTime} label="Starts in" />}
-        {isEnded && <span className="text-sm" style={{ color: '#9898aa' }}>Finished</span>}
+        {isActive && <CountdownTimer targetTime={Number(game.endTime) * 1000} label="Ends in" />}
+        {isUpcoming && <CountdownTimer targetTime={Number(game.startTime) * 1000} label="Starts in" />}
+        {isEnded && <span className="text-sm" style={{ color: '#6a6a7a' }}>Finished</span>}
         <span className="text-sm font-bold" style={{ color: '#ffffff' }}>
-          ${game.startingCapital.toLocaleString()}
+          ${formatWipBalance(game.startingWIPBalance).toLocaleString()}
         </span>
       </div>
     </button>
@@ -88,20 +69,24 @@ function MyGameCard({
 
 export default function MyGamesPage() {
   const router = useRouter();
+  const session = useSession();
+  const walletAddress = session?.data?.user?.walletAddress;
+  const { games, loading } = useMyGames(walletAddress);
   const [filter, setFilter] = useState<'active' | 'ended'>('active');
-  const myGames = getMyGames();
 
-  const filtered = myGames.filter((g) =>
-    filter === 'active'
-      ? g.status === GameStatus.Active || g.status === GameStatus.Upcoming
-      : g.status === GameStatus.Ended,
-  );
+  const filtered = games.filter((g) => {
+    const status = getGameStatus(g);
+    return filter === 'active'
+      ? status === GameStatus.Active || status === GameStatus.Upcoming
+      : status === GameStatus.Ended;
+  });
 
   return (
     <>
       <Page.Main>
         <TopBar title="My Games" endAdornment={<UsdcBalance />} />
         <div className="mb-4" />
+
         <div
           className="relative mb-5 flex overflow-hidden rounded-full"
           style={{ backgroundColor: '#24242e', height: '52px' }}
@@ -116,34 +101,34 @@ export default function MyGamesPage() {
           <button
             onClick={() => setFilter('active')}
             className="relative z-10 flex-1 text-[15px] font-bold"
-            style={{ color: filter === 'active' ? '#ffffff' : '#9898aa' }}
+            style={{ color: filter === 'active' ? '#ffffff' : '#6a6a7a' }}
           >
             Active
           </button>
           <button
             onClick={() => setFilter('ended')}
             className="relative z-10 flex-1 text-[15px] font-bold"
-            style={{ color: filter === 'ended' ? '#ffffff' : '#9898aa' }}
+            style={{ color: filter === 'ended' ? '#ffffff' : '#6a6a7a' }}
           >
             Ended
           </button>
         </div>
 
-        <div className="space-y-3">
-          {filtered.map((game) => {
-            const player = getMyPlayer(game);
-            return (
+        {loading ? (
+          <LoadingSpinner label="Loading games..." />
+        ) : (
+          <div className="space-y-3">
+            {filtered.map((game) => (
               <MyGameCard
                 key={game.id}
                 game={game}
-                player={player}
                 onClick={() => router.push(`/my-games/${game.id}`)}
               />
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        )}
 
-        {filtered.length === 0 && (
+        {!loading && filtered.length === 0 && (
           <p className="py-12 text-center text-sm" style={{ color: '#9898aa' }}>
             {filter === 'active' ? 'No active games' : 'No finished games'}
           </p>
