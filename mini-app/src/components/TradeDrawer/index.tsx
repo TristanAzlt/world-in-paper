@@ -170,11 +170,22 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
 
   const amountNum = Number(amount) || 0;
 
+  // Convert human amount to raw integer string with given decimals
+  const toRawAmount = (human: number, dec: number): string => {
+    // Use string math to avoid precision loss with large decimals
+    const [whole = '0', frac = ''] = human.toString().split('.');
+    const padded = (frac + '0'.repeat(dec)).slice(0, dec);
+    const raw = whole + padded;
+    return raw.replace(/^0+/, '') || '0';
+  };
+
   // Fetch quote from backend when amount changes
   useEffect(() => {
     if (!selectedAsset || !amount || amountNum === 0) return;
-    const rawAmount = Math.floor(amountNum * 1e6).toString();
-    getQuote(selectedAsset.address, activeOrigin, side === 'buy', rawAmount);
+    const decimals = side === 'buy' ? 6 : (selectedAsset.decimals ?? 18);
+    const rawAmount = toRawAmount(amountNum, decimals);
+    const origin = (ORIGIN_NUM_TO_KEY[selectedAsset.origin] || activeOrigin) as OriginKey;
+    getQuote(selectedAsset.address, origin, side === 'buy', rawAmount);
   }, [selectedAsset, amount, amountNum, side, activeOrigin, getQuote]);
 
   const estimatedTokens = useMemo(() => {
@@ -239,7 +250,9 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
     try {
       const tradesBefore = await getAssetTradeCount(selectedAsset.address);
 
-      const amountIn = BigInt(Math.floor(amountNum * 1e6));
+      // Buy: USDC 6 dec. Sell: token native decimals.
+      const dec = side === 'buy' ? 6 : (selectedAsset.decimals ?? 18);
+      const amountIn = BigInt(toRawAmount(amountNum, dec));
       const result = await submitTrade(
         BigInt(gameId),
         selectedAsset.address,

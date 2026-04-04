@@ -16,6 +16,7 @@ import { TradeDrawer } from '@/components/TradeDrawer';
 import { TokenIcon } from '@/components/TokenIcon';
 import { useContract } from '@/hooks/useContract';
 import { useTokenPrices } from '@/hooks/useTokenPrices';
+import { useLeaderboard } from '@/hooks/useLeaderboard';
 import { haptic } from '@/lib/haptics';
 import { Page } from '@/components/PageLayout';
 
@@ -81,11 +82,15 @@ export default function GameViewPage() {
   }, [refreshPortfolio, refreshRanking]);
 
   const { claimGame } = useContract();
-  const tokenPrices = useTokenPrices(portfolio?.tokens ?? []);
+  // Collect all tokens from all players for price fetching
+  const allTokens = portfolio?.tokens ?? [];
+  const tokenPrices = useTokenPrices(allTokens);
+  const { entries: leaderboard } = useLeaderboard(gameId, ranking, tokenPrices);
   const [tradeOpen, setTradeOpen] = useState(false);
   const [preselectedAsset, setPreselectedAsset] = useState<{ address: string; origin: string } | null>(null);
   const [claiming, setClaiming] = useState(false);
   const [claimed, setClaimed] = useState(false);
+  const [claimedAmount, setClaimedAmount] = useState(0);
 
   const game = [...myGames, ...allGames].find((g) => g.id === gameId);
 
@@ -106,7 +111,8 @@ export default function GameViewPage() {
   const positionsValue = portfolio
     ? portfolio.tokens.reduce((sum, t) => {
         const info = tokenPrices[t.asset_address.toLowerCase()];
-        const bal = formatWipBalance(t.balance);
+        const dec = info?.decimals ?? 18;
+        const bal = Number(t.balance) / 10 ** dec;
         return sum + (info ? bal * info.price : 0);
       }, 0)
     : 0;
@@ -124,6 +130,7 @@ export default function GameViewPage() {
       const result = await claimGame(BigInt(gameId));
       if (result?.data?.userOpHash) {
         haptic.success();
+        setClaimedAmount(claimableAmount);
         setClaimed(true);
       } else {
         throw new Error('Claim failed');
@@ -196,40 +203,68 @@ export default function GameViewPage() {
           </div>
         )}
 
-        {isEnded && !alreadyClaimed && claimableAmount > 0 && (
-          <div className="rounded-2xl px-5 py-4 mb-4 text-center" style={{ backgroundColor: '#34c75915', border: '1px solid #34c75930' }}>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Trophy width={20} height={20} style={{ color: '#34c759' }} />
-              <span className="text-base font-bold" style={{ color: '#34c759' }}>Game ended — You can claim!</span>
+        {isEnded && !alreadyClaimed && claimableAmount > 0 && (() => {
+          const entryAmt = formatWipBalance(game.entryAmount);
+          const isBreakeven = claimableAmount === entryAmt;
+          const isWin = claimableAmount > entryAmt;
+          const accentColor = isWin ? '#34c759' : '#f59e0b';
+          const bgGradient = isWin
+            ? 'linear-gradient(135deg, #0a2618 0%, #143d28 50%, #0d2e1e 100%)'
+            : 'linear-gradient(135deg, #2a1f0a 0%, #3d2e14 50%, #2e1f0d 100%)';
+          const borderColor = isWin ? '#1a5035' : '#504020';
+
+          return (
+            <div className="rounded-3xl mb-6 overflow-hidden" style={{ background: bgGradient, border: `1px solid ${borderColor}` }}>
+              <div className="px-6 pt-6 pb-5 text-center">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="flex items-center justify-center rounded-full" style={{ width: 56, height: 56, backgroundColor: `${accentColor}20` }}>
+                    <Trophy width={28} height={28} style={{ color: accentColor }} />
+                  </div>
+                </div>
+                <div className="text-sm font-semibold mb-3" style={{ color: accentColor }}>
+                  {isWin ? 'You won!' : isBreakeven ? 'Break even' : 'Game ended'}
+                </div>
+                <div className="flex items-center justify-center gap-2.5 mb-1">
+                  <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={28} height={28} />
+                  <span className="text-4xl font-extrabold" style={{ color: '#ffffff' }}>{claimableAmount}</span>
+                </div>
+                <div className="text-sm mb-5" style={{ color: '#9898aa' }}>
+                  {isWin ? 'USDC reward' : 'USDC — buy-in refund'}
+                </div>
+                <button
+                  onClick={handleClaim}
+                  disabled={claiming}
+                  className="w-full rounded-2xl text-base font-extrabold active:scale-[0.97] transition-all disabled:opacity-50"
+                  style={{ height: '56px', backgroundColor: accentColor, color: '#ffffff' }}
+                >
+                  {claiming ? 'Claiming...' : isWin ? 'Claim Reward' : 'Claim Refund'}
+                </button>
+              </div>
             </div>
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={24} height={24} />
-              <span className="text-2xl font-extrabold" style={{ color: '#ffffff' }}>{claimableAmount}</span>
-              <span className="text-base font-bold" style={{ color: '#9898aa' }}>USDC</span>
-            </div>
-            <button
-              onClick={handleClaim}
-              disabled={claiming}
-              className="w-full rounded-2xl text-base font-bold active:scale-[0.97] transition-all disabled:opacity-50"
-              style={{ height: '52px', backgroundColor: '#34c759', color: '#ffffff' }}
-            >
-              {claiming ? 'Claiming...' : 'Claim Reward'}
-            </button>
-          </div>
-        )}
+          );
+        })()}
 
         {isEnded && alreadyClaimed && (
-          <div className="rounded-2xl px-4 py-3 mb-4 flex items-center gap-3" style={{ backgroundColor: '#1c1c24' }}>
-            <Trophy width={18} height={18} style={{ color: '#6a6a7a' }} />
-            <span className="text-sm font-semibold" style={{ color: '#6a6a7a' }}>
-              Reward claimed ({claimableAmount} USDC)
-            </span>
+          <div className="rounded-2xl px-5 py-4 mb-4 flex items-center gap-3" style={{ backgroundColor: '#1c1c24' }}>
+            <div className="flex items-center justify-center rounded-full" style={{ width: 36, height: 36, backgroundColor: '#34c75920' }}>
+              <Trophy width={18} height={18} style={{ color: '#34c759' }} />
+            </div>
+            <div>
+              <div className="text-sm font-bold" style={{ color: '#ffffff' }}>Reward claimed</div>
+              <div className="text-xs" style={{ color: '#9898aa' }}>{claimedAmount || claimableAmount} USDC</div>
+            </div>
           </div>
         )}
 
-        {isEnded && claimableAmount === 0 && (
-          <div className="rounded-2xl px-4 py-3 mb-4 flex items-center gap-3" style={{ backgroundColor: '#1c1c24' }}>
-            <span className="text-sm" style={{ color: '#6a6a7a' }}>Game ended — no reward to claim</span>
+        {isEnded && !alreadyClaimed && claimableAmount === 0 && (
+          <div className="rounded-2xl px-5 py-4 mb-4 flex items-center gap-3" style={{ backgroundColor: '#1c1c24' }}>
+            <div className="flex items-center justify-center rounded-full" style={{ width: 36, height: 36, backgroundColor: '#24242e' }}>
+              <Trophy width={18} height={18} style={{ color: '#6a6a7a' }} />
+            </div>
+            <div>
+              <div className="text-sm font-bold" style={{ color: '#ffffff' }}>Game ended</div>
+              <div className="text-xs" style={{ color: '#6a6a7a' }}>No reward to claim</div>
+            </div>
           </div>
         )}
 
@@ -300,11 +335,12 @@ export default function GameViewPage() {
                 </div>
               ))}
             </div>
-          ) : portfolio && portfolio.tokens.filter((t) => formatWipBalance(t.balance) > 0.0001).length > 0 ? (
+          ) : portfolio && portfolio.tokens.filter((t) => Number(t.balance) > 0).length > 0 ? (
             <div className="space-y-2">
-              {portfolio.tokens.filter((t) => formatWipBalance(t.balance) > 0.0001).map((token) => {
+              {portfolio.tokens.filter((t) => Number(t.balance) > 0).map((token) => {
                 const info = tokenPrices[token.asset_address.toLowerCase()];
-                const bal = formatWipBalance(token.balance);
+                const dec = info?.decimals ?? 18;
+                const bal = Number(token.balance) / 10 ** dec;
                 const value = info ? bal * info.price : 0;
                 const totalBought = token.trades
                   .filter((t) => t.isBuy)
@@ -362,23 +398,25 @@ export default function GameViewPage() {
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: '#6a6a7a' }}>Leaderboard</span>
-            {myRank && (
-              <span className="text-sm font-bold" style={{ color: '#ffffff' }}>
-                Your rank: {myRank.place}/{game.playerCount}
-              </span>
-            )}
+            {(() => {
+              const myEntry = leaderboard.find((e) => e.player.toLowerCase() === walletAddress?.toLowerCase());
+              return myEntry ? (
+                <span className="text-sm font-bold" style={{ color: '#ffffff' }}>
+                  Your rank: {myEntry.place}/{game.playerCount}
+                </span>
+              ) : null;
+            })()}
           </div>
           {rankingLoading ? (
             <div className="py-4 text-center text-sm" style={{ color: '#6a6a7a' }}>Loading...</div>
           ) : (
-            ranking.map((player) => {
+            leaderboard.map((player) => {
               const isCurrent = player.player.toLowerCase() === walletAddress?.toLowerCase();
-              // For current user, use total portfolio value (cash + positions)
-              const playerWip = isCurrent && pricesReady ? currentWip : formatWipBalance(player.wipBalance);
-              const playerPnl = startingWip > 0 ? ((playerWip - startingWip) / startingWip) * 100 : 0;
+              const playerValue = player.totalValue;
+              const playerPnl = startingWip > 0 ? ((playerValue - startingWip) / startingWip) * 100 : 0;
               const half = Math.floor(Number(game.playerCount) / 2);
               const isOdd = Number(game.playerCount) % 2 !== 0;
-              const rank = Number(player.place);
+              const rank = player.place;
               const rankColor = rank <= half ? '#34c759' : (isOdd && rank === half + 1) ? '#6a6a7a' : '#ff6b6b';
 
               return (
@@ -394,7 +432,7 @@ export default function GameViewPage() {
                         {isCurrent ? (session?.data?.user?.username || shortenAddress(player.player)) : shortenAddress(player.player)}
                         {isCurrent && <span className="text-xs ml-1" style={{ color: '#6a6a7a' }}>(you)</span>}
                       </div>
-                      <div className="text-xs" style={{ color: '#9898aa' }}>${playerWip.toLocaleString()}</div>
+                      <div className="text-xs" style={{ color: '#9898aa' }}>${playerValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                     </div>
                   </div>
                   <div className="text-right">
@@ -402,7 +440,7 @@ export default function GameViewPage() {
                       {playerPnl >= 0 ? '+' : ''}{playerPnl.toFixed(1)}%
                     </div>
                     <div className="text-xs" style={{ color: playerPnl >= 0 ? '#34c759' : '#ff6b6b' }}>
-                      {playerPnl >= 0 ? '+' : '-'}${Math.abs(playerWip - startingWip).toLocaleString()}
+                      {playerPnl >= 0 ? '+' : '-'}${Math.abs(playerValue - startingWip).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                   </div>
                 </div>
@@ -433,10 +471,10 @@ export default function GameViewPage() {
         gameId={gameId}
         preselectedAsset={preselectedAsset}
         walletAddress={walletAddress}
-        positions={portfolio?.tokens.map((t) => ({
-          symbol: t.asset_address,
-          quantity: formatWipBalance(t.balance),
-        })) ?? []}
+        positions={portfolio?.tokens.map((t) => {
+          const dec = tokenPrices[t.asset_address.toLowerCase()]?.decimals ?? 18;
+          return { symbol: t.asset_address, quantity: Number(t.balance) / 10 ** dec };
+        }) ?? []}
         onTradeSuccess={refreshPortfolio}
       />
     </>

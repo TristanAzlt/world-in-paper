@@ -14,7 +14,7 @@ import { CountdownTimer } from '@/components/CountdownTimer';
 import { SkeletonList } from '@/components/Skeleton';
 import { UsdcBalance } from '@/components/UsdcBalance';
 import { haptic } from '@/lib/haptics';
-import { getWorldIdProof } from '@/lib/worldid';
+import { getWorldIdProof, EMPTY_PROOF } from '@/lib/worldid';
 import { Page } from '@/components/PageLayout';
 
 function ExploreCard({ game, onClick }: { game: GameView; onClick: () => void }) {
@@ -163,7 +163,7 @@ export default function ExplorePage() {
             <div
               key={i}
               className="flex-shrink-0 rounded-3xl overflow-hidden"
-              style={{ background: card.bg, width: 'calc(80%)', scrollSnapAlign: 'start', border: `1px solid ${card.border}` }}
+              style={{ background: card.bg, width: 'calc(88%)', scrollSnapAlign: 'start', border: `1px solid ${card.border}` }}
             >
               <div className="p-5" style={{ minHeight: '150px' }}>
                 <h3 className="text-[15px] font-extrabold tracking-tight" style={{ color: '#fff' }}>{card.title}</h3>

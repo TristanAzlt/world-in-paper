@@ -71,6 +71,7 @@ export interface AssetToken {
   image: string;
   price: number;
   market_cap: number;
+  decimals?: number;
 }
 
 export interface HyperliquidAssets {

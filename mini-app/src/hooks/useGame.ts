@@ -38,8 +38,8 @@ export function usePlayerPortfolio(gameId?: string, walletAddress?: string) {
     try {
       const data = await api<PlayerPortfolio>(`/games/portfolio?gameId=${gameId}&user=${walletAddress}`);
       setPortfolio(data);
-    } catch (e) {
-      console.error('Failed to fetch portfolio:', e);
+    } catch {
+      // Portfolio may not exist yet (game not started, user not joined)
     } finally {
       setLoading(false);
     }

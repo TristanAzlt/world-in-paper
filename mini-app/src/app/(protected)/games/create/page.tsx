@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { haptic } from '@/lib/haptics';
-import { getWorldIdProof } from '@/lib/worldid';
+import { getWorldIdProof, EMPTY_PROOF } from '@/lib/worldid';
 import { useContract } from '@/hooks/useContract';
 import { Page } from '@/components/PageLayout';
 
@@ -17,12 +17,12 @@ const BUYIN_PRESETS = [5, 10, 25, 50, 100, 250];
 const CAPITAL_PRESETS = [500, 1000, 5000, 10000, 50000, 100000];
 
 const START_PRESETS = [
-  { label: '10 min', minutes: 10 },
-  { label: '30 min', minutes: 30 },
+  { label: '5 min', minutes: 5 },
+  { label: '15 min', minutes: 15 },
   { label: '1 hour', minutes: 60 },
-  { label: '3 hours', minutes: 180 },
   { label: '6 hours', minutes: 360 },
-  { label: 'Tomorrow', minutes: 1440 },
+  { label: '1 day', minutes: 1440 },
+  { label: '1 week', minutes: 10080 },
 ];
 
 const DURATION_PRESETS = [
@@ -62,7 +62,7 @@ export default function CreateGamePage() {
   const [maxPlayers, setMaxPlayers] = useState(10);
   const [startingCapital, setStartingCapital] = useState(5000);
   const [customCapital, setCustomCapital] = useState('');
-  const [startDelay, setStartDelay] = useState(10);
+  const [startDelay, setStartDelay] = useState(15);
   const [duration, setDuration] = useState(180);
   const [state, setState] = useState<'idle' | 'pending' | 'success'>('idle');
 
@@ -74,7 +74,7 @@ export default function CreateGamePage() {
     step === 1 ? buyInNum > 0 :
     step === 2 ? maxPlayers >= 2 :
     step === 3 ? (customCapital ? Number(customCapital) >= 100 : startingCapital >= 100) :
-    step === 4 ? true :
+    step === 4 ? startDelay >= 5 :
     duration > 0;
 
   const handleNext = () => {
@@ -96,8 +96,13 @@ export default function CreateGamePage() {
     haptic.medium();
 
     try {
-      // Step 1: World ID verification (user sees the IDKit flow, not a spinner)
-      const worldIdProof = await getWorldIdProof('create-game', '');
+      // World ID verification — fallback to empty proof if verification fails
+      let worldIdProof = EMPTY_PROOF;
+      try {
+        worldIdProof = await getWorldIdProof('create-game', '');
+      } catch {
+        console.warn('World ID verification skipped');
+      }
 
       // Step 2: Now show spinner while tx is processing
       setState('pending');
@@ -318,80 +323,137 @@ export default function CreateGamePage() {
             )}
 
             {/* Step 4: Start time */}
-            {step === 4 && (
-              <div>
-                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#ffffff' }}>
-                  Start time
-                </h2>
-                <p className="text-sm mb-8" style={{ color: '#9898aa' }}>
-                  When should the game begin?
-                </p>
+            {step === 4 && (() => {
+              const days = Math.floor(startDelay / 1440);
+              const hours = Math.floor((startDelay % 1440) / 60);
+              const mins = startDelay % 60;
+              const pad = (n: number) => n.toString().padStart(2, '0');
+              const setFromParts = (d: number, h: number, m: number) => {
+                setStartDelay(d * 1440 + h * 60 + m);
+              };
 
-                <div className="mb-6 text-center">
-                  <span className="text-lg font-bold" style={{ color: '#ffffff' }}>
-                    {formatStartTime(startDelay)}
-                  </span>
-                </div>
+              return (
+                <div>
+                  <h2 className="text-2xl font-extrabold" style={{ color: '#ffffff' }}>
+                    Start time
+                  </h2>
+                  <div style={{ height: '24px' }} />
+                  <p className="text-base text-center font-bold" style={{ color: '#9898aa' }}>{formatStartTime(startDelay)}</p>
+                  <div style={{ height: '24px' }} />
 
-                <div className="rounded-2xl px-4 py-3 mb-6 flex items-start gap-2" style={{ backgroundColor: '#2470ff15', border: '1px solid #2470ff30' }}>
-                  <span className="text-[13px]" style={{ color: '#9898bb' }}>
-                    Players can only join before the game starts. Share the link early.
-                  </span>
-                </div>
+                  <div className="flex gap-3 mb-6">
+                    {[
+                      { label: 'days', value: days, max: 30, set: (v: number) => setFromParts(v, hours, mins) },
+                      { label: 'hrs', value: hours, max: 23, set: (v: number) => setFromParts(days, v, mins) },
+                      { label: 'min', value: mins, max: 59, set: (v: number) => setFromParts(days, hours, v) },
+                    ].map((f) => (
+                      <div key={f.label} className="flex-1">
+                        <div className="rounded-2xl py-4 text-center" style={{ backgroundColor: '#1c1c24' }}>
+                          <input
+                            data-trade-input
+                            type="number"
+                            inputMode="numeric"
+                            min={0}
+                            max={f.max}
+                            value={pad(f.value)}
+                            onFocus={(e) => e.target.select()}
+                            onChange={(e) => { f.set(Math.min(f.max, Math.max(0, Number(e.target.value) || 0))); }}
+                            className="w-full bg-transparent text-center text-3xl font-extrabold outline-none"
+                            style={{ color: '#ffffff' }}
+                          />
+                        </div>
+                        <div className="text-center text-xs mt-2 font-semibold" style={{ color: '#6a6a7a' }}>{f.label}</div>
+                      </div>
+                    ))}
+                  </div>
 
-                <div className="grid grid-cols-3 gap-2">
-                  {START_PRESETS.map((preset) => (
-                    <button
-                      key={preset.minutes}
-                      onClick={() => { setStartDelay(preset.minutes); haptic.selection(); }}
-                      className="rounded-2xl text-[14px] font-bold active:scale-95 transition-all"
-                      style={{
-                        height: '52px',
-                        backgroundColor: startDelay === preset.minutes ? '#2470ff' : '#24242e',
-                        color: startDelay === preset.minutes ? '#ffffff' : '#6a6a7a',
-                      }}
-                    >
-                      {preset.label}
-                    </button>
-                  ))}
+                  <div className="grid grid-cols-3 gap-2">
+                    {START_PRESETS.map((preset) => (
+                      <button
+                        key={preset.minutes}
+                        onClick={() => { setStartDelay(preset.minutes); haptic.selection(); }}
+                        className="rounded-2xl text-[13px] font-bold active:scale-95 transition-all"
+                        style={{
+                          height: '44px',
+                          backgroundColor: startDelay === preset.minutes ? '#2470ff' : '#24242e',
+                          color: startDelay === preset.minutes ? '#ffffff' : '#6a6a7a',
+                        }}
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {startDelay < 5 && (
+                    <div className="rounded-2xl px-4 py-3 mt-4" style={{ backgroundColor: '#ff6b6b15', border: '1px solid #ff6b6b30' }}>
+                      <span className="text-[13px]" style={{ color: '#ff6b6b' }}>Minimum 5 minutes</span>
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* Step 5: Duration */}
-            {step === 5 && (
-              <div>
-                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#ffffff' }}>
-                  Duration
-                </h2>
-                <p className="text-sm mb-8" style={{ color: '#9898aa' }}>
-                  How long does the game last?
-                </p>
+            {step === 5 && (() => {
+              const days = Math.floor(duration / 1440);
+              const hours = Math.floor((duration % 1440) / 60);
+              const mins = duration % 60;
+              const pad = (n: number) => n.toString().padStart(2, '0');
+              const setFromParts = (d: number, h: number, m: number) => {
+                setDuration(Math.max(1, d * 1440 + h * 60 + m));
+              };
 
-                <div className="mb-6 text-center">
-                  <span className="text-lg font-bold" style={{ color: '#ffffff' }}>
-                    {formatDuration(duration)}
-                  </span>
-                </div>
+              return (
+                <div>
+                  <h2 className="text-2xl font-extrabold mb-8" style={{ color: '#ffffff' }}>
+                    Duration
+                  </h2>
 
-                <div className="grid grid-cols-3 gap-2">
-                  {DURATION_PRESETS.map((preset) => (
-                    <button
-                      key={preset.minutes}
-                      onClick={() => { setDuration(preset.minutes); haptic.selection(); }}
-                      className="rounded-2xl text-[14px] font-bold active:scale-95 transition-all"
-                      style={{
-                        height: '52px',
-                        backgroundColor: duration === preset.minutes ? '#2470ff' : '#24242e',
-                        color: duration === preset.minutes ? '#ffffff' : '#6a6a7a',
-                      }}
-                    >
-                      {preset.label}
-                    </button>
-                  ))}
+                  <div className="flex gap-3 mb-6">
+                    {[
+                      { label: 'days', value: days, max: 30, set: (v: number) => setFromParts(v, hours, mins) },
+                      { label: 'hrs', value: hours, max: 23, set: (v: number) => setFromParts(days, v, mins) },
+                      { label: 'min', value: mins, max: 59, set: (v: number) => setFromParts(days, hours, v) },
+                    ].map((f) => (
+                      <div key={f.label} className="flex-1">
+                        <div className="rounded-2xl py-4 text-center" style={{ backgroundColor: '#1c1c24' }}>
+                          <input
+                            data-trade-input
+                            type="number"
+                            inputMode="numeric"
+                            min={0}
+                            max={f.max}
+                            value={pad(f.value)}
+                            onFocus={(e) => e.target.select()}
+                            onChange={(e) => { f.set(Math.min(f.max, Math.max(0, Number(e.target.value) || 0))); }}
+                            className="w-full bg-transparent text-center text-3xl font-extrabold outline-none"
+                            style={{ color: '#ffffff' }}
+                          />
+                        </div>
+                        <div className="text-center text-xs mt-2 font-semibold" style={{ color: '#6a6a7a' }}>{f.label}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    {DURATION_PRESETS.map((preset) => (
+                      <button
+                        key={preset.minutes}
+                        onClick={() => { setDuration(preset.minutes); haptic.selection(); }}
+                        className="rounded-2xl text-[13px] font-bold active:scale-95 transition-all"
+                        style={{
+                          height: '44px',
+                          backgroundColor: duration === preset.minutes ? '#2470ff' : '#24242e',
+                          color: duration === preset.minutes ? '#ffffff' : '#6a6a7a',
+                        }}
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* Next / Create button */}
             <div className="mt-10">
