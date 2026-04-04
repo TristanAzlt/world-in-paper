@@ -286,9 +286,9 @@ export default function GameViewPage() {
                 </div>
               ))}
             </div>
-          ) : portfolio ? (
+          ) : (
             <div className="space-y-2">
-              {/* Cash line */}
+              {/* Cash */}
               <div className="flex items-center justify-between rounded-2xl p-4" style={{ backgroundColor: '#1c1c24' }}>
                 <div className="flex items-center gap-3">
                   <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={40} height={40} />
@@ -301,14 +301,7 @@ export default function GameViewPage() {
               </div>
 
               {/* Token positions */}
-              {portfolio.tokens.filter((t) => {
-                const i = tokenPrices[t.asset_address.toLowerCase()];
-                const d = i?.decimals ?? 6;
-                const v = i ? (Number(t.balance) / 10 ** d) * i.price : 0;
-                return v >= 1;
-              }).length > 0 ? (
-            <div className="space-y-2">
-              {portfolio.tokens.filter((t) => {
+              {portfolio && portfolio.tokens.filter((t) => {
                 const i = tokenPrices[t.asset_address.toLowerCase()];
                 const d = i?.decimals ?? 6;
                 const v = i ? (Number(t.balance) / 10 ** d) * i.price : 0;
@@ -362,20 +355,6 @@ export default function GameViewPage() {
                   </button>
                 );
               })}
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between rounded-2xl p-4" style={{ backgroundColor: '#1c1c24' }}>
-                <div className="flex items-center gap-3">
-                  <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={40} height={40} />
-                  <div>
-                    <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>Cash</div>
-                    <div className="text-xs" style={{ color: '#9898aa' }}>USDC</div>
-                  </div>
-                </div>
-                <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>${cashBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-              </div>
-              <div className="py-4 text-center text-sm" style={{ color: '#6a6a7a' }}>No positions yet</div>
             </div>
           )}
         </div>
