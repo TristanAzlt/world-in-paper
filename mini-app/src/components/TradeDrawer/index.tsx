@@ -25,6 +25,10 @@ function originToNum(origin: string): number {
   return map[origin.toLowerCase()] ?? 5;
 }
 
+const ORIGIN_NUM_TO_KEY: Record<string, OriginKey> = {
+  '0': 'solana', '1': 'base', '2': 'ethereum', '3': 'bsc', '4': 'worldchain', '5': 'hyperliquid',
+};
+
 interface TradeDrawerProps {
   isOpen: boolean;
   onClose: () => void;
@@ -57,6 +61,16 @@ function formatPrice(price: number): string {
   if (price >= 1) return `$${price.toFixed(2)}`;
   if (price >= 0.01) return `$${price.toFixed(4)}`;
   return `$${price.toPrecision(4)}`;
+}
+
+function formatQty(n: number): string {
+  if (n === 0) return '0';
+  if (n >= 1e9) return `${(n / 1e9).toFixed(2)}B`;
+  if (n >= 1e6) return `${(n / 1e6).toFixed(2)}M`;
+  if (n >= 1e3) return `${(n / 1e3).toFixed(2)}K`;
+  if (n >= 1) return n.toFixed(4);
+  if (n >= 0.0001) return n.toFixed(6);
+  return n.toPrecision(4);
 }
 
 function AssetRowItem({ asset, onSelect }: { asset: AssetToken; onSelect: (a: AssetToken) => void }) {
@@ -93,7 +107,8 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
   const [amount, setAmount] = useState('');
 
   const { submitTrade } = useContract();
-  const { quote, loading: quoteLoading, getQuote } = useQuote();
+  const { quote, loading: quoteLoading, failed: quoteFailed, getQuote } = useQuote();
+  const [preselectionUsed, setPreselectionUsed] = useState(false);
 
   // Fetch assets based on current selection
   const activeOrigin: OriginKey = mainTab === 'crypto'
@@ -102,9 +117,22 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
 
   const { tokens, categories, loading: assetsLoading } = useAssets(activeOrigin);
 
-  // Auto-select preselected asset when assets load
+  // Auto-select preselected asset: first switch origin, then find asset
+  const preselectedOriginKey = preselectedAsset ? ORIGIN_NUM_TO_KEY[preselectedAsset.origin] || 'hyperliquid' : null;
+
   useEffect(() => {
-    if (!preselectedAsset || !isOpen || selectedAsset) return;
+    if (!preselectedAsset || !isOpen || selectedAsset || preselectionUsed) return;
+    if (preselectedOriginKey === 'hyperliquid') {
+      setMainTab('crypto');
+      setCryptoSub('top');
+    } else if (preselectedOriginKey) {
+      setMainTab('crypto');
+      setCryptoSub(preselectedOriginKey);
+    }
+  }, [preselectedAsset, isOpen, selectedAsset, preselectedOriginKey, preselectionUsed]);
+
+  useEffect(() => {
+    if (!preselectedAsset || !isOpen || selectedAsset || preselectionUsed) return;
     const allAssets = categories
       ? [...(categories.crypto || []), ...(categories.stocks || []), ...(categories.indices || []), ...(categories.commodities || [])]
       : tokens;
@@ -113,8 +141,9 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
       setSelectedAsset(match);
       setStep('order');
       setSide('sell');
+      setPreselectionUsed(true);
     }
-  }, [preselectedAsset, isOpen, tokens, categories, selectedAsset]);
+  }, [preselectedAsset, isOpen, tokens, categories, selectedAsset, preselectionUsed]);
 
   const displayAssets = useMemo(() => {
     let assets: AssetToken[] = [];
@@ -158,9 +187,10 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
   const tokenBalance = selectedAsset
     ? positions.find((p) => p.symbol === selectedAsset.address || p.symbol === selectedAsset.symbol)?.quantity ?? 0
     : 0;
-  const canConfirm = side === 'buy'
+  const hasQuote = quote && quote.price > 0;
+  const canConfirm = hasQuote && (side === 'buy'
     ? amountNum > 0 && amountNum <= availableBalance
-    : amountNum > 0 && amountNum <= tokenBalance;
+    : amountNum > 0 && amountNum <= tokenBalance);
 
   const handleSelectAsset = (asset: AssetToken) => {
     haptic.light();
@@ -171,6 +201,7 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
   };
 
   const handleBack = () => {
+    haptic.light();
     setStep('select');
     setSelectedAsset(null);
   };
@@ -244,6 +275,8 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
     setSelectedAsset(null);
     setSide('buy');
     setAmount('');
+    setPreselectionUsed(false);
+    haptic.light();
     onClose();
   };
 
@@ -442,7 +475,7 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
                 <div className="mt-2 text-xs" style={{ color: '#9898aa' }}>
                   Available: {side === 'buy'
                     ? `$${availableBalance.toLocaleString()}`
-                    : `${tokenBalance.toPrecision(6)} ${selectedAsset.symbol}`
+                    : `${formatQty(tokenBalance)} ${selectedAsset.symbol}`
                   }
                 </div>
               </div>
@@ -494,7 +527,7 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
                 ) : (
                   <AnimatedText className="mt-1 text-lg font-bold" style={{ color: '#ffffff', display: 'block' }}>
                     {side === 'buy'
-                      ? `~${estimatedTokens.toPrecision(6)} ${selectedAsset.symbol}`
+                      ? `~${formatQty(estimatedTokens)} ${selectedAsset.symbol}`
                       : `~$${estimatedTokens.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                     }
                   </AnimatedText>
@@ -505,9 +538,13 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
                 onClick={handleConfirm}
                 disabled={!canConfirm}
                 className="w-full rounded-2xl text-[17px] font-bold transition-all active:scale-[0.97] disabled:opacity-30"
-                style={{ backgroundColor: '#2470ff', color: '#ffffff', height: '64px' }}
+                style={{
+                  backgroundColor: quoteFailed ? '#ff6b6b' : '#2470ff',
+                  color: '#ffffff',
+                  height: '64px',
+                }}
               >
-                Execute Trade
+                {quoteFailed ? 'Something went wrong' : 'Execute Trade'}
               </button>
             </div>
           </div>

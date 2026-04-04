@@ -121,47 +121,54 @@ export default function ExplorePage() {
           {[
             {
               title: 'Trade Anything',
-              desc: 'Crypto, stocks, Solana tokens — trade across all chains in one place.',
-              bg: 'linear-gradient(135deg, #1a1a3e, #252548)',
-              icons: (
-                <div className="flex -space-x-3 mt-3">
-                  <img src="https://app.hyperliquid.xyz/coins/BTC.svg" className="h-10 w-10 rounded-full" style={{ border: '2px solid #252548' }} alt="" />
-                  <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" className="h-10 w-10 rounded-full" style={{ border: '2px solid #252548' }} alt="" />
-                  <img src="https://app.hyperliquid.xyz/coins/SOL.svg" className="h-10 w-10 rounded-full" style={{ border: '2px solid #252548' }} alt="" />
+              desc: 'Crypto, stocks, commodities — trade across all chains in one place.',
+              bg: 'linear-gradient(135deg, #0d1b3e 0%, #1a2f5e 50%, #0f1f4a 100%)',
+              border: '#1e3a6e',
+              content: (
+                <div className="flex -space-x-2 mt-4">
+                  <img src="https://app.hyperliquid.xyz/coins/BTC.svg" className="h-9 w-9 rounded-full" style={{ border: '2px solid #1a2f5e' }} alt="" />
+                  <img src="/ethereum-eth.svg" className="h-9 w-9 rounded-full" style={{ border: '2px solid #1a2f5e' }} alt="" />
+                  <img src="https://app.hyperliquid.xyz/coins/SOL.svg" className="h-9 w-9 rounded-full" style={{ border: '2px solid #1a2f5e' }} alt="" />
+                  <img src="https://app.hyperliquid.xyz/coins/xyz:AAPL.svg" className="h-9 w-9 rounded-full" style={{ border: '2px solid #1a2f5e', backgroundColor: '#1a2f5e' }} alt="" />
+                  <img src="https://app.hyperliquid.xyz/coins/xyz:TSLA.svg" className="h-9 w-9 rounded-full" style={{ border: '2px solid #1a2f5e', backgroundColor: '#1a2f5e' }} alt="" />
+                  <img src="https://app.hyperliquid.xyz/coins/xyz:GOLD.svg" className="h-9 w-9 rounded-full" style={{ border: '2px solid #1a2f5e', backgroundColor: '#1a2f5e' }} alt="" />
                 </div>
               ),
             },
             {
               title: 'Win 2x Your Buy-in',
-              desc: 'Finish in the top 50% and double your entry. Best traders take it all.',
-              bg: 'linear-gradient(135deg, #0f2a1a, #1a3a28)',
-              icons: (
-                <div className="mt-3 text-3xl font-extrabold" style={{ color: '#34c759', opacity: 0.3 }}>
-                  TOP 50% = 2x
+              desc: 'Top 50% doubles their entry. Compete with real market prices, virtual portfolio.',
+              bg: 'linear-gradient(135deg, #0d1b3e 0%, #162d55 50%, #0f1f4a 100%)',
+              border: '#1e3a6e',
+              content: (
+                <div className="mt-4 flex items-baseline gap-2">
+                  <span className="text-3xl font-black" style={{ color: '#ffffff' }}>2x</span>
+                  <span className="text-sm font-bold" style={{ color: '#9898aa' }}>payout for winners</span>
                 </div>
               ),
             },
             {
-              title: 'Zero Risk Trading',
-              desc: 'Virtual portfolio with real market prices. Only your buy-in is on the line.',
-              bg: 'linear-gradient(135deg, #1a1a2e, #2a2a40)',
-              icons: (
-                <div className="mt-3 flex items-center gap-2 opacity-40">
-                  <Image src="/usd-coin-usdc-logo.svg" alt="" width={28} height={28} />
-                  <span className="text-sm font-bold" style={{ color: '#9898aa' }}>Paper Trading</span>
+              title: 'Zero Risk',
+              desc: 'Paper trade with real prices. Only your USDC buy-in is at stake — not your portfolio.',
+              bg: 'linear-gradient(135deg, #0d1530 0%, #1a2545 50%, #0f1835 100%)',
+              border: '#1e3060',
+              content: (
+                <div className="mt-4 flex items-center gap-2">
+                  <Image src="/usd-coin-usdc-logo.svg" alt="" width={24} height={24} style={{ opacity: 0.4 }} />
+                  <span className="text-sm font-bold" style={{ color: '#9898aa' }}>Virtual Portfolio</span>
                 </div>
               ),
             },
           ].map((card, i) => (
             <div
               key={i}
-              className="flex-shrink-0 rounded-2xl overflow-hidden"
-              style={{ background: card.bg, width: 'calc(85%)', scrollSnapAlign: 'start' }}
+              className="flex-shrink-0 rounded-3xl overflow-hidden"
+              style={{ background: card.bg, width: 'calc(80%)', scrollSnapAlign: 'start', border: `1px solid ${card.border}` }}
             >
-              <div className="p-5" style={{ minHeight: '160px' }}>
-                <h3 className="text-base font-extrabold" style={{ color: '#fff' }}>{card.title}</h3>
-                <p className="mt-2 text-[13px] leading-relaxed" style={{ color: '#9898bb' }}>{card.desc}</p>
-                {card.icons}
+              <div className="p-5" style={{ minHeight: '150px' }}>
+                <h3 className="text-[15px] font-extrabold tracking-tight" style={{ color: '#fff' }}>{card.title}</h3>
+                <p className="mt-1.5 text-[13px] leading-relaxed" style={{ color: '#9898bb' }}>{card.desc}</p>
+                {card.content}
               </div>
             </div>
           ))}

@@ -7,6 +7,7 @@ import { type QuoteResponse, type OriginKey } from '@/types';
 export function useQuote() {
   const [quote, setQuote] = useState<QuoteResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [failed, setFailed] = useState(false);
   const debounceRef = useRef<NodeJS.Timeout>();
 
   const getQuote = useCallback(async (
@@ -20,6 +21,7 @@ export function useQuote() {
     return new Promise<QuoteResponse | null>((resolve) => {
       debounceRef.current = setTimeout(async () => {
         setLoading(true);
+        setFailed(false);
         try {
           const data = await api<QuoteResponse>('/quote', {
             method: 'POST',
@@ -29,6 +31,8 @@ export function useQuote() {
           resolve(data);
         } catch (e) {
           console.error('Quote failed:', e);
+          setQuote(null);
+          setFailed(true);
           resolve(null);
         } finally {
           setLoading(false);
@@ -37,5 +41,5 @@ export function useQuote() {
     });
   }, []);
 
-  return { quote, loading, getQuote };
+  return { quote, loading, failed, getQuote };
 }

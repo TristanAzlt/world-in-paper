@@ -11,6 +11,7 @@ import { useMyGames } from '@/hooks/useGames';
 import { CountdownTimer } from '@/components/CountdownTimer';
 import { SkeletonList } from '@/components/Skeleton';
 import { UsdcBalance } from '@/components/UsdcBalance';
+import { haptic } from '@/lib/haptics';
 import { Page } from '@/components/PageLayout';
 
 function MyGameCard({ game, onClick }: { game: GameView; onClick: () => void }) {
@@ -99,14 +100,14 @@ export default function MyGamesPage() {
             }}
           />
           <button
-            onClick={() => setFilter('active')}
+            onClick={() => { setFilter('active'); haptic.selection(); }}
             className="relative z-10 flex-1 text-[15px] font-bold"
             style={{ color: filter === 'active' ? '#ffffff' : '#6a6a7a' }}
           >
             Active
           </button>
           <button
-            onClick={() => setFilter('ended')}
+            onClick={() => { setFilter('ended'); haptic.selection(); }}
             className="relative z-10 flex-1 text-[15px] font-bold"
             style={{ color: filter === 'ended' ? '#ffffff' : '#6a6a7a' }}
           >
@@ -122,7 +123,7 @@ export default function MyGamesPage() {
               <MyGameCard
                 key={game.id}
                 game={game}
-                onClick={() => router.push(`/my-games/${game.id}`)}
+                onClick={() => { router.push(`/my-games/${game.id}`); haptic.light(); }}
               />
             ))}
           </div>

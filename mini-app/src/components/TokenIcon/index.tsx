@@ -9,10 +9,15 @@ interface TokenIconProps {
   size?: number;
 }
 
+const ICON_OVERRIDES: Record<string, string> = {
+  ETH: '/ethereum-eth.svg',
+};
+
 export function TokenIcon({ src, alt, size = 40 }: TokenIconProps) {
+  const resolvedSrc = ICON_OVERRIDES[alt] || src;
   const [error, setError] = useState(false);
 
-  if (error || !src) {
+  if (error || !resolvedSrc) {
     return (
       <div
         className="flex items-center justify-center rounded-full"
@@ -25,7 +30,7 @@ export function TokenIcon({ src, alt, size = 40 }: TokenIconProps) {
 
   return (
     <img
-      src={src}
+      src={resolvedSrc}
       alt={alt}
       className="rounded-full"
       style={{ width: size, height: size, backgroundColor: '#24242e' }}

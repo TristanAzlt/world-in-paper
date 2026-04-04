@@ -16,8 +16,8 @@ import { TOKENS } from '@/lib/constants';
 import { parseUnits, formatUnits } from 'viem';
 
 const TOKEN_ICONS: Record<string, string> = {
-  ETH: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
-  WETH: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
+  ETH: '/ethereum-eth.svg',
+  WETH: '/ethereum-eth.svg',
   WLD: 'https://app.hyperliquid.xyz/coins/WLD.svg',
   WBTC: 'https://app.hyperliquid.xyz/coins/BTC.svg',
   uXRP: 'https://app.hyperliquid.xyz/coins/XRP.svg',
