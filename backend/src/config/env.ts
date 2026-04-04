@@ -11,7 +11,8 @@ const envSchema = z.object({
     RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(60_000),
     RATE_LIMIT_MAX: z.coerce.number().int().positive().default(200),
     BODY_LIMIT: z.string().default('10kb'),
-    CORS_ORIGIN: z.string().default('*')
+    CORS_ORIGIN: z.string().default('*'),
+    UNISWAP_API_KEY: z.string().default('')
 });
 
 const parsed = envSchema.safeParse(process.env);

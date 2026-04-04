@@ -18,6 +18,37 @@ const configuredCategoryByName = new Map<string, HyperliquidCategory>(
 type CategorizedAssets = Record<HyperliquidCategory, HyperliquidAsset[]>;
 
 export class HyperliquidService {
+    async getMidPrice(symbol: string): Promise<number> {
+        const isTradfi = symbol.startsWith('xyz:');
+        const body = isTradfi
+            ? { type: 'allMids', dex: 'xyz' }
+            : { type: 'allMids' };
+
+        const response = await fetch(HYPERLIQUID_INFO_URL, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Hyperliquid HTTP ${response.status}`);
+        }
+
+        const prices = await response.json() as Record<string, string>;
+        const mid = prices[symbol] ?? prices[`xyz:${symbol}`];
+
+        if (!mid) {
+            throw new Error(`No price for "${symbol}" on Hyperliquid`);
+        }
+
+        const price = Number(mid);
+        if (!Number.isFinite(price) || price <= 0) {
+            throw new Error(`Invalid price for "${symbol}" on Hyperliquid`);
+        }
+
+        return price;
+    }
+
     async getCategorizedAssets(): Promise<CategorizedAssets> {
         const [hyperliquidAssets, xyzAssets] = await Promise.all([
             this.getHyperliquidAssets(),
