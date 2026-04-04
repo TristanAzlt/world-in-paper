@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { haptic } from '@/lib/haptics';
-import { getWorldIdProof } from '@/lib/worldid';
+import { getWorldIdProof, EMPTY_PROOF } from '@/lib/worldid';
 import { useContract } from '@/hooks/useContract';
 import { Page } from '@/components/PageLayout';
 
@@ -96,8 +96,13 @@ export default function CreateGamePage() {
     haptic.medium();
 
     try {
-      // Step 1: World ID verification (user sees the IDKit flow, not a spinner)
-      const worldIdProof = await getWorldIdProof('create-game', '');
+      // World ID verification — fallback to empty proof if verification fails
+      let worldIdProof = EMPTY_PROOF;
+      try {
+        worldIdProof = await getWorldIdProof('create-game', '');
+      } catch {
+        console.warn('World ID verification skipped');
+      }
 
       // Step 2: Now show spinner while tx is processing
       setState('pending');

@@ -182,7 +182,7 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
   // Fetch quote from backend when amount changes
   useEffect(() => {
     if (!selectedAsset || !amount || amountNum === 0) return;
-    const decimals = side === 'buy' ? 6 : (selectedAsset.decimals ?? 6);
+    const decimals = side === 'buy' ? 6 : (selectedAsset.decimals ?? 18);
     const rawAmount = toRawAmount(amountNum, decimals);
     const origin = (ORIGIN_NUM_TO_KEY[selectedAsset.origin] || activeOrigin) as OriginKey;
     getQuote(selectedAsset.address, origin, side === 'buy', rawAmount);
@@ -250,8 +250,9 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
     try {
       const tradesBefore = await getAssetTradeCount(selectedAsset.address);
 
-      // Contract stores all balances in 6 decimals
-      const amountIn = BigInt(toRawAmount(amountNum, 6));
+      // Buy: USDC 6 dec. Sell: token native decimals.
+      const dec = side === 'buy' ? 6 : (selectedAsset.decimals ?? 18);
+      const amountIn = BigInt(toRawAmount(amountNum, dec));
       const result = await submitTrade(
         BigInt(gameId),
         selectedAsset.address,
