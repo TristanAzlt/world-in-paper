@@ -82,7 +82,9 @@ export class HyperliquidService {
                 const candidate = hyperliquidAssetSchema.safeParse({
                     origin: 'hyperliquid',
                     category,
-                    address: `hyperliquid:${market.name.toLowerCase()}`,
+                    // Keep IDs compatible with allMids keys used by the workflow.
+                    // Examples: BTC, ETH, xyz:TSLA, @12.
+                    address: market.name,
                     name: market.name,
                     symbol,
                     image: `https://app.hyperliquid.xyz/coins/${symbol}.svg`,
