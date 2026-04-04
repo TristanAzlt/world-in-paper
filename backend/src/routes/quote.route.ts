@@ -61,6 +61,7 @@ export class QuoteRoute {
 
             return res.status(200).json(payload);
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 error: 'Failed to fetch quote',
                 details: error instanceof Error ? error.message : 'Unknown error'

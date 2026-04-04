@@ -5,7 +5,7 @@ const USDC_BY_ORIGIN: Partial<Record<Origin, string>> = {
     base: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
     ethereum: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
     bsc: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',
-    worldchain: '0x79A02482A880bCE3B13e09Da970dC34db4CD24d1'
+    worldchain: '0x79A02482A880bCE3F13e09Da970dC34db4CD24d1'
 };
 
 const CHAIN_ID_BY_ORIGIN: Partial<Record<Origin, number>> = {
@@ -16,6 +16,8 @@ const CHAIN_ID_BY_ORIGIN: Partial<Record<Origin, number>> = {
 };
 
 const DUMMY_SWAPPER = '0x0000000000000000000000000000000000000001';
+const UNISWAP_PROTOCOLS = ["V2", "V3", "V4"] as const;
+const UNISWAP_ROUTING_PREFERENCE = "BEST_PRICE" as const;
 
 export class UniswapService {
     async getQuote(tokenAddress: string, isBuy: boolean, amount: string, origin: Origin): Promise<number> {
@@ -46,7 +48,9 @@ export class UniswapService {
                 tokenOut,
                 tokenInChainId: chainId,
                 tokenOutChainId: chainId,
-                swapper: DUMMY_SWAPPER
+                swapper: DUMMY_SWAPPER,
+                protocols: [...UNISWAP_PROTOCOLS],
+                routingPreference: UNISWAP_ROUTING_PREFERENCE
             })
         });
 

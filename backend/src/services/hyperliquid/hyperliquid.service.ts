@@ -118,7 +118,7 @@ export class HyperliquidService {
                     address: market.name,
                     name: market.name,
                     symbol,
-                    image: `https://app.hyperliquid.xyz/coins/${name}.svg`,
+                    image: `https://app.hyperliquid.xyz/coins/${market.name}.svg`,
                     price,
                     market_cap: marketCap
                 });
