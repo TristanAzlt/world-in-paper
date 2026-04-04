@@ -16,8 +16,8 @@ import { TOKENS } from '@/lib/constants';
 import { parseUnits, formatUnits } from 'viem';
 
 const TOKEN_ICONS: Record<string, string> = {
-  ETH: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
-  WETH: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
+  ETH: '/ethereum-eth.svg',
+  WETH: '/ethereum-eth.svg',
   WLD: 'https://app.hyperliquid.xyz/coins/WLD.svg',
   WBTC: 'https://app.hyperliquid.xyz/coins/BTC.svg',
   uXRP: 'https://app.hyperliquid.xyz/coins/XRP.svg',
@@ -292,17 +292,24 @@ export function UsdcBalance() {
                   </div>
 
                   {/* Quote preview */}
-                  {amountNum > 0 && quote && (
-                    <div className="rounded-2xl py-3 px-4 flex items-center justify-between" style={{ backgroundColor: '#1c1c24' }}>
-                      <span className="text-sm" style={{ color: '#6a6a7a' }}>You receive</span>
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-sm font-bold" style={{ color: '#ffffff' }}>
-                          ~${usdcOut.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </span>
-                        <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={14} height={14} />
-                      </div>
+                  <div
+                    className="rounded-2xl py-3 px-4 flex items-center justify-between transition-all duration-300 overflow-hidden"
+                    style={{
+                      backgroundColor: '#1c1c24',
+                      maxHeight: amountNum > 0 && quote ? '60px' : '0px',
+                      opacity: amountNum > 0 && quote ? 1 : 0,
+                      padding: amountNum > 0 && quote ? undefined : '0 16px',
+                      marginTop: amountNum > 0 && quote ? undefined : '-8px',
+                    }}
+                  >
+                    <span className="text-sm" style={{ color: '#6a6a7a' }}>You receive</span>
+                    <div className="flex items-center gap-1.5">
+                      <AnimatedText className="text-sm font-bold" style={{ color: '#ffffff' }}>
+                        {`~$${usdcOut.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                      </AnimatedText>
+                      <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={14} height={14} />
                     </div>
-                  )}
+                  </div>
 
                   {/* Swap button */}
                   <button
@@ -318,7 +325,16 @@ export function UsdcBalance() {
             )}
 
             {state === 'swapping' && <LoadingSpinner label="Swapping..." />}
-            {state === 'done' && <SuccessState title={`+$${usdcOut.toFixed(2)} USDC`} subtitle="Added to your balance" />}
+            {state === 'done' && (
+              <SuccessState
+                title={
+                  <span className="flex items-center justify-center gap-2">
+                    +${usdcOut.toFixed(2)} <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={24} height={24} />
+                  </span>
+                }
+                subtitle="Added to your balance"
+              />
+            )}
             {state === 'error' && (
               <div className="flex flex-col items-center justify-center gap-4 py-16">
                 <div className="flex h-20 w-20 items-center justify-center rounded-full" style={{ backgroundColor: '#ff6b6b20' }}>

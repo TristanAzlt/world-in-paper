@@ -105,8 +105,8 @@ export default function CreateGamePage() {
       const capital = customCapital ? Number(customCapital) : startingCapital;
       const startTime = BigInt(Math.floor(Date.now() / 1000) + startDelay * 60);
       const endTime = BigInt(Math.floor(Date.now() / 1000) + startDelay * 60 + duration * 60);
-      const entryAmountRaw = BigInt(Math.round(buyInNum * 1e6));
-      const capitalRaw = BigInt(Math.round(capital * 1e6));
+      const entryAmountRaw = BigInt(Math.floor(buyInNum * 1e6));
+      const capitalRaw = BigInt(Math.floor(capital * 1e6));
 
       const result = await createGame(gameName, entryAmountRaw, capitalRaw, maxPlayers, startTime, endTime, worldIdProof);
       if (result?.data?.userOpHash) {

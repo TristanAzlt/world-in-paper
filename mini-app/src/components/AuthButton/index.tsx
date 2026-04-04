@@ -3,11 +3,13 @@
 import { walletAuth } from '@/auth/wallet';
 import { Spinner } from '@worldcoin/mini-apps-ui-kit-react';
 import { useMiniKit } from '@worldcoin/minikit-js/minikit-provider';
+import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export const AuthButton = () => {
   const [isPending, setIsPending] = useState(false);
   const { isInstalled } = useMiniKit();
+  const session = useSession();
   const hasAttemptedAuth = useRef(false);
 
   const onClick = useCallback(async () => {
@@ -15,15 +17,15 @@ export const AuthButton = () => {
     setIsPending(true);
     try {
       await walletAuth();
+      // Keep pending — redirect is happening
     } catch (error) {
       console.error('Auth error', error);
-    } finally {
       setIsPending(false);
     }
   }, [isInstalled, isPending]);
 
   useEffect(() => {
-    if (isInstalled === true && !hasAttemptedAuth.current) {
+    if (isInstalled === true && !hasAttemptedAuth.current && session.status !== 'authenticated') {
       hasAttemptedAuth.current = true;
       setIsPending(true);
       walletAuth()
@@ -32,7 +34,7 @@ export const AuthButton = () => {
           setIsPending(false);
         });
     }
-  }, [isInstalled]);
+  }, [isInstalled, session.status]);
 
   if (isPending) {
     return (

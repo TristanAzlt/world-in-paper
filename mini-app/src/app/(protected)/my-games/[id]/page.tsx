@@ -23,6 +23,16 @@ function shortenAddress(addr: string) {
   return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 }
 
+function formatQty(n: number): string {
+  if (n === 0) return '0';
+  if (n >= 1e9) return `${(n / 1e9).toFixed(2)}B`;
+  if (n >= 1e6) return `${(n / 1e6).toFixed(2)}M`;
+  if (n >= 1e3) return `${(n / 1e3).toFixed(2)}K`;
+  if (n >= 1) return n.toFixed(4);
+  if (n >= 0.0001) return n.toFixed(6);
+  return n.toPrecision(4);
+}
+
 export default function GameViewPage() {
   const params = useParams();
   const router = useRouter();
@@ -277,8 +287,19 @@ export default function GameViewPage() {
         {/* Positions */}
         <div className="mb-8">
           <div className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: '#6a6a7a' }}>Positions</div>
-          {portfolioLoading ? (
-            <div className="py-4 text-center text-sm" style={{ color: '#6a6a7a' }}>Loading...</div>
+          {portfolioLoading || (hasTokens && !pricesReady) ? (
+            <div className="space-y-2">
+              {[1, 2].map((i) => (
+                <div key={i} className="flex items-center gap-3 rounded-2xl p-4" style={{ backgroundColor: '#1c1c24' }}>
+                  <div className="h-10 w-10 rounded-full animate-pulse" style={{ backgroundColor: '#24242e' }} />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-16 rounded animate-pulse" style={{ backgroundColor: '#24242e' }} />
+                    <div className="h-3 w-24 rounded animate-pulse" style={{ backgroundColor: '#24242e' }} />
+                  </div>
+                  <div className="h-4 w-16 rounded animate-pulse" style={{ backgroundColor: '#24242e' }} />
+                </div>
+              ))}
+            </div>
           ) : portfolio && portfolio.tokens.filter((t) => formatWipBalance(t.balance) > 0.0001).length > 0 ? (
             <div className="space-y-2">
               {portfolio.tokens.filter((t) => formatWipBalance(t.balance) > 0.0001).map((token) => {
@@ -312,7 +333,7 @@ export default function GameViewPage() {
                           {info?.symbol || token.asset_address}
                         </div>
                         <div className="text-xs" style={{ color: '#9898aa' }}>
-                          {bal.toPrecision(6)} {info?.symbol || ''}
+                          {formatQty(bal)} {info?.symbol || ''}
                         </div>
                       </div>
                     </div>
