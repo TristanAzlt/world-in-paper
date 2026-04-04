@@ -36,9 +36,12 @@ export const AuthButton = () => {
 
   if (isPending) {
     return (
-      <div className="flex flex-col items-center gap-3">
-        <Spinner />
-        <p className="text-sm" style={{ color: '#aaa' }}>Connecting...</p>
+      <div className="flex flex-col items-center gap-4">
+        <div
+          className="h-10 w-10 rounded-full animate-spin"
+          style={{ border: '3px solid #24242e', borderTopColor: '#2470ff' }}
+        />
+        <p className="text-sm font-semibold" style={{ color: '#9898aa' }}>Connecting...</p>
       </div>
     );
   }
@@ -48,7 +51,7 @@ export const AuthButton = () => {
       onClick={onClick}
       disabled={isPending}
       className="rounded-full text-base font-bold active:scale-95 transition-all"
-      style={{ height: '56px', width: '220px', backgroundColor: '#111', color: '#fff' }}
+      style={{ height: '56px', width: '220px', backgroundColor: '#2470ff', color: '#ffffff' }}
     >
       Sign In
     </button>

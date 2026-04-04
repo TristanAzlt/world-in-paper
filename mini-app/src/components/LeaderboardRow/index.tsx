@@ -21,9 +21,9 @@ export function LeaderboardRow({ player, isCurrentUser }: LeaderboardRowProps) {
             className={clsx(
               'flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold',
               player.rank === 1 && 'bg-yellow-100 text-yellow-700',
-              player.rank === 2 && 'bg-gray-100 text-gray-600',
+              player.rank === 2 && 'bg-[#24242e] text-gray-600',
               player.rank === 3 && 'bg-orange-100 text-orange-700',
-              player.rank > 3 && 'bg-gray-50 text-gray-400',
+              player.rank > 3 && 'bg-[#24242e] text-[#6a6a7a]',
             )}
           >
             {player.rank}
@@ -39,7 +39,7 @@ export function LeaderboardRow({ player, isCurrentUser }: LeaderboardRowProps) {
         <span
           className={clsx(
             'text-sm font-medium',
-            isPositive ? 'text-green-600' : 'text-red-600',
+            isPositive ? 'text-[#34c759]' : 'text-[#ff6b6b]',
           )}
         >
           {isPositive ? '+' : ''}{player.pnlPercent.toFixed(1)}%

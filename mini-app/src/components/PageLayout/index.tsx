@@ -18,7 +18,7 @@ const Header = (props: { children: ReactNode; className?: string }) => {
   return (
     <header
       className={twMerge(
-        'bg-white flex flex-col justify-center px-6 pt-6 pb-3 z-10',
+        'flex flex-col justify-center px-6 pt-6 pb-3 z-10',
         clsx(props.className),
       )}
     >
@@ -33,16 +33,16 @@ const Main = (props: { children: ReactNode; className?: string; style?: React.CS
       className={twMerge(
         clsx('grow overflow-y-auto p-6 pt-3', props.className),
       )}
-      style={{ paddingBottom: '120px', ...props.style }}
+      style={{ paddingBottom: '160px', ...props.style }}
     >
       {props.children}
     </main>
   );
 };
 
-const Footer = (props: { children: ReactNode; className?: string }) => {
+const Footer = (props: { children: ReactNode; className?: string; style?: React.CSSProperties }) => {
   return (
-    <footer className={twMerge('px-6 pb-[35px]', clsx(props.className))}>
+    <footer className={twMerge('px-6 pb-[35px]', clsx(props.className))} style={props.style}>
       {props.children}
     </footer>
   );

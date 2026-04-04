@@ -6,10 +6,10 @@ export default function Home() {
     <Page>
       <Page.Main className="flex flex-col items-center justify-center gap-8">
         <div className="text-center">
-          <h1 className="text-3xl font-extrabold" style={{ color: '#111' }}>
+          <h1 className="text-3xl font-extrabold" style={{ color: '#ffffff' }}>
             World In Paper
           </h1>
-          <p className="mt-2 text-base" style={{ color: '#aaa' }}>
+          <p className="mt-2 text-base" style={{ color: '#9898aa' }}>
             Competitive paper trading
           </p>
         </div>

@@ -15,7 +15,7 @@ export function PositionRow({ position }: PositionRowProps) {
         <img
           src={position.asset.iconUrl}
           alt={position.asset.symbol}
-          className="h-8 w-8 rounded-full bg-gray-100"
+          className="h-8 w-8 rounded-full bg-[#24242e]"
           onError={(e) => {
             (e.target as HTMLImageElement).style.display = 'none';
           }}
@@ -23,10 +23,10 @@ export function PositionRow({ position }: PositionRowProps) {
       }
       endAdornment={
         <div className="text-right">
-          <div className="text-sm font-medium text-gray-900">
+          <div className="text-sm font-medium text-white">
             ${position.value.toLocaleString(undefined, { minimumFractionDigits: 2 })}
           </div>
-          <div className={`text-xs ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+          <div className={`text-xs ${isPositive ? 'text-[#34c759]' : 'text-[#ff6b6b]'}`}>
             {isPositive ? '+' : ''}{position.pnlPercent.toFixed(1)}%
           </div>
         </div>

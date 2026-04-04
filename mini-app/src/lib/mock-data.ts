@@ -19,7 +19,7 @@ const DAY = 86400_000;
 export const MOCK_ASSETS: Asset[] = [
   // Crypto — Hyperliquid perps
   { symbol: 'BTC', name: 'Bitcoin', price: 83949.5, change24h: 2.1, category: 'crypto', origin: Origin.Hyperliquid, iconUrl: 'https://app.hyperliquid.xyz/coins/BTC.svg', address: 'BTC' },
-  { symbol: 'ETH', name: 'Ethereum', price: 2060.45, change24h: -0.3, category: 'crypto', origin: Origin.Hyperliquid, iconUrl: 'https://app.hyperliquid.xyz/coins/ETH.svg', address: 'ETH' },
+  { symbol: 'ETH', name: 'Ethereum', price: 2060.45, change24h: -0.3, category: 'crypto', origin: Origin.Hyperliquid, iconUrl: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png', address: 'ETH' },
   { symbol: 'SOL', name: 'Solana', price: 179.02, change24h: 5.2, category: 'crypto', origin: Origin.Hyperliquid, iconUrl: 'https://app.hyperliquid.xyz/coins/SOL.svg', address: 'SOL' },
   { symbol: 'DOGE', name: 'Dogecoin', price: 0.1823, change24h: 1.8, category: 'crypto', origin: Origin.Hyperliquid, iconUrl: 'https://app.hyperliquid.xyz/coins/DOGE.svg', address: 'DOGE' },
   { symbol: 'AVAX', name: 'Avalanche', price: 38.72, change24h: -1.4, category: 'crypto', origin: Origin.Hyperliquid, iconUrl: 'https://app.hyperliquid.xyz/coins/AVAX.svg', address: 'AVAX' },

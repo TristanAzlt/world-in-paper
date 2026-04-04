@@ -31,7 +31,7 @@ export function CountdownTimer({ targetTime, label }: CountdownTimerProps) {
   }, [targetTime]);
 
   return (
-    <div className="flex items-center gap-1.5 text-sm text-gray-500">
+    <div className="flex items-center gap-1.5 text-sm text-[#9898aa]">
       <Clock width={14} height={14} />
       {label && <span>{label}</span>}
       <span className="font-medium tabular-nums">{formatRemaining(remaining)}</span>
