@@ -117,7 +117,7 @@ export default function MyGamesPage() {
         {loading ? (
           <SkeletonList count={3} />
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-3 animate-fade-in">
             {filtered.map((game) => (
               <MyGameCard
                 key={game.id}

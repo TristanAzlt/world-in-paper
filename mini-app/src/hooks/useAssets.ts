@@ -29,6 +29,7 @@ export function useAssets(origin: OriginKey) {
       return;
     }
 
+    setLoading(true);
     try {
       const res = await api<AssetsResult>(`/assets?origin=${origin}`);
       cache.set(origin, { data: res, ts: Date.now() });
@@ -41,6 +42,8 @@ export function useAssets(origin: OriginKey) {
   }, [origin]);
 
   useEffect(() => {
+    setData({ tokens: [] });
+    setLoading(true);
     fetch();
   }, [fetch]);
 

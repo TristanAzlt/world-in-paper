@@ -9,10 +9,12 @@ import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { NavArrowLeft, Xmark, Search } from 'iconoir-react';
 import { LoadingSpinner, SuccessState } from '@/components/LoadingState';
 import { haptic } from '@/lib/haptics';
-import { useState, useMemo } from 'react';
-import type { AssetToken, OriginKey } from '@/types';
+import { api } from '@/lib/api';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import type { AssetToken, OriginKey, PlayerPortfolio } from '@/types';
 import { useAssets } from '@/hooks/useAssets';
 import { useContract } from '@/hooks/useContract';
+import { useQuote } from '@/hooks/useQuote';
 import { AnimatedText } from '@/components/AnimatedText';
 import { TokenIcon } from '@/components/TokenIcon';
 
@@ -28,11 +30,12 @@ interface TradeDrawerProps {
   onClose: () => void;
   availableBalance: number;
   gameId: string;
+  walletAddress?: string;
   positions?: Array<{ symbol: string; quantity: number }>;
   onTradeSuccess?: () => void;
 }
 
-type Step = 'select' | 'order' | 'confirming' | 'success';
+type Step = 'select' | 'order' | 'confirming' | 'settling' | 'success';
 type MainTab = 'crypto' | 'tradfi';
 
 const CRYPTO_SUBS: { key: OriginKey | 'top'; label: string }[] = [
@@ -78,7 +81,7 @@ function AssetRowItem({ asset, onSelect }: { asset: AssetToken; onSelect: (a: As
   );
 }
 
-export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, positions = [], onTradeSuccess }: TradeDrawerProps) {
+export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletAddress, positions = [], onTradeSuccess }: TradeDrawerProps) {
   const [step, setStep] = useState<Step>('select');
   const [mainTab, setMainTab] = useState<MainTab>('crypto');
   const [cryptoSub, setCryptoSub] = useState<OriginKey | 'top'>('top');
@@ -89,6 +92,7 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, positio
   const [amount, setAmount] = useState('');
 
   const { submitTrade } = useContract();
+  const { quote, loading: quoteLoading, getQuote } = useQuote();
 
   // Fetch assets based on current selection
   const activeOrigin: OriginKey = mainTab === 'crypto'
@@ -120,10 +124,25 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, positio
     );
   }, [mainTab, cryptoSub, tradfiSub, tokens, categories, searchQuery]);
 
+  // Fetch quote from backend when amount changes
+  const quoteTimer = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => {
+    if (!selectedAsset || !amount || Number(amount) === 0) return;
+    if (quoteTimer.current) clearTimeout(quoteTimer.current);
+    quoteTimer.current = setTimeout(() => {
+      const originKey: OriginKey = activeOrigin;
+      getQuote(selectedAsset.address, originKey, side === 'buy', amount);
+    }, 400);
+    return () => { if (quoteTimer.current) clearTimeout(quoteTimer.current); };
+  }, [selectedAsset, amount, side, activeOrigin, getQuote]);
+
   const estimatedTokens = useMemo(() => {
-    if (!selectedAsset || !amount || Number(amount) === 0) return 0;
-    return Number(amount) / selectedAsset.price;
-  }, [selectedAsset, amount]);
+    if (quote && quote.price > 0 && amountNum > 0) {
+      return side === 'buy' ? amountNum / quote.price : amountNum * quote.price;
+    }
+    if (!selectedAsset || amountNum === 0) return 0;
+    return side === 'buy' ? amountNum / selectedAsset.price : amountNum * selectedAsset.price;
+  }, [quote, selectedAsset, amountNum, side]);
 
   const amountNum = Number(amount) || 0;
   const tokenBalance = selectedAsset
@@ -146,6 +165,19 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, positio
     setSelectedAsset(null);
   };
 
+  const waitForSettlement = async (tradeCountBefore: number) => {
+    if (!walletAddress) return;
+    const maxAttempts = 12;
+    for (let i = 0; i < maxAttempts; i++) {
+      await new Promise((r) => setTimeout(r, 3000));
+      try {
+        const p = await api<PlayerPortfolio>(`/games/portfolio?gameId=${gameId}&user=${walletAddress}`);
+        const totalTrades = p.tokens.reduce((sum, t) => sum + t.trades.length, 0);
+        if (totalTrades > tradeCountBefore) return;
+      } catch { /* keep polling */ }
+    }
+  };
+
   const handleConfirm = async () => {
     if (!selectedAsset || !gameId) return;
     haptic.medium();
@@ -162,6 +194,11 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, positio
       );
 
       if (result?.data?.userOpHash) {
+        // Count current trades to detect settlement
+        const currentTrades = positions.reduce((sum, p) => sum + 1, 0);
+        setStep('settling');
+        await waitForSettlement(currentTrades);
+
         haptic.success();
         setStep('success');
         onTradeSuccess?.();
@@ -280,17 +317,26 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, positio
             </div>
 
             {/* Asset list */}
-            <div className="overflow-y-auto px-5 pb-40" style={{ maxHeight: '50vh' }}>
+            <div className="flex-1 overflow-y-auto px-5 pb-8">
               {assetsLoading ? (
-                <div className="space-y-2">
-                  {[1,2,3,4].map(i => (
-                    <div key={i} className="h-16 rounded-2xl animate-pulse" style={{ backgroundColor: '#1c1c24' }} />
+                <div className="space-y-2.5">
+                  {[1,2,3,4,5,6,7,8].map(i => (
+                    <div key={i} className="flex items-center gap-3 rounded-2xl p-4" style={{ backgroundColor: '#1c1c24' }}>
+                      <div className="h-10 w-10 rounded-full animate-pulse" style={{ backgroundColor: '#24242e' }} />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 w-16 rounded animate-pulse" style={{ backgroundColor: '#24242e' }} />
+                        <div className="h-3 w-24 rounded animate-pulse" style={{ backgroundColor: '#24242e' }} />
+                      </div>
+                      <div className="h-4 w-16 rounded animate-pulse" style={{ backgroundColor: '#24242e' }} />
+                    </div>
                   ))}
                 </div>
               ) : displayAssets.length > 0 ? (
-                displayAssets.map((asset) => (
-                  <AssetRowItem key={`${asset.address}-${asset.origin}`} asset={asset} onSelect={handleSelectAsset} />
-                ))
+                <div className="animate-fade-in">
+                  {displayAssets.map((asset) => (
+                    <AssetRowItem key={`${asset.address}-${asset.origin}`} asset={asset} onSelect={handleSelectAsset} />
+                  ))}
+                </div>
               ) : (
                 <p className="py-12 text-center text-sm" style={{ color: '#9898aa' }}>No assets found</p>
               )}
@@ -417,12 +463,16 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, positio
                 <div className="text-sm" style={{ color: '#6a6a7a' }}>
                   {side === 'buy' ? 'You receive' : 'You get'}
                 </div>
-                <AnimatedText className="mt-1 text-lg font-bold" style={{ color: '#ffffff', display: 'block' }}>
-                  {side === 'buy'
-                    ? `~${estimatedTokens.toPrecision(6)} ${selectedAsset.symbol}`
-                    : `~$${(amountNum * selectedAsset.price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                  }
-                </AnimatedText>
+                {quoteLoading ? (
+                  <div className="mt-2 h-5 w-32 mx-auto rounded animate-pulse" style={{ backgroundColor: '#24242e' }} />
+                ) : (
+                  <AnimatedText className="mt-1 text-lg font-bold" style={{ color: '#ffffff', display: 'block' }}>
+                    {side === 'buy'
+                      ? `~${estimatedTokens.toPrecision(6)} ${selectedAsset.symbol}`
+                      : `~$${estimatedTokens.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                    }
+                  </AnimatedText>
+                )}
               </div>
 
               <button
@@ -437,12 +487,11 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, positio
           </div>
         )}
 
-        {(step === 'confirming' || step === 'success') && (
+        {(step === 'confirming' || step === 'settling' || step === 'success') && (
           <div className="min-h-[400px] flex items-center justify-center px-5">
-            {step === 'confirming'
-              ? <LoadingSpinner label="Submitting trade..." />
-              : <SuccessState title="Trade confirmed" subtitle="Your position has been updated" />
-            }
+            {step === 'confirming' && <LoadingSpinner label="Submitting trade..." />}
+            {step === 'settling' && <LoadingSpinner label="Waiting for settlement..." />}
+            {step === 'success' && <SuccessState title="Trade confirmed" subtitle="Your position has been updated" />}
           </div>
         )}
       </DrawerContent>

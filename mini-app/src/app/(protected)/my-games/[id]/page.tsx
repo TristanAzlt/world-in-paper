@@ -15,6 +15,7 @@ import { LoadingSpinner } from '@/components/LoadingState';
 import { TradeDrawer } from '@/components/TradeDrawer';
 import { TokenIcon } from '@/components/TokenIcon';
 import { useContract } from '@/hooks/useContract';
+import { useTokenPrices } from '@/hooks/useTokenPrices';
 import { haptic } from '@/lib/haptics';
 import { Page } from '@/components/PageLayout';
 
@@ -35,6 +36,7 @@ export default function GameViewPage() {
   const { portfolio, loading: portfolioLoading, refetch: refreshPortfolio } = usePlayerPortfolio(gameId, walletAddress);
 
   const { claimGame } = useContract();
+  const tokenPrices = useTokenPrices(portfolio?.tokens ?? []);
   const [tradeOpen, setTradeOpen] = useState(false);
   const [claiming, setClaiming] = useState(false);
   const [claimed, setClaimed] = useState(false);
@@ -54,7 +56,15 @@ export default function GameViewPage() {
   const isEnded = status === GameStatus.Ended;
   const isUpcoming = status === GameStatus.Upcoming;
   const startingWip = formatWipBalance(game.startingWIPBalance);
-  const currentWip = portfolio ? formatWipBalance(portfolio.wipBalance) : startingWip;
+  const cashBalance = portfolio ? formatWipBalance(portfolio.wipBalance) : startingWip;
+  const positionsValue = portfolio
+    ? portfolio.tokens.reduce((sum, t) => {
+        const info = tokenPrices[t.asset_address.toLowerCase()];
+        const bal = formatWipBalance(t.balance);
+        return sum + (info ? bal * info.price : 0);
+      }, 0)
+    : 0;
+  const currentWip = cashBalance + positionsValue;
   const pnl = startingWip > 0 ? ((currentWip - startingWip) / startingWip) * 100 : 0;
   const myRank = ranking.find((r) => r.player.toLowerCase() === walletAddress?.toLowerCase());
   const claimableAmount = portfolio ? formatWipBalance(portfolio.claimableAmount) : 0;
@@ -111,7 +121,7 @@ export default function GameViewPage() {
         />
       </Page.Header>
 
-      <Page.Main>
+      <Page.Main className="animate-fade-in">
         {/* Status banner */}
         {isUpcoming && (
           <div className="rounded-2xl px-4 py-3 mb-4 flex items-center gap-3" style={{ backgroundColor: '#f59e0b15', border: '1px solid #f59e0b30' }}>
@@ -208,26 +218,45 @@ export default function GameViewPage() {
             <div className="py-4 text-center text-sm" style={{ color: '#6a6a7a' }}>Loading...</div>
           ) : portfolio && portfolio.tokens.length > 0 ? (
             <div className="space-y-2">
-              {portfolio.tokens.map((token) => (
-                <div
-                  key={`${token.asset_address}-${token.origin}`}
-                  className="flex items-center justify-between rounded-2xl p-4"
-                  style={{ backgroundColor: '#1c1c24' }}
-                >
-                  <div className="flex items-center gap-3">
-                    <TokenIcon src="" alt={token.asset_address} />
-                    <div>
-                      <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>{token.asset_address}</div>
-                      <div className="text-xs" style={{ color: '#9898aa' }}>
-                        Balance: {formatWipBalance(token.balance).toFixed(4)}
+              {portfolio.tokens.map((token) => {
+                const info = tokenPrices[token.asset_address.toLowerCase()];
+                const bal = formatWipBalance(token.balance);
+                const value = info ? bal * info.price : 0;
+                const costBasis = token.trades
+                  .filter((t) => t.isBuy)
+                  .reduce((sum, t) => sum + formatWipBalance(t.amountIn), 0);
+                const tokenPnl = value - costBasis;
+
+                return (
+                  <div
+                    key={`${token.asset_address}-${token.origin}`}
+                    className="flex items-center justify-between rounded-2xl p-4"
+                    style={{ backgroundColor: '#1c1c24' }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <TokenIcon src={info?.image || ''} alt={info?.symbol || token.asset_address} />
+                      <div>
+                        <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>
+                          {info?.symbol || token.asset_address}
+                        </div>
+                        <div className="text-xs" style={{ color: '#9898aa' }}>
+                          {bal.toPrecision(6)} {info?.symbol || ''}
+                        </div>
                       </div>
                     </div>
+                    <div className="text-right">
+                      <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>
+                        ${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
+                      {costBasis > 0 && (
+                        <div className="text-xs" style={{ color: tokenPnl >= 0 ? '#34c759' : '#ff6b6b' }}>
+                          {tokenPnl >= 0 ? '+' : '-'}${Math.abs(tokenPnl).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="text-xs" style={{ color: '#6a6a7a' }}>
-                    {token.trades.length} trade{token.trades.length > 1 ? 's' : ''}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="py-8 text-center">
@@ -242,7 +271,7 @@ export default function GameViewPage() {
             <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: '#6a6a7a' }}>Leaderboard</span>
             {myRank && (
               <span className="text-sm font-bold" style={{ color: '#ffffff' }}>
-                Your rank: #{myRank.place}/{game.playerCount}
+                Your rank: {myRank.place}/{game.playerCount}
               </span>
             )}
           </div>
@@ -278,7 +307,9 @@ export default function GameViewPage() {
                     <div className="text-[15px] font-bold" style={{ color: playerPnl >= 0 ? '#34c759' : '#ff6b6b' }}>
                       {playerPnl >= 0 ? '+' : ''}{playerPnl.toFixed(1)}%
                     </div>
-                    <div className="text-xs" style={{ color: '#9898aa' }}>${Math.abs(playerWip - startingWip).toLocaleString()}</div>
+                    <div className="text-xs" style={{ color: playerPnl >= 0 ? '#34c759' : '#ff6b6b' }}>
+                      {playerPnl >= 0 ? '+' : '-'}${Math.abs(playerWip - startingWip).toLocaleString()}
+                    </div>
                   </div>
                 </div>
               );
@@ -306,6 +337,7 @@ export default function GameViewPage() {
         onClose={() => setTradeOpen(false)}
         availableBalance={currentWip}
         gameId={gameId}
+        walletAddress={walletAddress}
         positions={portfolio?.tokens.map((t) => ({
           symbol: t.asset_address,
           quantity: formatWipBalance(t.balance),
