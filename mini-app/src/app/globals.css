@@ -66,13 +66,13 @@ input:not([data-trade-input]) {
 [data-vaul-drawer-content],
 [vaul-drawer],
 [role="dialog"] {
-  border-radius: 24px 24px 0 0 !important;
+  border-radius: 32px 32px 0 0 !important;
   background-color: #202028 !important;
   border: 1px solid #3a3a48 !important;
   border-bottom: none !important;
 }
 [data-vaul-drawer-overlay] + div {
-  border-radius: 24px 24px 0 0 !important;
+  border-radius: 32px 32px 0 0 !important;
 }
 
 /* Range slider */
