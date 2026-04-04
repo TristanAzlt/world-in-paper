@@ -24,6 +24,14 @@ body {
 
 * {
   font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  transition: opacity 0.15s ease;
+}
+button:active {
+  opacity: 0.7;
 }
 
 /* Drawer rounded corners */
