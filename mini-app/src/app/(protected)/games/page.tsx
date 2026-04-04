@@ -10,7 +10,7 @@ import { type GameView, getGameStatus, formatWipBalance } from '@/types';
 import { useExploreGames } from '@/hooks/useGames';
 import { useContract } from '@/hooks/useContract';
 import { CountdownTimer } from '@/components/CountdownTimer';
-import { LoadingSpinner } from '@/components/LoadingState';
+import { SkeletonList } from '@/components/Skeleton';
 import { UsdcBalance } from '@/components/UsdcBalance';
 import { haptic } from '@/lib/haptics';
 import { Page } from '@/components/PageLayout';
@@ -159,7 +159,7 @@ export default function ExplorePage() {
         </div>
 
         {loading ? (
-          <LoadingSpinner label="Loading games..." />
+          <SkeletonList count={3} />
         ) : (
           <div className="space-y-3">
             {games.map((game) => (

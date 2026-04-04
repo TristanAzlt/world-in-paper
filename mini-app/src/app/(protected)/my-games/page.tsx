@@ -9,7 +9,7 @@ import { useSession } from 'next-auth/react';
 import { type GameView, GameStatus, getGameStatus, formatWipBalance } from '@/types';
 import { useMyGames } from '@/hooks/useGames';
 import { CountdownTimer } from '@/components/CountdownTimer';
-import { LoadingSpinner } from '@/components/LoadingState';
+import { SkeletonList } from '@/components/Skeleton';
 import { UsdcBalance } from '@/components/UsdcBalance';
 import { Page } from '@/components/PageLayout';
 
@@ -115,7 +115,7 @@ export default function MyGamesPage() {
         </div>
 
         {loading ? (
-          <LoadingSpinner label="Loading games..." />
+          <SkeletonList count={3} />
         ) : (
           <div className="space-y-3">
             {filtered.map((game) => (
