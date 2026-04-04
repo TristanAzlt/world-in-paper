@@ -6,9 +6,11 @@ import { TOKENS, WORLD_CHAIN_ID } from '@/lib/constants';
 import WorldInPaperAbi from '@/lib/WorldInPaper.abi.json';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '';
+const ABI = WorldInPaperAbi as readonly unknown[];
 
 export function useContract() {
   const createGame = async (
+    name: string,
     entryAmount: bigint,
     startingWIPBalance: bigint,
     maxPlayers: number,
@@ -18,7 +20,6 @@ export function useContract() {
     const result = await MiniKit.sendTransaction({
       chainId: WORLD_CHAIN_ID,
       transactions: [
-        // Approve USDC for the entry amount (creator auto-joins)
         {
           to: TOKENS.USDC.address,
           data: encodeFunctionData({
@@ -27,13 +28,12 @@ export function useContract() {
             args: [CONTRACT_ADDRESS as `0x${string}`, entryAmount],
           }),
         },
-        // Create game
         {
           to: CONTRACT_ADDRESS,
           data: encodeFunctionData({
-            abi: WorldInPaperAbi as readonly unknown[],
+            abi: ABI,
             functionName: 'createGame',
-            args: [entryAmount, startingWIPBalance, maxPlayers, startTime, endTime],
+            args: [name, entryAmount, startingWIPBalance, maxPlayers, startTime, endTime],
           }),
         },
       ],
@@ -45,7 +45,6 @@ export function useContract() {
     const result = await MiniKit.sendTransaction({
       chainId: WORLD_CHAIN_ID,
       transactions: [
-        // Approve USDC
         {
           to: TOKENS.USDC.address,
           data: encodeFunctionData({
@@ -54,11 +53,10 @@ export function useContract() {
             args: [CONTRACT_ADDRESS as `0x${string}`, entryAmount],
           }),
         },
-        // Join
         {
           to: CONTRACT_ADDRESS,
           data: encodeFunctionData({
-            abi: WorldInPaperAbi as readonly unknown[],
+            abi: ABI,
             functionName: 'joinGame',
             args: [gameId],
           }),
@@ -74,17 +72,6 @@ export function useContract() {
     origin: number,
     isBuy: boolean,
     amountIn: bigint,
-    worldIdProof: {
-      nullifier: bigint;
-      action: bigint;
-      rpId: bigint;
-      nonce: bigint;
-      signalHash: bigint;
-      expiresAtMin: bigint;
-      issuerSchemaId: bigint;
-      credentialGenesisIssuedAtMin: bigint;
-      zeroKnowledgeProof: [bigint, bigint, bigint, bigint, bigint];
-    },
   ) => {
     const result = await MiniKit.sendTransaction({
       chainId: WORLD_CHAIN_ID,
@@ -92,9 +79,9 @@ export function useContract() {
         {
           to: CONTRACT_ADDRESS,
           data: encodeFunctionData({
-            abi: WorldInPaperAbi as readonly unknown[],
+            abi: ABI,
             functionName: 'submitTrade',
-            args: [gameId, assetAddress, origin, isBuy, amountIn, worldIdProof],
+            args: [gameId, assetAddress, origin, isBuy, amountIn],
           }),
         },
       ],
@@ -109,7 +96,7 @@ export function useContract() {
         {
           to: CONTRACT_ADDRESS,
           data: encodeFunctionData({
-            abi: WorldInPaperAbi as readonly unknown[],
+            abi: ABI,
             functionName: 'claimGame',
             args: [gameId],
           }),

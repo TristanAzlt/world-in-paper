@@ -20,6 +20,7 @@ export enum GameStatus {
 
 export interface GameView {
   id: string;
+  name: string;
   entryAmount: string;
   startingWIPBalance: string;
   startTime: string;
