@@ -23,6 +23,7 @@ const gamePortfolioQuerySchema = z.object({
 
 type GameViewOutput = {
     id: string;
+    name: string;
     entryAmount: string;
     startingWIPBalance: string;
     startTime: string;
@@ -167,6 +168,7 @@ export class GamesRoute {
     private formatGame(game: any): GameViewOutput {
         return {
             id: game.id.toString(),
+            name: game.name,
             entryAmount: game.entryAmount.toString(),
             startingWIPBalance: game.startingWIPBalance.toString(),
             startTime: game.startTime.toString(),

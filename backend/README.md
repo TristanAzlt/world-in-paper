@@ -178,6 +178,7 @@ Returns the latest created games.
 	"games": [
 		{
 			"id": "12",
+			"name": "Weekend Battle",
 			"entryAmount": "1000000",
 			"startingWIPBalance": "100000000",
 			"startTime": "1712000000",
@@ -208,6 +209,7 @@ Returns games created by a user.
 	"games": [
 		{
 			"id": "5",
+			"name": "High Stakes",
 			"entryAmount": "1000000",
 			"startingWIPBalance": "100000000",
 			"startTime": "1712000000",
@@ -238,6 +240,7 @@ Returns games joined by a user.
 	"games": [
 		{
 			"id": "9",
+			"name": "Friends League",
 			"entryAmount": "1000000",
 			"startingWIPBalance": "100000000",
 			"startTime": "1712000000",

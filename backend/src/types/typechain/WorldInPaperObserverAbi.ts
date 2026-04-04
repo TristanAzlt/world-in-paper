@@ -24,6 +24,7 @@ import type {
 export declare namespace WorldInPaper {
   export type GameViewStruct = {
     id: BigNumberish;
+    name: string;
     entryAmount: BigNumberish;
     startingWIPBalance: BigNumberish;
     startTime: BigNumberish;
@@ -36,6 +37,7 @@ export declare namespace WorldInPaper {
 
   export type GameViewStructOutput = [
     id: bigint,
+    name: string,
     entryAmount: bigint,
     startingWIPBalance: bigint,
     startTime: bigint,
@@ -46,6 +48,7 @@ export declare namespace WorldInPaper {
     exists: boolean
   ] & {
     id: bigint;
+    name: string;
     entryAmount: bigint;
     startingWIPBalance: bigint;
     startTime: bigint;

@@ -23,9 +23,9 @@ const _abi = [
         internalType: "address",
       },
       {
-        name: "_verifier",
+        name: "_worldIdRouter",
         type: "address",
-        internalType: "contract IWorldIDVerifier",
+        internalType: "contract IWorldID",
       },
       {
         name: "_worldIdVerificationEnabled",
@@ -115,6 +115,19 @@ const _abi = [
   },
   {
     type: "function",
+    name: "WORLD_ID_GROUP_ID",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     name: "claimGame",
     inputs: [
       {
@@ -136,6 +149,11 @@ const _abi = [
     type: "function",
     name: "createGame",
     inputs: [
+      {
+        name: "name",
+        type: "string",
+        internalType: "string",
+      },
       {
         name: "entryAmount",
         type: "uint256",
@@ -243,6 +261,11 @@ const _abi = [
             name: "id",
             type: "uint256",
             internalType: "uint256",
+          },
+          {
+            name: "name",
+            type: "string",
+            internalType: "string",
           },
           {
             name: "entryAmount",
@@ -707,22 +730,7 @@ const _abi = [
         internalType: "struct WorldInPaper.WorldIdVerification",
         components: [
           {
-            name: "nullifier",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "action",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "rpId",
-            type: "uint64",
-            internalType: "uint64",
-          },
-          {
-            name: "nonce",
+            name: "root",
             type: "uint256",
             internalType: "uint256",
           },
@@ -732,24 +740,19 @@ const _abi = [
             internalType: "uint256",
           },
           {
-            name: "expiresAtMin",
-            type: "uint64",
-            internalType: "uint64",
-          },
-          {
-            name: "issuerSchemaId",
-            type: "uint64",
-            internalType: "uint64",
-          },
-          {
-            name: "credentialGenesisIssuedAtMin",
+            name: "nullifierHash",
             type: "uint256",
             internalType: "uint256",
           },
           {
-            name: "zeroKnowledgeProof",
-            type: "uint256[5]",
-            internalType: "uint256[5]",
+            name: "externalNullifierHash",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "proof",
+            type: "uint256[8]",
+            internalType: "uint256[8]",
           },
         ],
       },
@@ -797,13 +800,13 @@ const _abi = [
   },
   {
     type: "function",
-    name: "verifier",
+    name: "worldIdRouter",
     inputs: [],
     outputs: [
       {
         name: "",
         type: "address",
-        internalType: "contract IWorldIDVerifier",
+        internalType: "contract IWorldID",
       },
     ],
     stateMutability: "view",

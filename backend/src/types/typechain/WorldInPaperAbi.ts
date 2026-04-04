@@ -26,6 +26,7 @@ import type {
 export declare namespace WorldInPaper {
   export type GameViewStruct = {
     id: BigNumberish;
+    name: string;
     entryAmount: BigNumberish;
     startingWIPBalance: BigNumberish;
     startTime: BigNumberish;
@@ -38,6 +39,7 @@ export declare namespace WorldInPaper {
 
   export type GameViewStructOutput = [
     id: bigint,
+    name: string,
     entryAmount: bigint,
     startingWIPBalance: bigint,
     startTime: bigint,
@@ -48,6 +50,7 @@ export declare namespace WorldInPaper {
     exists: boolean
   ] & {
     id: bigint;
+    name: string;
     entryAmount: bigint;
     startingWIPBalance: bigint;
     startTime: bigint;
@@ -115,43 +118,25 @@ export declare namespace WorldInPaper {
   };
 
   export type WorldIdVerificationStruct = {
-    nullifier: BigNumberish;
-    action: BigNumberish;
-    rpId: BigNumberish;
-    nonce: BigNumberish;
+    root: BigNumberish;
     signalHash: BigNumberish;
-    expiresAtMin: BigNumberish;
-    issuerSchemaId: BigNumberish;
-    credentialGenesisIssuedAtMin: BigNumberish;
-    zeroKnowledgeProof: [
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
-    ];
+    nullifierHash: BigNumberish;
+    externalNullifierHash: BigNumberish;
+    proof: BigNumberish[];
   };
 
   export type WorldIdVerificationStructOutput = [
-    nullifier: bigint,
-    action: bigint,
-    rpId: bigint,
-    nonce: bigint,
+    root: bigint,
     signalHash: bigint,
-    expiresAtMin: bigint,
-    issuerSchemaId: bigint,
-    credentialGenesisIssuedAtMin: bigint,
-    zeroKnowledgeProof: [bigint, bigint, bigint, bigint, bigint]
+    nullifierHash: bigint,
+    externalNullifierHash: bigint,
+    proof: bigint[]
   ] & {
-    nullifier: bigint;
-    action: bigint;
-    rpId: bigint;
-    nonce: bigint;
+    root: bigint;
     signalHash: bigint;
-    expiresAtMin: bigint;
-    issuerSchemaId: bigint;
-    credentialGenesisIssuedAtMin: bigint;
-    zeroKnowledgeProof: [bigint, bigint, bigint, bigint, bigint];
+    nullifierHash: bigint;
+    externalNullifierHash: bigint;
+    proof: bigint[];
   };
 }
 
@@ -164,6 +149,7 @@ export interface WorldInPaperAbiInterface extends Interface {
       | "MIN_PLAYERS"
       | "MIN_STARTING_WIP_BALANCE"
       | "USDC"
+      | "WORLD_ID_GROUP_ID"
       | "claimGame"
       | "createGame"
       | "getExpectedAuthor"
@@ -193,7 +179,7 @@ export interface WorldInPaperAbiInterface extends Interface {
       | "submitTrade"
       | "supportsInterface"
       | "transferOwnership"
-      | "verifier"
+      | "worldIdRouter"
       | "worldIdVerificationEnabled"
   ): FunctionFragment;
 
@@ -235,12 +221,17 @@ export interface WorldInPaperAbiInterface extends Interface {
   ): string;
   encodeFunctionData(functionFragment: "USDC", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "WORLD_ID_GROUP_ID",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "claimGame",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "createGame",
     values: [
+      string,
       BigNumberish,
       BigNumberish,
       BigNumberish,
@@ -360,7 +351,10 @@ export interface WorldInPaperAbiInterface extends Interface {
     functionFragment: "transferOwnership",
     values: [AddressLike]
   ): string;
-  encodeFunctionData(functionFragment: "verifier", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "worldIdRouter",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "worldIdVerificationEnabled",
     values?: undefined
@@ -387,6 +381,10 @@ export interface WorldInPaperAbiInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "USDC", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "WORLD_ID_GROUP_ID",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "claimGame", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "createGame", data: BytesLike): Result;
   decodeFunctionResult(
@@ -476,7 +474,10 @@ export interface WorldInPaperAbiInterface extends Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "verifier", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "worldIdRouter",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "worldIdVerificationEnabled",
     data: BytesLike
@@ -801,6 +802,8 @@ export interface WorldInPaperAbi extends BaseContract {
 
   USDC: TypedContractMethod<[], [string], "view">;
 
+  WORLD_ID_GROUP_ID: TypedContractMethod<[], [bigint], "view">;
+
   claimGame: TypedContractMethod<
     [gameId: BigNumberish],
     [bigint],
@@ -809,6 +812,7 @@ export interface WorldInPaperAbi extends BaseContract {
 
   createGame: TypedContractMethod<
     [
+      name: string,
       entryAmount: BigNumberish,
       startingWIPBalance: BigNumberish,
       maxPlayers: BigNumberish,
@@ -944,7 +948,7 @@ export interface WorldInPaperAbi extends BaseContract {
     "nonpayable"
   >;
 
-  verifier: TypedContractMethod<[], [string], "view">;
+  worldIdRouter: TypedContractMethod<[], [string], "view">;
 
   worldIdVerificationEnabled: TypedContractMethod<[], [boolean], "view">;
 
@@ -971,12 +975,16 @@ export interface WorldInPaperAbi extends BaseContract {
     nameOrSignature: "USDC"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "WORLD_ID_GROUP_ID"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
     nameOrSignature: "claimGame"
   ): TypedContractMethod<[gameId: BigNumberish], [bigint], "nonpayable">;
   getFunction(
     nameOrSignature: "createGame"
   ): TypedContractMethod<
     [
+      name: string,
       entryAmount: BigNumberish,
       startingWIPBalance: BigNumberish,
       maxPlayers: BigNumberish,
@@ -1107,7 +1115,7 @@ export interface WorldInPaperAbi extends BaseContract {
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "verifier"
+    nameOrSignature: "worldIdRouter"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "worldIdVerificationEnabled"

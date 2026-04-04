@@ -41,6 +41,11 @@ const _abi = [
             internalType: "uint256",
           },
           {
+            name: "name",
+            type: "string",
+            internalType: "string",
+          },
+          {
             name: "entryAmount",
             type: "uint256",
             internalType: "uint256",
@@ -156,6 +161,11 @@ const _abi = [
             name: "id",
             type: "uint256",
             internalType: "uint256",
+          },
+          {
+            name: "name",
+            type: "string",
+            internalType: "string",
           },
           {
             name: "entryAmount",
@@ -347,6 +357,11 @@ const _abi = [
             name: "id",
             type: "uint256",
             internalType: "uint256",
+          },
+          {
+            name: "name",
+            type: "string",
+            internalType: "string",
           },
           {
             name: "entryAmount",
