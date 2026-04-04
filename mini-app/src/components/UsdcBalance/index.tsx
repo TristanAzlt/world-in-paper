@@ -292,17 +292,24 @@ export function UsdcBalance() {
                   </div>
 
                   {/* Quote preview */}
-                  {amountNum > 0 && quote && (
-                    <div className="rounded-2xl py-3 px-4 flex items-center justify-between" style={{ backgroundColor: '#1c1c24' }}>
-                      <span className="text-sm" style={{ color: '#6a6a7a' }}>You receive</span>
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-sm font-bold" style={{ color: '#ffffff' }}>
-                          ~${usdcOut.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </span>
-                        <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={14} height={14} />
-                      </div>
+                  <div
+                    className="rounded-2xl py-3 px-4 flex items-center justify-between transition-all duration-300 overflow-hidden"
+                    style={{
+                      backgroundColor: '#1c1c24',
+                      maxHeight: amountNum > 0 && quote ? '60px' : '0px',
+                      opacity: amountNum > 0 && quote ? 1 : 0,
+                      padding: amountNum > 0 && quote ? undefined : '0 16px',
+                      marginTop: amountNum > 0 && quote ? undefined : '-8px',
+                    }}
+                  >
+                    <span className="text-sm" style={{ color: '#6a6a7a' }}>You receive</span>
+                    <div className="flex items-center gap-1.5">
+                      <AnimatedText className="text-sm font-bold" style={{ color: '#ffffff' }}>
+                        {`~$${usdcOut.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                      </AnimatedText>
+                      <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={14} height={14} />
                     </div>
-                  )}
+                  </div>
 
                   {/* Swap button */}
                   <button

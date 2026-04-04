@@ -1,5 +1,5 @@
 export const WORLD_CHAIN_ID = 480;
-export const WORLD_RPC = 'https://worldchain-mainnet.g.alchemy.com/public';
+export const WORLD_RPC = process.env.NEXT_PUBLIC_WORLD_RPC || 'https://worldchain-mainnet.g.alchemy.com/public';
 
 export const TOKENS = {
   USDC: {
