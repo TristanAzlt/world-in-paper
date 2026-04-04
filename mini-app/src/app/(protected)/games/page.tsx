@@ -6,15 +6,20 @@ import { Plus, Group } from 'iconoir-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import type { Game } from '@/types';
-import { getExploreGames } from '@/lib/mock-data';
+import { type GameView, getGameStatus, formatWipBalance } from '@/types';
+import { useExploreGames } from '@/hooks/useGames';
+import { useContract } from '@/hooks/useContract';
 import { CountdownTimer } from '@/components/CountdownTimer';
+import { SkeletonList } from '@/components/Skeleton';
 import { UsdcBalance } from '@/components/UsdcBalance';
 import { haptic } from '@/lib/haptics';
 import { Page } from '@/components/PageLayout';
 
-function ExploreCard({ game, onClick }: { game: Game; onClick: () => void }) {
-  const isActive = game.status === 'active';
+function ExploreCard({ game, onClick }: { game: GameView; onClick: () => void }) {
+  const status = getGameStatus(game);
+  const isActive = status === 'active';
+  const entryAmount = formatWipBalance(game.entryAmount);
+  const startingCapital = formatWipBalance(game.startingWIPBalance);
 
   return (
     <button
@@ -24,7 +29,7 @@ function ExploreCard({ game, onClick }: { game: Game; onClick: () => void }) {
     >
       <div className="p-5 pb-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-extrabold" style={{ color: '#ffffff' }}>{game.name}</h3>
+          <h3 className="text-lg font-extrabold" style={{ color: '#ffffff' }}>Game #{game.id}</h3>
           <div className="flex items-center gap-1.5">
             <div
               className="h-2 w-2 rounded-full"
@@ -39,7 +44,7 @@ function ExploreCard({ game, onClick }: { game: Game; onClick: () => void }) {
         <div className="mt-2 flex items-center gap-5 text-sm" style={{ color: '#9898aa' }}>
           <span className="flex items-center gap-1.5">
             <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={14} height={14} />
-            <strong style={{ color: '#ffffff' }}>{game.entryAmount}</strong> USDC
+            <strong style={{ color: '#ffffff' }}>{entryAmount}</strong> USDC
           </span>
           <span className="flex items-center gap-1.5">
             <Group width={14} height={14} />
@@ -53,11 +58,11 @@ function ExploreCard({ game, onClick }: { game: Game; onClick: () => void }) {
         style={{ backgroundColor: '#24242e' }}
       >
         <CountdownTimer
-          targetTime={isActive ? game.endTime : game.startTime}
+          targetTime={isActive ? Number(game.endTime) * 1000 : Number(game.startTime) * 1000}
           label={isActive ? 'Ends in' : 'Starts in'}
         />
         <span className="text-sm font-bold" style={{ color: '#ffffff' }}>
-          ${game.startingCapital.toLocaleString()}
+          ${startingCapital.toLocaleString()}
         </span>
       </div>
     </button>
@@ -66,27 +71,44 @@ function ExploreCard({ game, onClick }: { game: Game; onClick: () => void }) {
 
 export default function ExplorePage() {
   const router = useRouter();
-  const games = getExploreGames();
-  const [joinTarget, setJoinTarget] = useState<Game | null>(null);
+  const { games, loading } = useExploreGames();
+  const { joinGame } = useContract();
+  const [joinTarget, setJoinTarget] = useState<GameView | null>(null);
+  const [joining, setJoining] = useState(false);
 
-  const handleJoin = () => {
-    if (joinTarget) {
-      haptic.medium();
-      router.push(`/my-games/${joinTarget.id}`);
+  const handleJoin = async () => {
+    if (!joinTarget) return;
+    haptic.medium();
+    setJoining(true);
+    try {
+      const result = await joinGame(BigInt(joinTarget.id), BigInt(joinTarget.entryAmount));
+      if (result?.data?.userOpHash) {
+        haptic.success();
+        router.push(`/my-games/${joinTarget.id}`);
+      }
+    } catch (e) {
+      console.error('Join failed:', e);
+      haptic.error();
+    } finally {
+      setJoining(false);
       setJoinTarget(null);
     }
   };
+
+  const entryAmount = joinTarget ? formatWipBalance(joinTarget.entryAmount) : 0;
+  const startingCapital = joinTarget ? formatWipBalance(joinTarget.startingWIPBalance) : 0;
 
   return (
     <>
       <Page.Main className="relative">
         <TopBar title="Explore" endAdornment={<UsdcBalance />} />
         <div className="mb-4" />
+
+        {/* Info carousel */}
         <div
           className="flex gap-3 overflow-x-auto pb-1 mb-5 -mr-6 pr-6"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}
         >
-          <style>{`[data-carousel]::-webkit-scrollbar { display: none; }`}</style>
           {[
             {
               title: 'Trade Anything',
@@ -136,17 +158,21 @@ export default function ExplorePage() {
           ))}
         </div>
 
-        <div className="space-y-3">
-          {games.map((game) => (
-            <ExploreCard
-              key={game.id}
-              game={game}
-              onClick={() => { setJoinTarget(game); haptic.light(); }}
-            />
-          ))}
-        </div>
+        {loading ? (
+          <SkeletonList count={3} />
+        ) : (
+          <div className="space-y-3">
+            {games.map((game) => (
+              <ExploreCard
+                key={game.id}
+                game={game}
+                onClick={() => { setJoinTarget(game); haptic.light(); }}
+              />
+            ))}
+          </div>
+        )}
 
-        {games.length === 0 && (
+        {!loading && games.length === 0 && (
           <div className="py-16 text-center">
             <p className="text-base" style={{ color: '#9898aa' }}>No games available</p>
           </div>
@@ -164,26 +190,23 @@ export default function ExplorePage() {
         </div>
       </Page.Main>
 
-      {/* Join drawer */}
       <Drawer open={!!joinTarget} onOpenChange={(open) => !open && setJoinTarget(null)} dismissible={true} height="fit">
         <DrawerContent>
           <VisuallyHidden.Root><DrawerTitle>Join Game</DrawerTitle></VisuallyHidden.Root>
           <div className="px-5 pt-6 pb-10">
-            {/* Game info */}
             <div className="text-center mb-6">
               <h2 className="text-2xl font-extrabold mb-2" style={{ color: '#ffffff' }}>
-                {joinTarget?.name}
+                Game #{joinTarget?.id}
               </h2>
               <div className="flex items-center justify-center gap-4 text-sm" style={{ color: '#9898aa' }}>
                 <span className="flex items-center gap-1.5">
                   <Group width={16} height={16} />
                   {joinTarget?.playerCount}/{joinTarget?.maxPlayers}
                 </span>
-                <span>${joinTarget?.startingCapital.toLocaleString()} capital</span>
+                <span>${startingCapital.toLocaleString()} capital</span>
               </div>
             </div>
 
-            {/* Buy-in display */}
             <div className="rounded-2xl py-5 mb-6 text-center" style={{ backgroundColor: '#1c1c24' }}>
               <div className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#9898aa' }}>
                 Buy-in
@@ -191,13 +214,12 @@ export default function ExplorePage() {
               <div className="flex items-center justify-center gap-2">
                 <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={28} height={28} />
                 <span className="text-3xl font-extrabold" style={{ color: '#ffffff' }}>
-                  {joinTarget?.entryAmount}
+                  {entryAmount}
                 </span>
                 <span className="text-lg font-bold" style={{ color: '#9898aa' }}>USDC</span>
               </div>
             </div>
 
-            {/* Buttons */}
             <div className="flex gap-3">
               <button
                 onClick={() => setJoinTarget(null)}
@@ -208,10 +230,11 @@ export default function ExplorePage() {
               </button>
               <button
                 onClick={handleJoin}
-                className="flex-1 rounded-2xl text-base font-bold active:scale-95 transition-transform"
+                disabled={joining}
+                className="flex-1 rounded-2xl text-base font-bold active:scale-95 transition-transform disabled:opacity-50"
                 style={{ height: '56px', backgroundColor: '#2470ff', color: '#ffffff' }}
               >
-                Join Game
+                {joining ? 'Joining...' : 'Join Game'}
               </button>
             </div>
           </div>

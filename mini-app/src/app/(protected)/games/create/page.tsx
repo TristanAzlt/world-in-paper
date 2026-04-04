@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { haptic } from '@/lib/haptics';
+import { useContract } from '@/hooks/useContract';
 import { Page } from '@/components/PageLayout';
 
 const STEPS = ['Name', 'Buy-in', 'Players', 'Capital', 'Start', 'Duration'];
@@ -53,6 +54,7 @@ function formatDuration(minutes: number): string {
 
 export default function CreateGamePage() {
   const router = useRouter();
+  const { createGame } = useContract();
   const [step, setStep] = useState(0);
   const [gameName, setGameName] = useState('');
   const [buyIn, setBuyIn] = useState('10');
@@ -89,14 +91,30 @@ export default function CreateGamePage() {
     else router.back();
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     haptic.medium();
     setState('pending');
-    setTimeout(() => {
-      haptic.success();
-      setState('success');
-      setTimeout(() => router.push('/my-games'), 800);
-    }, 1500);
+
+    const capital = customCapital ? Number(customCapital) : startingCapital;
+    const startTime = BigInt(Math.floor(Date.now() / 1000) + startDelay * 60);
+    const endTime = BigInt(Math.floor(Date.now() / 1000) + startDelay * 60 + duration * 60);
+    const entryAmountRaw = BigInt(Math.round(buyInNum * 1e6));
+    const capitalRaw = BigInt(Math.round(capital * 1e6));
+
+    try {
+      const result = await createGame(entryAmountRaw, capitalRaw, maxPlayers, startTime, endTime);
+      if (result?.data?.userOpHash) {
+        haptic.success();
+        setState('success');
+        setTimeout(() => router.push('/my-games'), 1500);
+      } else {
+        throw new Error('No userOpHash');
+      }
+    } catch (e) {
+      console.error('Create game failed:', e);
+      haptic.error();
+      setState('idle');
+    }
   };
 
   return (
