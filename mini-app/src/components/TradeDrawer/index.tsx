@@ -127,7 +127,7 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, positio
 
   const amountNum = Number(amount) || 0;
   const tokenBalance = selectedAsset
-    ? positions.find((p) => p.symbol === selectedAsset.symbol)?.quantity ?? 0
+    ? positions.find((p) => p.symbol === selectedAsset.address || p.symbol === selectedAsset.symbol)?.quantity ?? 0
     : 0;
   const canConfirm = side === 'buy'
     ? amountNum > 0 && amountNum <= availableBalance

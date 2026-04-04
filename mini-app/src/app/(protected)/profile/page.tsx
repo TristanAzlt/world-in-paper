@@ -86,7 +86,7 @@ export default function ProfilePage() {
                       #{game.id}
                     </span>
                     <div className="text-left">
-                      <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>Game #{game.id}</div>
+                      <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>{game.name || `Game #${game.id}`}</div>
                       <div className="text-xs" style={{ color: '#9898aa' }}>
                         {game.playerCount} players · {entryAmount} USDC
                       </div>

@@ -169,7 +169,14 @@ export default function ExplorePage() {
               <ExploreCard
                 key={game.id}
                 game={game}
-                onClick={() => { setJoinTarget(game); haptic.light(); }}
+                onClick={() => {
+                  haptic.light();
+                  if (getGameStatus(game) === GameStatus.Active) {
+                    router.push(`/my-games/${game.id}`);
+                  } else {
+                    setJoinTarget(game);
+                  }
+                }}
               />
             ))}
           </div>
