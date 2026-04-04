@@ -163,11 +163,11 @@ export function UsdcBalance() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-[15px] font-bold" style={{ color: token.formatted > 0 ? '#ffffff' : '#6a6a7a' }}>
-                          {token.formatted.toLocaleString('en-US', { maximumFractionDigits: 4 })}
+                        <div className="text-[15px] font-bold" style={{ color: canSwap ? '#ffffff' : '#6a6a7a' }}>
+                          {canSwap ? token.formatted.toLocaleString('en-US', { maximumFractionDigits: 4 }) : '0'}
                         </div>
                         <div className="text-xs" style={{ color: canSwap ? '#2470ff' : '#6a6a7a' }}>
-                          {canSwap ? 'Swap →' : token.formatted > 0 ? '' : 'No balance'}
+                          {canSwap ? 'Swap →' : 'No balance'}
                         </div>
                       </div>
                     </button>
