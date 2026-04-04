@@ -4,7 +4,7 @@ import { TopBar } from '@worldcoin/mini-apps-ui-kit-react';
 import { NavArrowLeft, Plus, ShareIos, Trophy, Lock } from 'iconoir-react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { getGameStatus, GameStatus, formatWipBalance } from '@/types';
 import { useExploreGames, useMyGames } from '@/hooks/useGames';
@@ -32,12 +32,48 @@ export default function GameViewPage() {
 
   const { games: myGames } = useMyGames(walletAddress);
   const { games: allGames } = useExploreGames();
-  const { ranking, loading: rankingLoading } = useGameRanking(gameId);
+  const { ranking, loading: rankingLoading, refetch: refreshRanking } = useGameRanking(gameId);
   const { portfolio, loading: portfolioLoading, refetch: refreshPortfolio } = usePlayerPortfolio(gameId, walletAddress);
+
+  // Pull to refresh
+  const [refreshing, setRefreshing] = useState(false);
+  const touchStart = useRef(0);
+  const pullDistance = useRef(0);
+  const [pullY, setPullY] = useState(0);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (window.scrollY === 0) {
+      touchStart.current = e.touches[0].clientY;
+    } else {
+      touchStart.current = 0;
+    }
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!touchStart.current) return;
+    const diff = e.touches[0].clientY - touchStart.current;
+    if (diff > 0) {
+      pullDistance.current = Math.min(diff, 120);
+      setPullY(pullDistance.current);
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(async () => {
+    if (pullDistance.current > 60) {
+      setRefreshing(true);
+      haptic.light();
+      await Promise.all([refreshPortfolio(), refreshRanking()]);
+      setRefreshing(false);
+    }
+    touchStart.current = 0;
+    pullDistance.current = 0;
+    setPullY(0);
+  }, [refreshPortfolio, refreshRanking]);
 
   const { claimGame } = useContract();
   const tokenPrices = useTokenPrices(portfolio?.tokens ?? []);
   const [tradeOpen, setTradeOpen] = useState(false);
+  const [preselectedAsset, setPreselectedAsset] = useState<{ address: string; origin: string } | null>(null);
   const [claiming, setClaiming] = useState(false);
   const [claimed, setClaimed] = useState(false);
 
@@ -123,7 +159,23 @@ export default function GameViewPage() {
         />
       </Page.Header>
 
-      <Page.Main className="animate-fade-in">
+      <Page.Main
+        className="animate-fade-in"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Pull to refresh indicator */}
+        <div
+          className="flex justify-center overflow-hidden transition-all duration-200"
+          style={{ height: pullY > 0 || refreshing ? `${Math.max(pullY, refreshing ? 40 : 0)}px` : '0px', opacity: pullY > 20 || refreshing ? 1 : 0 }}
+        >
+          <div
+            className={`h-5 w-5 rounded-full border-2 ${refreshing ? 'animate-spin' : ''}`}
+            style={{ borderColor: '#2470ff', borderTopColor: 'transparent', marginTop: '12px' }}
+          />
+        </div>
+
         {/* Status banner */}
         {isUpcoming && (
           <div className="rounded-2xl px-4 py-3 mb-4 flex items-center gap-3" style={{ backgroundColor: '#f59e0b15', border: '1px solid #f59e0b30' }}>
@@ -242,9 +294,15 @@ export default function GameViewPage() {
                 const tokenPnl = value + totalSold - totalBought;
 
                 return (
-                  <div
+                  <button
                     key={`${token.asset_address}-${token.origin}`}
-                    className="flex items-center justify-between rounded-2xl p-4"
+                    onClick={() => {
+                      if (!isActive) return;
+                      setPreselectedAsset({ address: token.asset_address, origin: token.origin });
+                      setTradeOpen(true);
+                      haptic.light();
+                    }}
+                    className="flex w-full items-center justify-between rounded-2xl p-4 text-left active:scale-[0.98] transition-all"
                     style={{ backgroundColor: '#1c1c24' }}
                   >
                     <div className="flex items-center gap-3">
@@ -262,13 +320,13 @@ export default function GameViewPage() {
                       <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>
                         ${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
-                      {costBasis > 0 && (
+                      {totalBought > 0 && (
                         <div className="text-xs" style={{ color: tokenPnl >= 0 ? '#34c759' : '#ff6b6b' }}>
                           {tokenPnl >= 0 ? '+' : '-'}${Math.abs(tokenPnl).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                       )}
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>
@@ -349,9 +407,10 @@ export default function GameViewPage() {
 
       <TradeDrawer
         isOpen={tradeOpen}
-        onClose={() => setTradeOpen(false)}
+        onClose={() => { setTradeOpen(false); setPreselectedAsset(null); }}
         availableBalance={cashBalance}
         gameId={gameId}
+        preselectedAsset={preselectedAsset}
         walletAddress={walletAddress}
         positions={portfolio?.tokens.map((t) => ({
           symbol: t.asset_address,

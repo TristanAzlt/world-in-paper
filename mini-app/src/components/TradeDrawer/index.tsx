@@ -32,6 +32,7 @@ interface TradeDrawerProps {
   gameId: string;
   walletAddress?: string;
   positions?: Array<{ symbol: string; quantity: number }>;
+  preselectedAsset?: { address: string; origin: string } | null;
   onTradeSuccess?: () => void;
 }
 
@@ -81,7 +82,7 @@ function AssetRowItem({ asset, onSelect }: { asset: AssetToken; onSelect: (a: As
   );
 }
 
-export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletAddress, positions = [], onTradeSuccess }: TradeDrawerProps) {
+export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletAddress, positions = [], preselectedAsset, onTradeSuccess }: TradeDrawerProps) {
   const [step, setStep] = useState<Step>('select');
   const [mainTab, setMainTab] = useState<MainTab>('crypto');
   const [cryptoSub, setCryptoSub] = useState<OriginKey | 'top'>('top');
@@ -100,6 +101,20 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
     : 'hyperliquid';
 
   const { tokens, categories, loading: assetsLoading } = useAssets(activeOrigin);
+
+  // Auto-select preselected asset when assets load
+  useEffect(() => {
+    if (!preselectedAsset || !isOpen || selectedAsset) return;
+    const allAssets = categories
+      ? [...(categories.crypto || []), ...(categories.stocks || []), ...(categories.indices || []), ...(categories.commodities || [])]
+      : tokens;
+    const match = allAssets.find((a) => a.address.toLowerCase() === preselectedAsset.address.toLowerCase());
+    if (match) {
+      setSelectedAsset(match);
+      setStep('order');
+      setSide('sell');
+    }
+  }, [preselectedAsset, isOpen, tokens, categories, selectedAsset]);
 
   const displayAssets = useMemo(() => {
     let assets: AssetToken[] = [];
@@ -127,14 +142,10 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
   const amountNum = Number(amount) || 0;
 
   // Fetch quote from backend when amount changes
-  const quoteTimer = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => {
     if (!selectedAsset || !amount || amountNum === 0) return;
-    if (quoteTimer.current) clearTimeout(quoteTimer.current);
-    quoteTimer.current = setTimeout(() => {
-      getQuote(selectedAsset.address, activeOrigin, side === 'buy', amount);
-    }, 400);
-    return () => { if (quoteTimer.current) clearTimeout(quoteTimer.current); };
+    const rawAmount = Math.floor(amountNum * 1e6).toString();
+    getQuote(selectedAsset.address, activeOrigin, side === 'buy', rawAmount);
   }, [selectedAsset, amount, amountNum, side, activeOrigin, getQuote]);
 
   const estimatedTokens = useMemo(() => {
@@ -164,27 +175,27 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
     setSelectedAsset(null);
   };
 
-  const getPortfolioSnapshot = async () => {
-    if (!walletAddress) return { trades: 0, wip: '0' };
+  const getAssetTradeCount = async (assetAddress: string) => {
+    if (!walletAddress) return 0;
     try {
       const p = await api<PlayerPortfolio>(`/games/portfolio?gameId=${gameId}&user=${walletAddress}`);
-      const trades = p.tokens.reduce((sum, t) => sum + t.trades.length, 0);
-      return { trades, wip: p.wipBalance };
+      const token = p.tokens.find((t) => t.asset_address.toLowerCase() === assetAddress.toLowerCase());
+      return token ? token.trades.length : 0;
     } catch {
-      return { trades: 0, wip: '0' };
+      return 0;
     }
   };
 
-  const waitForSettlement = async (snapshot: { trades: number; wip: string }) => {
+  const waitForSettlement = async (assetAddress: string, tradesBefore: number) => {
     if (!walletAddress) return;
     const maxAttempts = 12;
     for (let i = 0; i < maxAttempts; i++) {
       await new Promise((r) => setTimeout(r, 3000));
       try {
         const p = await api<PlayerPortfolio>(`/games/portfolio?gameId=${gameId}&user=${walletAddress}`);
-        const totalTrades = p.tokens.reduce((sum, t) => sum + t.trades.length, 0);
-        // Detect settlement: new trade appeared OR wipBalance changed (sell settled)
-        if (totalTrades > snapshot.trades || p.wipBalance !== snapshot.wip) return;
+        const token = p.tokens.find((t) => t.asset_address.toLowerCase() === assetAddress.toLowerCase());
+        const tradesNow = token ? token.trades.length : 0;
+        if (tradesNow > tradesBefore) return;
       } catch { /* keep polling */ }
     }
   };
@@ -195,10 +206,9 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
     setStep('confirming');
 
     try {
-      // Snapshot before trade
-      const snapshot = await getPortfolioSnapshot();
+      const tradesBefore = await getAssetTradeCount(selectedAsset.address);
 
-      const amountIn = BigInt(Math.round(amountNum * 1e6));
+      const amountIn = BigInt(Math.floor(amountNum * 1e6));
       const result = await submitTrade(
         BigInt(gameId),
         selectedAsset.address,
@@ -209,7 +219,7 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
 
       if (result?.data?.userOpHash) {
         setStep('settling');
-        await waitForSettlement(snapshot);
+        await waitForSettlement(selectedAsset.address, tradesBefore);
 
         haptic.success();
         setStep('success');
@@ -238,7 +248,8 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
   };
 
   return (
-    <Drawer open={isOpen} onOpenChange={(open) => !open && resetAndClose()} dismissible={false} snapPoints={[0.92]}>
+    <>
+    <Drawer open={isOpen && step !== 'confirming' && step !== 'settling' && step !== 'success'} onOpenChange={(open) => !open && resetAndClose()} dismissible={false} snapPoints={[0.92]}>
       <DrawerContent>
         <VisuallyHidden.Root><DrawerTitle>Trade</DrawerTitle></VisuallyHidden.Root>
 
@@ -502,14 +513,20 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
           </div>
         )}
 
-        {(step === 'confirming' || step === 'settling' || step === 'success') && (
-          <div className="flex items-center justify-center px-5" style={{ height: '60vh' }}>
-            {step === 'confirming' && <LoadingSpinner label="Submitting trade..." />}
-            {step === 'settling' && <LoadingSpinner label="Waiting for settlement..." />}
-            {step === 'success' && <SuccessState title="Trade confirmed" subtitle="Your position has been updated" />}
-          </div>
-        )}
       </DrawerContent>
     </Drawer>
+
+    {/* Settlement overlay — separate small drawer */}
+    <Drawer open={step === 'confirming' || step === 'settling' || step === 'success'} dismissible={false} height="fit">
+      <DrawerContent>
+        <VisuallyHidden.Root><DrawerTitle>Processing</DrawerTitle></VisuallyHidden.Root>
+        <div className="flex flex-col items-center justify-center px-5 py-12">
+          {step === 'confirming' && <LoadingSpinner label="Submitting trade..." />}
+          {step === 'settling' && <LoadingSpinner label="Waiting for settlement..." />}
+          {step === 'success' && <SuccessState title="Trade confirmed" subtitle="Your position has been updated" />}
+        </div>
+      </DrawerContent>
+    </Drawer>
+  </>
   );
 }
