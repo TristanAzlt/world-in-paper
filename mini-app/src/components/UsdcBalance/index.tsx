@@ -4,6 +4,7 @@ import { Drawer, DrawerContent, Spinner } from '@worldcoin/mini-apps-ui-kit-reac
 import { Plus, Xmark } from 'iconoir-react';
 import Image from 'next/image';
 import { useState } from 'react';
+import { AnimatedText } from '@/components/AnimatedText';
 import { haptic } from '@/lib/haptics';
 
 interface UsdcBalanceProps {
@@ -66,9 +67,9 @@ export function UsdcBalance({ balance }: UsdcBalanceProps) {
         style={{ backgroundColor: '#f7f7f7', padding: '8px 14px' }}
       >
         <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={18} height={18} />
-        <span className="text-sm font-bold" style={{ color: '#111' }}>
+        <AnimatedText className="text-sm font-bold" style={{ color: '#111' }}>
           {displayBalance}
-        </span>
+        </AnimatedText>
         <Plus width={14} height={14} style={{ color: '#aaa' }} />
       </button>
 
@@ -197,7 +198,7 @@ export function UsdcBalance({ balance }: UsdcBalanceProps) {
             )}
             {state === 'done' && (
               <div className="flex flex-col items-center justify-center gap-4 py-10">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full" style={{ backgroundColor: '#dcfce7' }}>
+                <div className="flex h-16 w-16 items-center justify-center rounded-full" style={{ backgroundColor: '#f0f0f0' }}>
                   <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={32} height={32} />
                 </div>
                 <p className="text-lg font-bold" style={{ color: '#111' }}>+${amount} USDC</p>

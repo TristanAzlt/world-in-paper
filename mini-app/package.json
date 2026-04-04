@@ -24,6 +24,7 @@
     "react": "^19.0.3",
     "react-dom": "^19.0.3",
     "tailwind-merge": "^3.2.0",
+    "torph": "^0.0.5",
     "viem": "2.45.3",
     "web-haptics": "^0.0.6"
   },

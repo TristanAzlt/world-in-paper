@@ -11,6 +11,7 @@ import { haptic } from '@/lib/haptics';
 import { useState, useMemo } from 'react';
 import type { Asset, AssetCategory } from '@/types';
 import { getAssetsByCategory } from '@/lib/mock-data';
+import { AnimatedText } from '@/components/AnimatedText';
 import { AssetRow } from '@/components/AssetRow';
 
 interface TradeDrawerProps {
@@ -198,9 +199,9 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, positions = [] 
             <div className="flex-1 overflow-y-auto space-y-5 px-5 pb-40">
               {/* Price card */}
               <div className="rounded-2xl py-6 text-center" style={{ backgroundColor: '#f7f7f7' }}>
-                <div className="text-4xl font-bold" style={{ color: '#111' }}>
+                <AnimatedText className="text-4xl font-bold" style={{ color: '#111' }}>
                   {formatPrice(selectedAsset.price)}
-                </div>
+                </AnimatedText>
                 <div
                   className="mt-2 text-base font-semibold"
                   style={{ color: selectedAsset.change24h >= 0 ? '#16a34a' : '#ef4444' }}
@@ -219,14 +220,14 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, positions = [] 
                   }}
                 />
                 <button
-                  onClick={() => { setSide('buy'); haptic.selection(); }}
+                  onClick={() => { setSide('buy'); setAmount(''); haptic.selection(); }}
                   className="relative z-10 flex-1 text-base font-bold"
                   style={{ color: side === 'buy' ? '#fff' : '#888' }}
                 >
                   BUY
                 </button>
                 <button
-                  onClick={() => { setSide('sell'); haptic.selection(); }}
+                  onClick={() => { setSide('sell'); setAmount(''); haptic.selection(); }}
                   className="relative z-10 flex-1 text-base font-bold"
                   style={{ color: side === 'sell' ? '#fff' : '#888' }}
                 >
@@ -325,12 +326,12 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, positions = [] 
                 <div className="text-sm" style={{ color: '#888' }}>
                   {side === 'buy' ? 'You receive' : 'You get'}
                 </div>
-                <div className="mt-1 text-lg font-bold" style={{ color: '#111' }}>
+                <AnimatedText className="mt-1 text-lg font-bold" style={{ color: '#111', display: 'block' }}>
                   {side === 'buy'
                     ? `~${estimatedTokens.toPrecision(6)} ${selectedAsset.symbol}`
                     : `~$${(amountNum * selectedAsset.price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                   }
-                </div>
+                </AnimatedText>
               </div>
 
               {/* Confirm */}

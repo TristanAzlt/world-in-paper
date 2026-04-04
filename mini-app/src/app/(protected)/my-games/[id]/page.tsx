@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { GameStatus } from '@/types';
 import { MOCK_GAMES, MOCK_POSITIONS, MOCK_CURRENT_ADDRESS } from '@/lib/mock-data';
+import { AnimatedText } from '@/components/AnimatedText';
 import { CountdownTimer } from '@/components/CountdownTimer';
 import { TradeDrawer } from '@/components/TradeDrawer';
 import { haptic } from '@/lib/haptics';
@@ -57,14 +58,16 @@ export default function GameViewPage() {
       <Page.Main>
         {/* P&L + stats */}
         <div className="mb-8 text-center">
-          <div
+          <AnimatedText
             className="text-5xl font-extrabold"
             style={{ color: pnl >= 0 ? '#16a34a' : '#ef4444' }}
           >
-            {pnl >= 0 ? '+' : ''}{pnl.toFixed(1)}%
-          </div>
+            {`${pnl >= 0 ? '+' : ''}${pnl.toFixed(1)}%`}
+          </AnimatedText>
           <div className="mt-1 text-sm" style={{ color: '#aaa' }}>
-            ${currentPlayer?.portfolioValue.toLocaleString() ?? game.startingCapital.toLocaleString()}
+            <AnimatedText>
+              {`$${currentPlayer?.portfolioValue.toLocaleString() ?? game.startingCapital.toLocaleString()}`}
+            </AnimatedText>
           </div>
           <div className="mt-3 flex justify-center gap-6 text-sm">
             <span style={{ color: '#aaa' }}>
