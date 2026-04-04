@@ -10,10 +10,9 @@ import { NavArrowLeft, Xmark, Search } from 'iconoir-react';
 import { LoadingSpinner, SuccessState } from '@/components/LoadingState';
 import { haptic } from '@/lib/haptics';
 import { useState, useMemo } from 'react';
-import type { Asset, AssetCategory } from '@/types';
-import { getAssetsByCategory } from '@/lib/mock-data';
+import type { AssetToken, OriginKey } from '@/types';
+import { useAssets } from '@/hooks/useAssets';
 import { AnimatedText } from '@/components/AnimatedText';
-import { AssetRow } from '@/components/AssetRow';
 import { TokenIcon } from '@/components/TokenIcon';
 
 interface TradeDrawerProps {
@@ -25,13 +24,20 @@ interface TradeDrawerProps {
 }
 
 type Step = 'select' | 'order' | 'confirming' | 'success';
+type MainTab = 'crypto' | 'tradfi';
+
+const CRYPTO_SUBS: { key: OriginKey | 'top'; label: string }[] = [
+  { key: 'top', label: 'Top' },
+  { key: 'base', label: 'Base' },
+  { key: 'ethereum', label: 'ETH' },
+  { key: 'bsc', label: 'BSC' },
+  { key: 'solana', label: 'SOL' },
+  { key: 'worldchain', label: 'World' },
+];
+
+const TRADFI_SUBS = ['stocks', 'indices', 'commodities'] as const;
 
 const QUICK_PERCENTS = [5, 10, 25, 50];
-const CATEGORIES: { key: AssetCategory; label: string }[] = [
-  { key: 'crypto', label: 'Crypto' },
-  { key: 'stocks', label: 'Stocks' },
-  { key: 'solana', label: 'Solana' },
-];
 
 function formatPrice(price: number): string {
   if (price >= 1000) return `$${price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -40,22 +46,68 @@ function formatPrice(price: number): string {
   return `$${price.toPrecision(4)}`;
 }
 
+function AssetRowItem({ asset, onSelect }: { asset: AssetToken; onSelect: (a: AssetToken) => void }) {
+  return (
+    <button
+      onClick={() => onSelect(asset)}
+      className="flex w-full items-center justify-between rounded-2xl active:scale-[0.98] transition-all"
+      style={{ backgroundColor: '#1c1c24', marginBottom: '10px', padding: '16px' }}
+    >
+      <div className="flex items-center gap-3">
+        <TokenIcon src={asset.image} alt={asset.symbol} />
+        <div className="text-left">
+          <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>{asset.symbol}</div>
+          <div className="text-xs" style={{ color: '#9898aa' }}>{asset.name}</div>
+        </div>
+      </div>
+      <div className="text-right">
+        <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>
+          {formatPrice(asset.price)}
+        </div>
+      </div>
+    </button>
+  );
+}
+
 export function TradeDrawer({ isOpen, onClose, availableBalance, gameId: _gameId, positions = [] }: TradeDrawerProps) {
   const [step, setStep] = useState<Step>('select');
-  const [category, setCategory] = useState<AssetCategory>('crypto');
+  const [mainTab, setMainTab] = useState<MainTab>('crypto');
+  const [cryptoSub, setCryptoSub] = useState<OriginKey | 'top'>('top');
+  const [tradfiSub, setTradfiSub] = useState<typeof TRADFI_SUBS[number]>('stocks');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
+  const [selectedAsset, setSelectedAsset] = useState<AssetToken | null>(null);
   const [side, setSide] = useState<'buy' | 'sell'>('buy');
   const [amount, setAmount] = useState('');
 
-  const filteredAssets = useMemo(() => {
-    const assets = getAssetsByCategory(category);
+  // Fetch assets based on current selection
+  const activeOrigin: OriginKey = mainTab === 'crypto'
+    ? (cryptoSub === 'top' ? 'hyperliquid' : cryptoSub)
+    : 'hyperliquid';
+
+  const { tokens, categories, loading: assetsLoading } = useAssets(activeOrigin);
+
+  const displayAssets = useMemo(() => {
+    let assets: AssetToken[] = [];
+
+    if (mainTab === 'crypto') {
+      if (cryptoSub === 'top') {
+        // Hyperliquid crypto tokens
+        assets = categories?.crypto || tokens;
+      } else {
+        // Other chain tokens
+        assets = tokens;
+      }
+    } else {
+      // TradFi from hyperliquid categories
+      assets = categories?.[tradfiSub] || [];
+    }
+
     if (!searchQuery) return assets;
     const q = searchQuery.toLowerCase();
     return assets.filter(
       (a) => a.symbol.toLowerCase().includes(q) || a.name.toLowerCase().includes(q),
     );
-  }, [category, searchQuery]);
+  }, [mainTab, cryptoSub, tradfiSub, tokens, categories, searchQuery]);
 
   const estimatedTokens = useMemo(() => {
     if (!selectedAsset || !amount || Number(amount) === 0) return 0;
@@ -70,7 +122,7 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId: _gameId
     ? amountNum > 0 && amountNum <= availableBalance
     : amountNum > 0 && amountNum <= tokenBalance;
 
-  const handleSelectAsset = (asset: Asset) => {
+  const handleSelectAsset = (asset: AssetToken) => {
     haptic.light();
     setSelectedAsset(asset);
     setStep('order');
@@ -95,7 +147,9 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId: _gameId
 
   const resetAndClose = () => {
     setStep('select');
-    setCategory('crypto');
+    setMainTab('crypto');
+    setCryptoSub('top');
+    setTradfiSub('stocks');
     setSearchQuery('');
     setSelectedAsset(null);
     setSide('buy');
@@ -103,17 +157,14 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId: _gameId
     onClose();
   };
 
-  const handleOpenChange = (open: boolean) => {
-    if (!open) resetAndClose();
-  };
-
   return (
-    <Drawer open={isOpen} onOpenChange={handleOpenChange} dismissible={false} snapPoints={[0.92]}>
+    <Drawer open={isOpen} onOpenChange={(open) => !open && resetAndClose()} dismissible={false} snapPoints={[0.92]}>
       <DrawerContent>
         <VisuallyHidden.Root><DrawerTitle>Trade</DrawerTitle></VisuallyHidden.Root>
+
+        {/* Step 1: Select */}
         {step === 'select' && (
           <div className="flex h-full flex-col">
-            
             <div className="flex items-center justify-between px-5 pt-4 pb-3">
               <h2 className="text-xl font-bold" style={{ color: '#ffffff' }}>Select Asset</h2>
               <button
@@ -125,27 +176,62 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId: _gameId
               </button>
             </div>
 
-            {/* Category tabs */}
-            <div className="relative flex h-12 rounded-full mx-5 mb-4" style={{ backgroundColor: '#24242e' }}>
+            {/* Main tabs: Crypto | TradFi */}
+            <div className="relative flex h-11 rounded-full mx-5 mb-3" style={{ backgroundColor: '#24242e' }}>
               <div
-                className="absolute top-0 left-0 h-full rounded-full transition-transform duration-300 ease-out"
-                style={{
-                  width: '33.333%',
-                  backgroundColor: '#2470ff',
-                  transform: category === 'stocks' ? 'translateX(100%)' : category === 'solana' ? 'translateX(200%)' : 'translateX(0)',
-                }}
+                className="absolute top-0 left-0 h-full w-1/2 rounded-full transition-transform duration-300 ease-out"
+                style={{ backgroundColor: '#2470ff', transform: mainTab === 'tradfi' ? 'translateX(100%)' : 'translateX(0)' }}
               />
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat.key}
-                  onClick={() => { setCategory(cat.key); setSearchQuery(''); haptic.selection(); }}
-                  className="relative z-10 flex-1 text-[15px] font-semibold"
-                  style={{ color: category === cat.key ? '#ffffff' : '#6a6a7a' }}
-                >
-                  {cat.label}
-                </button>
-              ))}
+              <button
+                onClick={() => { setMainTab('crypto'); setSearchQuery(''); haptic.selection(); }}
+                className="relative z-10 flex-1 text-sm font-bold"
+                style={{ color: mainTab === 'crypto' ? '#ffffff' : '#6a6a7a' }}
+              >
+                Crypto
+              </button>
+              <button
+                onClick={() => { setMainTab('tradfi'); setSearchQuery(''); haptic.selection(); }}
+                className="relative z-10 flex-1 text-sm font-bold"
+                style={{ color: mainTab === 'tradfi' ? '#ffffff' : '#6a6a7a' }}
+              >
+                TradFi
+              </button>
             </div>
+
+            {/* Sub tabs */}
+            {mainTab === 'crypto' ? (
+              <div className="flex gap-2 overflow-x-auto px-5 pb-3" style={{ scrollbarWidth: 'none' }}>
+                {CRYPTO_SUBS.map((sub) => (
+                  <button
+                    key={sub.key}
+                    onClick={() => { setCryptoSub(sub.key); setSearchQuery(''); haptic.selection(); }}
+                    className="flex-shrink-0 rounded-full px-4 py-2 text-xs font-bold transition-all"
+                    style={{
+                      backgroundColor: cryptoSub === sub.key ? '#2470ff' : '#24242e',
+                      color: cryptoSub === sub.key ? '#ffffff' : '#6a6a7a',
+                    }}
+                  >
+                    {sub.label}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="flex gap-2 px-5 pb-3">
+                {TRADFI_SUBS.map((sub) => (
+                  <button
+                    key={sub}
+                    onClick={() => { setTradfiSub(sub); setSearchQuery(''); haptic.selection(); }}
+                    className="flex-1 rounded-full py-2 text-xs font-bold transition-all"
+                    style={{
+                      backgroundColor: tradfiSub === sub ? '#2470ff' : '#24242e',
+                      color: tradfiSub === sub ? '#ffffff' : '#6a6a7a',
+                    }}
+                  >
+                    {sub.charAt(0).toUpperCase() + sub.slice(1)}
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* Search */}
             <div className="px-5 pb-3">
@@ -163,20 +249,27 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId: _gameId
             </div>
 
             {/* Asset list */}
-            <div className="overflow-y-auto px-5 pb-40" style={{ maxHeight: '60vh' }}>
-              {filteredAssets.map((asset) => (
-                <AssetRow key={asset.symbol} asset={asset} onSelect={handleSelectAsset} />
-              ))}
-              {filteredAssets.length === 0 && (
+            <div className="overflow-y-auto px-5 pb-40" style={{ maxHeight: '50vh' }}>
+              {assetsLoading ? (
+                <div className="space-y-2">
+                  {[1,2,3,4].map(i => (
+                    <div key={i} className="h-16 rounded-2xl animate-pulse" style={{ backgroundColor: '#1c1c24' }} />
+                  ))}
+                </div>
+              ) : displayAssets.length > 0 ? (
+                displayAssets.map((asset) => (
+                  <AssetRowItem key={`${asset.address}-${asset.origin}`} asset={asset} onSelect={handleSelectAsset} />
+                ))
+              ) : (
                 <p className="py-12 text-center text-sm" style={{ color: '#9898aa' }}>No assets found</p>
               )}
             </div>
           </div>
         )}
 
+        {/* Step 2: Order */}
         {step === 'order' && selectedAsset && (
           <div className="flex h-full flex-col">
-            
             <div className="flex items-center justify-between px-5 pt-4 pb-3">
               <div className="flex items-center gap-3">
                 <button
@@ -186,7 +279,7 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId: _gameId
                 >
                   <NavArrowLeft width={20} height={20} style={{ color: '#9898aa' }} />
                 </button>
-                <TokenIcon src={selectedAsset.iconUrl} alt={selectedAsset.symbol} size={36} />
+                <TokenIcon src={selectedAsset.image} alt={selectedAsset.symbol} size={36} />
                 <div>
                   <h2 className="text-lg font-bold" style={{ color: '#ffffff' }}>{selectedAsset.symbol}</h2>
                   <p className="text-xs" style={{ color: '#6a6a7a' }}>{selectedAsset.name}</p>
@@ -202,27 +295,16 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId: _gameId
             </div>
 
             <div className="flex-1 overflow-y-auto space-y-5 px-5 pb-40">
-              {/* Price card */}
               <div className="rounded-2xl py-6 text-center" style={{ backgroundColor: '#1c1c24' }}>
                 <AnimatedText className="text-4xl font-bold" style={{ color: '#ffffff' }}>
                   {formatPrice(selectedAsset.price)}
                 </AnimatedText>
-                <div
-                  className="mt-2 text-base font-semibold"
-                  style={{ color: selectedAsset.change24h >= 0 ? '#34c759' : '#ff6b6b' }}
-                >
-                  {selectedAsset.change24h >= 0 ? '+' : ''}{selectedAsset.change24h.toFixed(1)}%
-                </div>
               </div>
 
-              {/* Buy / Sell toggle */}
               <div className="relative flex h-14 rounded-full" style={{ backgroundColor: '#24242e' }}>
                 <div
                   className="absolute top-0 left-0 h-full w-1/2 rounded-full transition-transform duration-300 ease-out"
-                  style={{
-                    backgroundColor: '#2470ff',
-                    transform: side === 'sell' ? 'translateX(100%)' : 'translateX(0)',
-                  }}
+                  style={{ backgroundColor: '#2470ff', transform: side === 'sell' ? 'translateX(100%)' : 'translateX(0)' }}
                 />
                 <button
                   onClick={() => { setSide('buy'); setAmount(''); haptic.selection(); }}
@@ -240,7 +322,6 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId: _gameId
                 </button>
               </div>
 
-              {/* Amount */}
               <div className="rounded-2xl px-5 py-4" style={{ backgroundColor: '#1c1c24' }}>
                 <div className="text-xs font-medium mb-2" style={{ color: '#9898aa' }}>
                   {side === 'buy' ? 'Amount (USD)' : `Amount (${selectedAsset.symbol})`}
@@ -259,66 +340,39 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId: _gameId
                   {side === 'sell' && <span className="text-lg font-bold" style={{ color: '#9898aa' }}>{selectedAsset.symbol}</span>}
                 </div>
                 <div className="mt-2 text-xs" style={{ color: '#9898aa' }}>
-                  {side === 'buy'
-                    ? `Available: $${availableBalance.toLocaleString()}`
-                    : `Available: — ${selectedAsset.symbol}`
-                  }
+                  Available: ${availableBalance.toLocaleString()}
                 </div>
               </div>
 
-              {/* Quick percent + MAX */}
-              {side === 'sell' && tokenBalance === 0 ? (
-                <div className="rounded-2xl py-4 text-center" style={{ backgroundColor: '#1c1c24' }}>
-                  <span className="text-sm font-semibold" style={{ color: '#ff6b6b' }}>
-                    No {selectedAsset.symbol} to sell
-                  </span>
-                </div>
-              ) : (
-                <div className="flex gap-2">
-                  {QUICK_PERCENTS.map((pct) => {
-                    const base = side === 'buy' ? availableBalance : tokenBalance;
-                    const pctVal = side === 'buy'
-                      ? Math.floor(base * pct / 100).toString()
-                      : (base * pct / 100).toPrecision(6);
-                    const isSelected = amount === pctVal;
-                    return (
-                      <button
-                        key={pct}
-                        onClick={() => { setAmount(pctVal); haptic.selection(); }}
-                        className="flex-1 rounded-2xl text-[15px] font-bold active:scale-95 transition-all"
-                        style={{
-                          height: '50px',
-                          backgroundColor: isSelected ? '#2470ff' : '#24242e',
-                          color: isSelected ? '#ffffff' : '#6a6a7a',
-                        }}
-                      >
-                        {pct}%
-                      </button>
-                    );
-                  })}
-                  {(() => {
-                    const maxVal = side === 'buy'
-                      ? Math.floor(availableBalance).toString()
-                      : tokenBalance.toString();
-                    const isSelected = amount === maxVal;
-                    return (
-                      <button
-                        onClick={() => { setAmount(maxVal); haptic.selection(); }}
-                        className="flex-1 rounded-2xl text-[15px] font-bold active:scale-95 transition-all"
-                        style={{
-                          height: '50px',
-                          backgroundColor: isSelected ? '#2470ff' : '#24242e',
-                          color: isSelected ? '#ffffff' : '#6a6a7a',
-                        }}
-                      >
-                        MAX
-                      </button>
-                    );
-                  })()}
-                </div>
-              )}
+              <div className="flex gap-2">
+                {QUICK_PERCENTS.map((pct) => {
+                  const base = side === 'buy' ? availableBalance : tokenBalance;
+                  const pctVal = Math.floor(base * pct / 100).toString();
+                  const isSelected = amount === pctVal;
+                  return (
+                    <button
+                      key={pct}
+                      onClick={() => { setAmount(pctVal); haptic.selection(); }}
+                      className="flex-1 rounded-2xl text-[15px] font-bold active:scale-95 transition-all"
+                      style={{ height: '50px', backgroundColor: isSelected ? '#2470ff' : '#24242e', color: isSelected ? '#ffffff' : '#6a6a7a' }}
+                    >
+                      {pct}%
+                    </button>
+                  );
+                })}
+                <button
+                  onClick={() => {
+                    const maxVal = side === 'buy' ? Math.floor(availableBalance).toString() : tokenBalance.toString();
+                    setAmount(maxVal);
+                    haptic.selection();
+                  }}
+                  className="flex-1 rounded-2xl text-[15px] font-bold active:scale-95 transition-all"
+                  style={{ height: '50px', backgroundColor: amount === Math.floor(availableBalance).toString() ? '#2470ff' : '#24242e', color: '#6a6a7a' }}
+                >
+                  MAX
+                </button>
+              </div>
 
-              {/* Estimated output */}
               <div
                 className="rounded-2xl py-4 text-center transition-all duration-300 overflow-hidden"
                 style={{
@@ -340,16 +394,11 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId: _gameId
                 </AnimatedText>
               </div>
 
-              {/* Confirm */}
               <button
                 onClick={handleConfirm}
                 disabled={!canConfirm}
                 className="w-full rounded-2xl text-[17px] font-bold transition-all active:scale-[0.97] disabled:opacity-30"
-                style={{
-                  backgroundColor: '#2470ff',
-                  color: '#ffffff',
-                  height: '64px',
-                }}
+                style={{ backgroundColor: '#2470ff', color: '#ffffff', height: '64px' }}
               >
                 Execute Trade
               </button>
