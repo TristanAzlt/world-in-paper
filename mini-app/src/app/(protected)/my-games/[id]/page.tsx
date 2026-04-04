@@ -1,7 +1,8 @@
 'use client';
 
 import { TopBar } from '@worldcoin/mini-apps-ui-kit-react';
-import { NavArrowLeft, Plus } from 'iconoir-react';
+import { NavArrowLeft, Plus, ShareIos } from 'iconoir-react';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { GameStatus } from '@/types';
@@ -47,44 +48,76 @@ export default function GameViewPage() {
           }
           title={game.name}
           endAdornment={
-            isActive ? (
-              <CountdownTimer targetTime={game.endTime} />
-            ) : game.status === GameStatus.Upcoming ? (
-              <CountdownTimer targetTime={game.startTime} label="Starts" />
-            ) : null
+            <button
+              onClick={() => {
+                haptic.light();
+                navigator.share?.({
+                  title: `Join ${game.name} on World In Paper`,
+                  text: `Paper trading game — ${game.entryAmount} USDC buy-in, ${game.playerCount}/${game.maxPlayers} players`,
+                  url: `https://worldcoin.org/mini-app?app_id=${process.env.NEXT_PUBLIC_APP_ID}&path=/my-games/${game.id}`,
+                }).catch(() => {});
+              }}
+              className="flex h-9 w-9 items-center justify-center rounded-full active:scale-90 transition-transform"
+              style={{ backgroundColor: '#24242e' }}
+            >
+              <ShareIos width={16} height={16} style={{ color: '#9898aa' }} />
+            </button>
           }
         />
       </Page.Header>
 
       <Page.Main>
-        {/* P&L + stats */}
-        <div className="mb-8 text-center">
+        {/* Balance + P&L */}
+        <div className="mb-6 text-center">
+          <div className="text-sm font-semibold uppercase tracking-wider mb-2" style={{ color: '#6a6a7a' }}>Your Balance</div>
+          <div className="flex items-center justify-center gap-2">
+            <AnimatedText
+              className="text-4xl font-extrabold"
+              style={{ color: '#ffffff' }}
+            >
+              {`$${currentPlayer?.portfolioValue.toLocaleString() ?? game.startingCapital.toLocaleString()}`}
+            </AnimatedText>
+          </div>
           <AnimatedText
-            className="text-5xl font-extrabold"
+            className="text-lg font-bold mt-1"
             style={{ color: pnl >= 0 ? '#34c759' : '#ff6b6b' }}
           >
             {`${pnl >= 0 ? '+' : ''}${pnl.toFixed(1)}%`}
           </AnimatedText>
-          <div className="mt-1 text-sm" style={{ color: '#9898aa' }}>
-            <AnimatedText>
-              {`$${currentPlayer?.portfolioValue.toLocaleString() ?? game.startingCapital.toLocaleString()}`}
-            </AnimatedText>
+        </div>
+
+        {/* Stats row */}
+        <div className="flex gap-2 mb-6">
+          <div className="flex-1 rounded-2xl p-3 text-center" style={{ backgroundColor: '#1c1c24' }}>
+            <div className="text-xs" style={{ color: '#6a6a7a' }}>Buy-in</div>
+            <div className="flex items-center justify-center gap-1">
+              <span className="text-lg font-extrabold" style={{ color: '#ffffff' }}>{game.entryAmount}</span>
+              <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={16} height={16} />
+            </div>
           </div>
-          <div className="mt-3 flex justify-center gap-6 text-sm">
-            <span style={{ color: '#9898aa' }}>
-              Rank <strong style={{ color: '#ffffff' }}>#{currentPlayer?.rank ?? '-'}</strong>
-            </span>
-            <span style={{ color: '#9898aa' }}>
-              Capital <strong style={{ color: '#ffffff' }}>${game.startingCapital.toLocaleString()}</strong>
-            </span>
-            <span style={{ color: '#9898aa' }}>
-              Players <strong style={{ color: '#ffffff' }}>{game.playerCount}</strong>
-            </span>
+          <div className="flex-1 rounded-2xl p-3 text-center" style={{ backgroundColor: '#1c1c24' }}>
+            <div className="text-xs" style={{ color: '#6a6a7a' }}>Start with</div>
+            <div className="text-lg font-extrabold" style={{ color: '#ffffff' }}>${game.startingCapital.toLocaleString()}</div>
+          </div>
+          <div className="flex-1 rounded-2xl p-3 text-center" style={{ backgroundColor: '#1c1c24' }}>
+            <div className="text-xs" style={{ color: '#6a6a7a' }}>Players</div>
+            <div className="text-lg font-extrabold" style={{ color: '#ffffff' }}>{game.playerCount}</div>
           </div>
         </div>
 
+        {isActive && (
+          <div className="flex justify-center mb-6">
+            <CountdownTimer targetTime={game.endTime} label="Ends in" />
+          </div>
+        )}
+        {game.status === GameStatus.Upcoming && (
+          <div className="flex justify-center mb-6">
+            <CountdownTimer targetTime={game.startTime} label="Starts in" />
+          </div>
+        )}
+
         {/* Positions */}
-        <div className="mb-6">
+        <div className="mb-8">
           <div className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: '#6a6a7a' }}>
             Positions
           </div>
@@ -133,8 +166,15 @@ export default function GameViewPage() {
 
         {/* Leaderboard */}
         <div className="mb-6">
-          <div className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: '#6a6a7a' }}>
-            Leaderboard
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: '#6a6a7a' }}>
+              Leaderboard
+            </span>
+            {currentPlayer && (
+              <span className="text-sm font-bold" style={{ color: '#ffffff' }}>
+                Your rank: #{currentPlayer.rank}/{game.playerCount}
+              </span>
+            )}
           </div>
           {[...game.players]
             .sort((a, b) => a.rank - b.rank)
@@ -152,7 +192,21 @@ export default function GameViewPage() {
                   }}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="w-5 text-sm text-center" style={{ color: '#9898aa' }}>{player.rank}</span>
+                    <span
+                      className="w-5 text-sm text-center font-bold"
+                      style={{
+                        color: (() => {
+                          const half = Math.floor(game.playerCount / 2);
+                          const isOdd = game.playerCount % 2 !== 0;
+                          const middleRank = half + 1;
+                          if (player.rank <= half) return '#34c759';
+                          if (isOdd && player.rank === middleRank) return '#6a6a7a';
+                          return '#ff6b6b';
+                        })(),
+                      }}
+                    >
+                      {player.rank}
+                    </span>
                     <div>
                       <div className="text-[15px]" style={{ color: '#ffffff' }}>
                         {player.username}
