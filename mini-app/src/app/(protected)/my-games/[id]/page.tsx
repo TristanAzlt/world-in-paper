@@ -430,7 +430,7 @@ export default function GameViewPage() {
       </Page.Main>
 
       {/* Player portfolio drawer */}
-      <Drawer open={!!viewPlayer} onOpenChange={(open) => !open && setViewPlayer(null)} dismissible={true} snapPoints={[0.55]}>
+      <Drawer open={!!viewPlayer} onOpenChange={(open) => !open && setViewPlayer(null)} dismissible={true} height="fit">
         <DrawerContent>
           <VisuallyHidden.Root><DrawerTitle>Player Portfolio</DrawerTitle></VisuallyHidden.Root>
           {viewPlayer && (() => {
