@@ -1,7 +1,8 @@
 'use client';
 
-import { TopBar } from '@worldcoin/mini-apps-ui-kit-react';
-import { NavArrowLeft, Plus, ShareIos, Trophy, Lock } from 'iconoir-react';
+import { TopBar, Drawer, DrawerContent, DrawerTitle } from '@worldcoin/mini-apps-ui-kit-react';
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
+import { NavArrowLeft, Plus, ShareIos, Trophy, Lock, Xmark } from 'iconoir-react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -49,9 +50,10 @@ export default function GameViewPage() {
 
   const { claimGame } = useContract();
   const tokenPrices = useTokenPrices(portfolio?.tokens ?? []);
-  const { entries: leaderboard, refresh: refreshLeaderboard } = useLeaderboard(gameId, ranking);
+  const { entries: leaderboard, refresh: refreshLeaderboard, playerPortfolios, priceMap: leaderboardPrices } = useLeaderboard(gameId, ranking);
   const [tradeOpen, setTradeOpen] = useState(false);
   const [preselectedAsset, setPreselectedAsset] = useState<{ address: string; origin: string } | null>(null);
+  const [viewPlayer, setViewPlayer] = useState<string | null>(null);
   const [claiming, setClaiming] = useState(false);
   const [claimed, setClaimed] = useState(false);
   const [claimedAmount, setClaimedAmount] = useState(0);
@@ -284,7 +286,22 @@ export default function GameViewPage() {
                 </div>
               ))}
             </div>
-          ) : portfolio && portfolio.tokens.filter((t) => {
+          ) : portfolio ? (
+            <div className="space-y-2">
+              {/* Cash line */}
+              <div className="flex items-center justify-between rounded-2xl p-4" style={{ backgroundColor: '#1c1c24' }}>
+                <div className="flex items-center gap-3">
+                  <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={40} height={40} />
+                  <div>
+                    <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>Cash</div>
+                    <div className="text-xs" style={{ color: '#9898aa' }}>USDC</div>
+                  </div>
+                </div>
+                <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>${cashBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+              </div>
+
+              {/* Token positions */}
+              {portfolio.tokens.filter((t) => {
                 const i = tokenPrices[t.asset_address.toLowerCase()];
                 const d = i?.decimals ?? 6;
                 const v = i ? (Number(t.balance) / 10 ** d) * i.price : 0;
@@ -347,8 +364,18 @@ export default function GameViewPage() {
               })}
             </div>
           ) : (
-            <div className="py-8 text-center">
-              <p className="text-sm" style={{ color: '#6a6a7a' }}>No positions yet</p>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between rounded-2xl p-4" style={{ backgroundColor: '#1c1c24' }}>
+                <div className="flex items-center gap-3">
+                  <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={40} height={40} />
+                  <div>
+                    <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>Cash</div>
+                    <div className="text-xs" style={{ color: '#9898aa' }}>USDC</div>
+                  </div>
+                </div>
+                <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>${cashBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+              </div>
+              <div className="py-4 text-center text-sm" style={{ color: '#6a6a7a' }}>No positions yet</div>
             </div>
           )}
         </div>
@@ -381,7 +408,8 @@ export default function GameViewPage() {
               return (
                 <div
                   key={player.player}
-                  className="flex items-center justify-between"
+                  onClick={() => { setViewPlayer(player.player.toLowerCase()); haptic.light(); }}
+                  className="flex items-center justify-between cursor-pointer active:scale-[0.98] transition-all"
                   style={{ padding: '14px 0', borderBottom: '1px solid #24242e', fontWeight: isCurrent ? 700 : 400 }}
                 >
                   <div className="flex items-center gap-3">
@@ -422,6 +450,76 @@ export default function GameViewPage() {
           </div>
         )}
       </Page.Main>
+
+      {/* Player portfolio drawer */}
+      <Drawer open={!!viewPlayer} onOpenChange={(open) => !open && setViewPlayer(null)} dismissible={true} height="fit">
+        <DrawerContent>
+          <VisuallyHidden.Root><DrawerTitle>Player Portfolio</DrawerTitle></VisuallyHidden.Root>
+          {viewPlayer && (() => {
+            const p = playerPortfolios[viewPlayer];
+            const entry = leaderboard.find((e) => e.player.toLowerCase() === viewPlayer);
+            const wip = p ? formatWipBalance(p.wipBalance) : 0;
+
+            return (
+              <div className="px-5 pt-5 pb-8">
+                <div className="flex items-center justify-between mb-5">
+                  <div>
+                    <div className="text-lg font-extrabold" style={{ color: '#ffffff' }}>{shortenAddress(viewPlayer)}</div>
+                    {entry && <div className="text-sm" style={{ color: '#9898aa' }}>Rank {entry.place} · ${entry.totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>}
+                  </div>
+                  <button onClick={() => setViewPlayer(null)} className="flex h-9 w-9 items-center justify-center rounded-full active:scale-90 transition-transform" style={{ backgroundColor: '#24242e' }}>
+                    <Xmark width={18} height={18} style={{ color: '#9898aa' }} />
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  {/* Cash */}
+                  <div className="flex items-center justify-between rounded-2xl p-4" style={{ backgroundColor: '#1c1c24' }}>
+                    <div className="flex items-center gap-3">
+                      <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={40} height={40} />
+                      <div>
+                        <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>Cash</div>
+                        <div className="text-xs" style={{ color: '#9898aa' }}>USDC</div>
+                      </div>
+                    </div>
+                    <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>${wip.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  </div>
+
+                  {/* Positions */}
+                  {p?.tokens.filter((t) => {
+                    const info = leaderboardPrices[t.asset_address.toLowerCase()];
+                    const dec = info?.decimals ?? 6;
+                    const v = info ? (Number(t.balance) / 10 ** dec) * info.price : 0;
+                    return v >= 1;
+                  }).map((t) => {
+                    const info = leaderboardPrices[t.asset_address.toLowerCase()];
+                    const dec = info?.decimals ?? 6;
+                    const bal = Number(t.balance) / 10 ** dec;
+                    const value = info ? bal * info.price : 0;
+
+                    return (
+                      <div key={t.asset_address} className="flex items-center justify-between rounded-2xl p-4" style={{ backgroundColor: '#1c1c24' }}>
+                        <div className="flex items-center gap-3">
+                          <TokenIcon src={info?.image || ''} alt={info?.symbol || t.asset_address} />
+                          <div>
+                            <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>{info?.symbol || t.asset_address}</div>
+                            <div className="text-xs" style={{ color: '#9898aa' }}>{formatQty(bal)}</div>
+                          </div>
+                        </div>
+                        <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      </div>
+                    );
+                  })}
+
+                  {(!p || p.tokens.filter((t) => Number(t.balance) > 0).length === 0) && (
+                    <div className="py-4 text-center text-sm" style={{ color: '#6a6a7a' }}>No positions</div>
+                  )}
+                </div>
+              </div>
+            );
+          })()}
+        </DrawerContent>
+      </Drawer>
 
       <TradeDrawer
         isOpen={tradeOpen}

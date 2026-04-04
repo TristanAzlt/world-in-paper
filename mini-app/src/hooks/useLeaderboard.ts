@@ -16,6 +16,8 @@ export interface LeaderboardEntry {
 
 export function useLeaderboard(gameId: string | undefined, ranking: GameRankingEntry[]) {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [playerPortfolios, setPlayerPortfolios] = useState<Record<string, PlayerPortfolio>>({});
+  const [priceMap, setPriceMap] = useState<Record<string, { price: number; decimals: number; symbol: string; image: string }>>({});
   const [refreshCount, setRefreshCount] = useState(0);
   const lastRankingKey = useRef('');
   const enriched = useRef(false);
@@ -69,7 +71,7 @@ export function useLeaderboard(gameId: string | undefined, ranking: GameRankingE
         }
 
         // Fetch prices
-        const priceMap: Record<string, { price: number; decimals: number }> = {};
+        const prices: Record<string, { price: number; decimals: number; symbol: string; image: string }> = {};
         await Promise.all(
           [...originSet].map(async (origin) => {
             try {
@@ -78,13 +80,21 @@ export function useLeaderboard(gameId: string | undefined, ranking: GameRankingE
               );
               const all = data.categories ? Object.values(data.categories).flat() : data.tokens;
               for (const a of all) {
-                priceMap[a.address.toLowerCase()] = { price: a.price, decimals: a.decimals ?? 6 };
+                prices[a.address.toLowerCase()] = { price: a.price, decimals: a.decimals ?? 6, symbol: a.symbol, image: a.image };
               }
             } catch { /* skip */ }
           }),
         );
 
         if (cancelled) return;
+
+        // Store portfolios and prices
+        const portfolioMap: Record<string, PlayerPortfolio> = {};
+        for (let i = 0; i < ranking.length; i++) {
+          if (portfolios[i]) portfolioMap[ranking[i].player.toLowerCase()] = portfolios[i]!;
+        }
+        setPlayerPortfolios(portfolioMap);
+        setPriceMap(prices);
 
         // Compute total value
         const computed = ranking.map((r, i) => {
@@ -93,7 +103,7 @@ export function useLeaderboard(gameId: string | undefined, ranking: GameRankingE
           let pos = 0;
           if (p) {
             for (const t of p.tokens) {
-              const info = priceMap[t.asset_address.toLowerCase()];
+              const info = prices[t.asset_address.toLowerCase()];
               if (info && info.price > 0) {
                 pos += (Number(t.balance) / 10 ** info.decimals) * info.price;
               }
@@ -114,5 +124,5 @@ export function useLeaderboard(gameId: string | undefined, ranking: GameRankingE
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameId, rankingKey, refreshCount]);
 
-  return { entries, refresh };
+  return { entries, refresh, playerPortfolios, priceMap };
 }
