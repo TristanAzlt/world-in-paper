@@ -14,5 +14,5 @@ export const GECKOTERMINAL_NETWORK_BY_ORIGIN: Partial<Record<Origin, string>> = 
     ethereum: 'eth',
     bsc: 'bsc',
     solana: 'solana',
-    worldchain: 'worldchain'
+    worldchain: 'world-chain'
 };

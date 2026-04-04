@@ -125,7 +125,7 @@ app.use(hpp());
 
 (async () => {
     try {
-        logInfo("Starting Hollow Protocol API...");
+        logInfo("Starting World In Paper API...");
 
         await connectRedis();
 
