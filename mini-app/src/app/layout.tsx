@@ -2,17 +2,13 @@ import { auth } from '@/auth';
 import ClientProviders from '@/providers';
 import '@worldcoin/mini-apps-ui-kit-react/styles.css';
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Nunito } from 'next/font/google';
 import './globals.css';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const nunito = Nunito({
   subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+  variable: '--font-nunito',
+  weight: ['400', '500', '600', '700', '800'],
 });
 
 export const metadata: Metadata = {
@@ -28,7 +24,10 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <html lang="en" data-theme="light" className="light">
-      <body className={`${geistSans.variable} ${geistMono.variable} `}>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+      </head>
+      <body className={`${nunito.variable} ${nunito.className}`}>
         <ClientProviders session={session}>{children}</ClientProviders>
       </body>
     </html>

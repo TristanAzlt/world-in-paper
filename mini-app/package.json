@@ -13,8 +13,8 @@
     "lint": "prettier --check . --ignore-path ../../.prettierignore"
   },
   "dependencies": {
-    "@worldcoin/mini-apps-ui-kit-react": "^1.0.2",
     "@worldcoin/idkit": "^4.0.11",
+    "@worldcoin/mini-apps-ui-kit-react": "^1.0.2",
     "@worldcoin/minikit-js": "^2.0.2",
     "@worldcoin/minikit-react": "^2.0.2",
     "clsx": "^2.1.1",
@@ -24,7 +24,8 @@
     "react": "^19.0.3",
     "react-dom": "^19.0.3",
     "tailwind-merge": "^3.2.0",
-    "viem": "2.45.3"
+    "viem": "2.45.3",
+    "web-haptics": "^0.0.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

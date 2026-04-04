@@ -1,21 +1,98 @@
 'use client';
 
-import { Button, Input, LiveFeedback, TopBar } from '@worldcoin/mini-apps-ui-kit-react';
-import { NavArrowLeft } from 'iconoir-react';
+import { TopBar, Spinner } from '@worldcoin/mini-apps-ui-kit-react';
+import { NavArrowLeft, Check } from 'iconoir-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { haptic } from '@/lib/haptics';
 import { Page } from '@/components/PageLayout';
+
+const STEPS = ['Buy-in', 'Players', 'Capital', 'Start', 'Duration'];
+
+const BUYIN_PRESETS = [5, 10, 25, 50, 100, 250];
+const CAPITAL_PRESETS = [500, 1000, 5000, 10000, 50000, 100000];
+
+const START_PRESETS = [
+  { label: '10 min', minutes: 10 },
+  { label: '30 min', minutes: 30 },
+  { label: '1 hour', minutes: 60 },
+  { label: '3 hours', minutes: 180 },
+  { label: '6 hours', minutes: 360 },
+  { label: 'Tomorrow', minutes: 1440 },
+];
+
+const DURATION_PRESETS = [
+  { label: '1 hour', minutes: 60 },
+  { label: '3 hours', minutes: 180 },
+  { label: '6 hours', minutes: 360 },
+  { label: '12 hours', minutes: 720 },
+  { label: '1 day', minutes: 1440 },
+  { label: '3 days', minutes: 4320 },
+];
+
+function formatCapital(v: number): string {
+  if (v >= 1000000) return `$${v / 1000000}M`;
+  if (v >= 1000) return `$${v / 1000}K`;
+  return `$${v}`;
+}
+
+function formatStartTime(minutes: number): string {
+  if (minutes === 0) return 'Starts immediately';
+  const date = new Date(Date.now() + minutes * 60000);
+  const today = new Date();
+  const isToday = date.toDateString() === today.toDateString();
+  if (isToday) return `Today at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  return `${date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })} at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+}
+
+function formatDuration(minutes: number): string {
+  if (minutes < 60) return `${minutes} min`;
+  if (minutes < 1440) return `${minutes / 60} hour${minutes > 60 ? 's' : ''}`;
+  return `${minutes / 1440} day${minutes > 1440 ? 's' : ''}`;
+}
 
 export default function CreateGamePage() {
   const router = useRouter();
+  const [step, setStep] = useState(0);
   const [buyIn, setBuyIn] = useState('10');
-  const [maxPlayers, setMaxPlayers] = useState('10');
-  const [startingCapital, setStartingCapital] = useState('5000');
-  const [state, setState] = useState<'pending' | 'success' | undefined>(undefined);
+  const [maxPlayers, setMaxPlayers] = useState(10);
+  const [startingCapital, setStartingCapital] = useState(5000);
+  const [customCapital, setCustomCapital] = useState('');
+  const [startDelay, setStartDelay] = useState(10);
+  const [duration, setDuration] = useState(180);
+  const [state, setState] = useState<'idle' | 'pending' | 'success'>('idle');
+
+  const buyInNum = Number(buyIn) || 0;
+  const totalSteps = STEPS.length;
+
+  const canNext =
+    step === 0 ? buyInNum > 0 :
+    step === 1 ? maxPlayers >= 2 :
+    step === 2 ? (customCapital ? Number(customCapital) >= 100 : startingCapital >= 100) :
+    step === 3 ? true :
+    duration > 0;
+
+  const handleNext = () => {
+    haptic.light();
+    if (step < totalSteps - 1) {
+      setStep(step + 1);
+    } else {
+      handleCreate();
+    }
+  };
+
+  const handleBack = () => {
+    haptic.selection();
+    if (step > 0) setStep(step - 1);
+    else router.back();
+  };
 
   const handleCreate = () => {
+    haptic.medium();
     setState('pending');
     setTimeout(() => {
+      haptic.success();
       setState('success');
       setTimeout(() => router.push('/my-games'), 800);
     }, 1500);
@@ -25,58 +102,278 @@ export default function CreateGamePage() {
     <>
       <Page.Header>
         <TopBar
-          title="Create Game"
+          title="New Game"
           startAdornment={
-            <button onClick={() => router.back()} className="p-1">
-              <NavArrowLeft />
+            <button
+              onClick={handleBack}
+              className="flex h-10 w-10 items-center justify-center rounded-full active:scale-90 transition-transform"
+              style={{ backgroundColor: '#f0f0f0' }}
+            >
+              <NavArrowLeft width={20} height={20} style={{ color: '#555' }} />
             </button>
+          }
+          endAdornment={
+            <span className="text-sm font-semibold" style={{ color: '#aaa' }}>
+              {step + 1}/{totalSteps}
+            </span>
           }
         />
       </Page.Header>
 
       <Page.Main>
-        <div className="space-y-5">
-          <Input
-            type="number"
-            label="Buy-in (USDC)"
-            value={buyIn}
-            onChange={(e) => setBuyIn(e.target.value)}
-          />
+        {state === 'idle' && (
+          <>
+            {/* Progress bar */}
+            <div className="flex gap-1.5 mb-8">
+              {STEPS.map((_, i) => (
+                <div
+                  key={i}
+                  className="h-1 flex-1 rounded-full transition-all duration-300"
+                  style={{ backgroundColor: i <= step ? '#111' : '#e5e5e5' }}
+                />
+              ))}
+            </div>
 
-          <Input
-            type="number"
-            label="Max Players"
-            value={maxPlayers}
-            onChange={(e) => setMaxPlayers(e.target.value)}
-          />
+            {/* Step 1: Buy-in */}
+            {step === 0 && (
+              <div>
+                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#111' }}>
+                  Buy-in amount
+                </h2>
+                <p className="text-sm mb-8" style={{ color: '#aaa' }}>
+                  How much USDC to enter the game
+                </p>
 
-          <Input
-            type="number"
-            label="Starting Capital ($)"
-            value={startingCapital}
-            onChange={(e) => setStartingCapital(e.target.value)}
-          />
+                <div className="rounded-2xl px-5 py-4 mb-6" style={{ backgroundColor: '#f7f7f7' }}>
+                  <div className="flex items-center gap-2">
+                    <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={28} height={28} />
+                    <input
+                      type="number"
+                      inputMode="decimal"
+                      value={buyIn}
+                      onChange={(e) => setBuyIn(e.target.value)}
+                      className="w-full bg-transparent text-3xl font-extrabold outline-none"
+                      style={{ color: '#111' }}
+                    />
+                    <span className="text-lg font-bold" style={{ color: '#aaa' }}>USDC</span>
+                  </div>
+                </div>
 
-          <LiveFeedback
-            label={{
-              pending: 'Creating...',
-              success: 'Game created',
-              failed: 'Failed',
-            }}
-            state={state}
-            className="w-full"
-          >
-            <Button
-              variant="primary"
-              size="lg"
-              fullWidth
-              onClick={handleCreate}
-              disabled={state === 'pending'}
+                <div className="grid grid-cols-3 gap-2">
+                  {BUYIN_PRESETS.map((v) => (
+                    <button
+                      key={v}
+                      onClick={() => { setBuyIn(v.toString()); haptic.selection(); }}
+                      className="rounded-2xl text-base font-bold active:scale-95 transition-all"
+                      style={{
+                        height: '52px',
+                        backgroundColor: buyInNum === v ? '#111' : '#f0f0f0',
+                        color: buyInNum === v ? '#fff' : '#555',
+                      }}
+                    >
+                      {v}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Step 2: Players */}
+            {step === 1 && (
+              <div>
+                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#111' }}>
+                  Max players
+                </h2>
+                <p className="text-sm mb-8" style={{ color: '#aaa' }}>
+                  Between 2 and 100 players
+                </p>
+
+                <div className="flex flex-col items-center mb-10">
+                  <span className="text-5xl font-extrabold" style={{ color: '#111' }}>{maxPlayers}</span>
+                  <span className="text-sm mt-1" style={{ color: '#aaa' }}>players</span>
+                </div>
+
+                <div className="px-2 mb-6">
+                  <input
+                    type="range"
+                    min={2}
+                    max={100}
+                    value={maxPlayers}
+                    onChange={(e) => setMaxPlayers(Number(e.target.value))}
+                    className="w-full"
+                    style={{
+                      height: '8px',
+                      borderRadius: '4px',
+                      appearance: 'none',
+                      background: `linear-gradient(to right, #111 ${((maxPlayers - 2) / 98) * 100}%, #e5e5e5 ${((maxPlayers - 2) / 98) * 100}%)`,
+                    }}
+                  />
+                  <div className="flex justify-between mt-2 text-xs" style={{ color: '#aaa' }}>
+                    <span>2</span>
+                    <span>100</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3: Capital */}
+            {step === 2 && (
+              <div>
+                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#111' }}>
+                  Starting capital
+                </h2>
+                <p className="text-sm mb-8" style={{ color: '#aaa' }}>
+                  Virtual trading balance ($100 — $1M)
+                </p>
+
+                <div className="rounded-2xl px-5 py-4 mb-6" style={{ backgroundColor: '#f7f7f7' }}>
+                  <div className="flex items-center gap-1">
+                    <span className="text-3xl font-extrabold" style={{ color: '#111' }}>$</span>
+                    <input
+                      type="number"
+                      inputMode="decimal"
+                      value={customCapital || startingCapital}
+                      onChange={(e) => {
+                        setCustomCapital(e.target.value);
+                        setStartingCapital(0);
+                      }}
+                      className="w-full bg-transparent text-3xl font-extrabold outline-none"
+                      style={{ color: '#111' }}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2">
+                  {CAPITAL_PRESETS.map((v) => (
+                    <button
+                      key={v}
+                      onClick={() => {
+                        setStartingCapital(v);
+                        setCustomCapital('');
+                        haptic.selection();
+                      }}
+                      className="rounded-2xl text-[14px] font-bold active:scale-95 transition-all"
+                      style={{
+                        height: '48px',
+                        backgroundColor: startingCapital === v && !customCapital ? '#111' : '#f0f0f0',
+                        color: startingCapital === v && !customCapital ? '#fff' : '#555',
+                      }}
+                    >
+                      {formatCapital(v)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Step 4: Start time */}
+            {step === 3 && (
+              <div>
+                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#111' }}>
+                  Start time
+                </h2>
+                <p className="text-sm mb-8" style={{ color: '#aaa' }}>
+                  When should the game begin?
+                </p>
+
+                <div className="mb-6 text-center">
+                  <span className="text-lg font-bold" style={{ color: '#111' }}>
+                    {formatStartTime(startDelay)}
+                  </span>
+                </div>
+
+                <div className="rounded-2xl px-4 py-3 mb-6 flex items-start gap-2" style={{ backgroundColor: '#fef3c7' }}>
+                  <span className="text-sm" style={{ color: '#92400e' }}>
+                    Players can only join before the game starts. Share the link early.
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2">
+                  {START_PRESETS.map((preset) => (
+                    <button
+                      key={preset.minutes}
+                      onClick={() => { setStartDelay(preset.minutes); haptic.selection(); }}
+                      className="rounded-2xl text-[14px] font-bold active:scale-95 transition-all"
+                      style={{
+                        height: '52px',
+                        backgroundColor: startDelay === preset.minutes ? '#111' : '#f0f0f0',
+                        color: startDelay === preset.minutes ? '#fff' : '#555',
+                      }}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Step 5: Duration */}
+            {step === 4 && (
+              <div>
+                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#111' }}>
+                  Duration
+                </h2>
+                <p className="text-sm mb-8" style={{ color: '#aaa' }}>
+                  How long does the game last?
+                </p>
+
+                <div className="mb-6 text-center">
+                  <span className="text-lg font-bold" style={{ color: '#111' }}>
+                    {formatDuration(duration)}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2">
+                  {DURATION_PRESETS.map((preset) => (
+                    <button
+                      key={preset.minutes}
+                      onClick={() => { setDuration(preset.minutes); haptic.selection(); }}
+                      className="rounded-2xl text-[14px] font-bold active:scale-95 transition-all"
+                      style={{
+                        height: '52px',
+                        backgroundColor: duration === preset.minutes ? '#111' : '#f0f0f0',
+                        color: duration === preset.minutes ? '#fff' : '#555',
+                      }}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Next / Create button */}
+            <div className="mt-10">
+              <button
+                onClick={handleNext}
+                disabled={!canNext}
+                className="w-full rounded-2xl text-[17px] font-bold active:scale-[0.97] transition-all disabled:opacity-30"
+                style={{ height: '60px', backgroundColor: '#111', color: '#fff' }}
+              >
+                {step < totalSteps - 1 ? 'Next' : 'Create Game'}
+              </button>
+            </div>
+          </>
+        )}
+
+        {state === 'pending' && (
+          <div className="flex flex-col items-center justify-center gap-5 py-20">
+            <Spinner />
+            <p className="text-lg font-semibold" style={{ color: '#555' }}>Creating game...</p>
+          </div>
+        )}
+
+        {state === 'success' && (
+          <div className="flex flex-col items-center justify-center gap-5 py-20">
+            <div
+              className="flex h-20 w-20 items-center justify-center rounded-full"
+              style={{ backgroundColor: '#dcfce7' }}
             >
-              Create Game
-            </Button>
-          </LiveFeedback>
-        </div>
+              <Check width={36} height={36} style={{ color: '#16a34a' }} />
+            </div>
+            <p className="text-xl font-bold" style={{ color: '#111' }}>Game created</p>
+          </div>
+        )}
       </Page.Main>
     </>
   );

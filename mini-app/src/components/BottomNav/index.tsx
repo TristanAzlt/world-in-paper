@@ -3,6 +3,7 @@
 import { TabItem, Tabs } from '@worldcoin/mini-apps-ui-kit-react';
 import { Compass, Trophy, User } from 'iconoir-react';
 import { usePathname, useRouter } from 'next/navigation';
+import { haptic } from '@/lib/haptics';
 
 const TAB_ROUTES: Record<string, string> = {
   games: '/games',
@@ -23,6 +24,7 @@ export function BottomNav() {
 
   const handleChange = (value: string) => {
     if (value === activeTab) return;
+    haptic.light();
     const route = TAB_ROUTES[value];
     if (route) router.push(route);
   };

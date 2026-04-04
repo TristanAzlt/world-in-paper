@@ -27,12 +27,13 @@ const Header = (props: { children: ReactNode; className?: string }) => {
   );
 };
 
-const Main = (props: { children: ReactNode; className?: string }) => {
+const Main = (props: { children: ReactNode; className?: string; style?: React.CSSProperties }) => {
   return (
     <main
       className={twMerge(
         clsx('grow overflow-y-auto p-6 pt-3', props.className),
       )}
+      style={{ paddingBottom: '120px', ...props.style }}
     >
       {props.children}
     </main>

@@ -1,4 +1,3 @@
-import { ListItem } from '@worldcoin/mini-apps-ui-kit-react';
 import { ArrowUp, ArrowDown } from 'iconoir-react';
 import type { Asset } from '@/types';
 
@@ -18,31 +17,33 @@ export function AssetRow({ asset, onSelect }: AssetRowProps) {
   const isPositive = asset.change24h >= 0;
 
   return (
-    <ListItem
+    <button
       onClick={() => onSelect(asset)}
-      label={asset.symbol}
-      description={asset.name}
-      startAdornment={
+      className="flex w-full items-center justify-between rounded-2xl active:scale-[0.98] transition-all"
+      style={{ backgroundColor: '#f7f7f7', marginBottom: '10px', padding: '16px' }}
+    >
+      <div className="flex items-center gap-3">
         <img
           src={asset.iconUrl}
           alt={asset.symbol}
-          className="h-8 w-8 rounded-full bg-gray-100"
-          onError={(e) => {
-            (e.target as HTMLImageElement).style.display = 'none';
-          }}
+          className="h-10 w-10 rounded-full"
+          style={{ backgroundColor: '#eee' }}
+          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
         />
-      }
-      endAdornment={
-        <div className="text-right">
-          <div className="text-sm font-medium text-gray-900">
-            {formatPrice(asset.price)}
-          </div>
-          <div className={`flex items-center justify-end gap-0.5 text-xs ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-            {isPositive ? <ArrowUp width={10} height={10} /> : <ArrowDown width={10} height={10} />}
-            {Math.abs(asset.change24h).toFixed(1)}%
-          </div>
+        <div className="text-left">
+          <div className="text-[15px] font-bold" style={{ color: '#111' }}>{asset.symbol}</div>
+          <div className="text-xs" style={{ color: '#aaa' }}>{asset.name}</div>
         </div>
-      }
-    />
+      </div>
+      <div className="text-right">
+        <div className="text-[15px] font-bold" style={{ color: '#111' }}>
+          {formatPrice(asset.price)}
+        </div>
+        <div className="flex items-center justify-end gap-0.5 text-xs font-semibold" style={{ color: isPositive ? '#16a34a' : '#ef4444' }}>
+          {isPositive ? <ArrowUp width={10} height={10} /> : <ArrowDown width={10} height={10} />}
+          {Math.abs(asset.change24h).toFixed(1)}%
+        </div>
+      </div>
+    </button>
   );
 }
