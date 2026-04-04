@@ -140,7 +140,7 @@ export function UsdcBalance() {
             {/* Main: balances + copy */}
             {state === 'main' && (
               <>
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-2">
                   <h2 className="text-xl font-extrabold" style={{ color: '#ffffff' }}>Top Up</h2>
                   <button
                     onClick={() => setOpen(false)}
@@ -150,6 +150,7 @@ export function UsdcBalance() {
                     <Xmark width={20} height={20} style={{ color: '#9898aa' }} />
                   </button>
                 </div>
+                <p className="text-sm mb-5" style={{ color: '#9898aa' }}>Swap your tokens to USDC to join games</p>
 
                 <div className="space-y-2 mb-4">
                   {balances.filter((t) => t.symbol !== 'USDC' && t.symbol !== 'ETH').map((token) => {
