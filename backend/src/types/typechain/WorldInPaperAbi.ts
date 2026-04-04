@@ -222,6 +222,7 @@ export interface WorldInPaperAbiInterface extends Interface {
       | "USDC"
       | "claimGame"
       | "createGame"
+      | "getCreatedGames"
       | "getExpectedAuthor"
       | "getExpectedWorkflowId"
       | "getExpectedWorkflowName"
@@ -231,7 +232,9 @@ export interface WorldInPaperAbiInterface extends Interface {
       | "getGameRanking"
       | "getGameTradeCount"
       | "getGameTrades"
+      | "getJoinedGames"
       | "getPlayerPortfolio"
+      | "getRecentGames"
       | "getTotalSettlementRequestsCreated"
       | "getTradeToSettle"
       | "hasJoined"
@@ -305,6 +308,10 @@ export interface WorldInPaperAbiInterface extends Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "getCreatedGames",
+    values: [AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getExpectedAuthor",
     values?: undefined
   ): string;
@@ -341,8 +348,16 @@ export interface WorldInPaperAbiInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "getJoinedGames",
+    values: [AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getPlayerPortfolio",
     values: [BigNumberish, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRecentGames",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getTotalSettlementRequestsCreated",
@@ -446,6 +461,10 @@ export interface WorldInPaperAbiInterface extends Interface {
   decodeFunctionResult(functionFragment: "claimGame", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "createGame", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "getCreatedGames",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getExpectedAuthor",
     data: BytesLike
   ): Result;
@@ -479,7 +498,15 @@ export interface WorldInPaperAbiInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getJoinedGames",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getPlayerPortfolio",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRecentGames",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -878,6 +905,12 @@ export interface WorldInPaperAbi extends BaseContract {
     "nonpayable"
   >;
 
+  getCreatedGames: TypedContractMethod<
+    [creator: AddressLike, limit: BigNumberish],
+    [WorldInPaper.GameViewStructOutput[]],
+    "view"
+  >;
+
   getExpectedAuthor: TypedContractMethod<[], [string], "view">;
 
   getExpectedWorkflowId: TypedContractMethod<[], [string], "view">;
@@ -916,9 +949,21 @@ export interface WorldInPaperAbi extends BaseContract {
     "view"
   >;
 
+  getJoinedGames: TypedContractMethod<
+    [player: AddressLike, limit: BigNumberish],
+    [WorldInPaper.GameViewStructOutput[]],
+    "view"
+  >;
+
   getPlayerPortfolio: TypedContractMethod<
     [gameId: BigNumberish, player: AddressLike],
     [WorldInPaper.PlayerPortfolioViewStructOutput],
+    "view"
+  >;
+
+  getRecentGames: TypedContractMethod<
+    [limit: BigNumberish],
+    [WorldInPaper.GameViewStructOutput[]],
     "view"
   >;
 
@@ -1046,6 +1091,13 @@ export interface WorldInPaperAbi extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "getCreatedGames"
+  ): TypedContractMethod<
+    [creator: AddressLike, limit: BigNumberish],
+    [WorldInPaper.GameViewStructOutput[]],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "getExpectedAuthor"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -1085,10 +1137,24 @@ export interface WorldInPaperAbi extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "getJoinedGames"
+  ): TypedContractMethod<
+    [player: AddressLike, limit: BigNumberish],
+    [WorldInPaper.GameViewStructOutput[]],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "getPlayerPortfolio"
   ): TypedContractMethod<
     [gameId: BigNumberish, player: AddressLike],
     [WorldInPaper.PlayerPortfolioViewStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getRecentGames"
+  ): TypedContractMethod<
+    [limit: BigNumberish],
+    [WorldInPaper.GameViewStructOutput[]],
     "view"
   >;
   getFunction(

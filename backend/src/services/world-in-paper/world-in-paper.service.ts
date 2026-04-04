@@ -20,6 +20,26 @@ export class WorldInPaperService {
         return this.contract.getGame(gameId);
     }
 
+    async getRecentGames(limit: BigNumberish): Promise<WorldInPaper.GameViewStructOutput[]> {
+        return this.contract.getRecentGames(limit);
+    }
+
+    async getCreatedGames(creator: string, limit: BigNumberish): Promise<WorldInPaper.GameViewStructOutput[]> {
+        return this.contract.getCreatedGames(creator, limit);
+    }
+
+    async getJoinedGames(player: string, limit: BigNumberish): Promise<WorldInPaper.GameViewStructOutput[]> {
+        return this.contract.getJoinedGames(player, limit);
+    }
+
+    async hasJoined(gameId: BigNumberish, player: string): Promise<boolean> {
+        return this.contract.hasJoined(gameId, player);
+    }
+
+    async getNextGameId(): Promise<bigint> {
+        return this.contract.nextGameId();
+    }
+
     async getGamePlayers(gameId: BigNumberish): Promise<string[]> {
         return this.contract.getGamePlayers(gameId);
     }

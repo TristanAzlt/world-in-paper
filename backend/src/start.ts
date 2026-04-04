@@ -8,11 +8,13 @@ import { logError, logInfo } from './utils/log';
 import { env } from './config';
 import { closeRedis, connectRedis } from './utils/redis';
 import { AssetsRoute } from './routes/assets.route';
+import { GamesRoute } from './routes/games.route';
 import { QuoteRoute } from './routes/quote.route';
 import { GeckoTerminalService } from './services/gecko-terminal/gecko-terminal.service';
 import { HyperliquidService } from './services/hyperliquid/hyperliquid.service';
 import { UniswapService } from './services/uniswap/uniswap.service';
 import { JupiterService } from './services/jupiter/jupiter.service';
+import { WorldInPaperService } from './services/world-in-paper/world-in-paper.service';
 
 const app = express();
 
@@ -132,12 +134,15 @@ app.use(hpp());
         const hyperliquidService = new HyperliquidService();
         const uniswapService = new UniswapService();
         const jupiterService = new JupiterService();
+        const worldInPaperService = new WorldInPaperService();
 
         // ROUTES
         const assetsRoute = new AssetsRoute(geckoTerminalService, hyperliquidService);
+        const gamesRoute = new GamesRoute(worldInPaperService);
         const quoteRoute = new QuoteRoute(uniswapService, jupiterService, hyperliquidService);
 
         app.use('/assets', assetsRoute.router);
+        app.use('/games', gamesRoute.router);
         app.use('/quote', quoteRoute.router);
 
         const PORT = env.PORT;
