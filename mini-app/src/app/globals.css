@@ -1,22 +1,30 @@
 @import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #111111;
-  --brand: #111;
-  --brand-light: #e8f4fd;
-  color-scheme: light;
+  --bg: #131318;
+  --bg-card: #1c1c24;
+  --bg-card-hover: #24242e;
+  --bg-input: #24242e;
+  --border: #2e2e3a;
+  --text: #ffffff;
+  --text-secondary: #9898aa;
+  --text-muted: #6a6a7a;
+  --accent: #2470ff;
+  --accent-light: #2470ff20;
+  --green: #34c759;
+  --red: #ff6b6b;
+  color-scheme: dark;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
   --font-sans: var(--font-nunito);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bg);
+  color: var(--text);
   font-family: var(--font-nunito), sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -24,13 +32,44 @@ body {
 
 * {
   font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Drawer rounded corners */
+button {
+  transition: opacity 0.15s ease;
+}
+button:active {
+  opacity: 0.7;
+}
+
+/* Force dark search field */
+[data-slot="base"],
+[class*="SearchField"],
+[class*="search"] {
+  background-color: #24242e !important;
+  border-color: #2e2e3a !important;
+  color: #fff !important;
+}
+[data-slot="base"] input,
+[class*="SearchField"] input,
+[class*="search"] input {
+  color: #fff !important;
+  font-size: 16px !important;
+  background: transparent !important;
+}
+/* Prevent zoom on inputs (except trade amount) */
+input:not([data-trade-input]) {
+  font-size: 16px !important;
+}
+
+/* Drawer */
 [data-vaul-drawer-content],
 [vaul-drawer],
 [role="dialog"] {
   border-radius: 24px 24px 0 0 !important;
+  background-color: #202028 !important;
+  border: 1px solid #3a3a48 !important;
+  border-bottom: none !important;
 }
 [data-vaul-drawer-overlay] + div {
   border-radius: 24px 24px 0 0 !important;
@@ -47,17 +86,17 @@ input[type="range"]::-webkit-slider-thumb {
   height: 28px;
   width: 28px;
   border-radius: 50%;
-  background: #111;
-  border: 3px solid #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  background: var(--accent);
+  border: 3px solid var(--bg);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 input[type="range"]::-moz-range-thumb {
   height: 28px;
   width: 28px;
   border-radius: 50%;
-  background: #111;
-  border: 3px solid #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  background: var(--accent);
+  border: 3px solid var(--bg);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 
 input[type="number"]::-webkit-inner-spin-button,

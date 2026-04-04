@@ -1,15 +1,14 @@
 'use client';
 
-import { TabItem, Tabs } from '@worldcoin/mini-apps-ui-kit-react';
 import { Compass, Trophy, User } from 'iconoir-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { haptic } from '@/lib/haptics';
 
-const TAB_ROUTES: Record<string, string> = {
-  games: '/games',
-  'my-games': '/my-games',
-  profile: '/profile',
-};
+const TABS = [
+  { key: 'games', path: '/games', icon: Compass, label: 'Explore' },
+  { key: 'my-games', path: '/my-games', icon: Trophy, label: 'My Games' },
+  { key: 'profile', path: '/profile', icon: User, label: 'Profile' },
+];
 
 function getActiveTab(pathname: string): string {
   if (pathname.startsWith('/my-games')) return 'my-games';
@@ -22,18 +21,37 @@ export function BottomNav() {
   const router = useRouter();
   const activeTab = getActiveTab(pathname);
 
-  const handleChange = (value: string) => {
-    if (value === activeTab) return;
-    haptic.light();
-    const route = TAB_ROUTES[value];
-    if (route) router.push(route);
-  };
-
   return (
-    <Tabs value={activeTab} onValueChange={handleChange}>
-      <TabItem value="games" icon={<Compass />} label="Explore" />
-      <TabItem value="my-games" icon={<Trophy />} label="My Games" />
-      <TabItem value="profile" icon={<User />} label="Profile" />
-    </Tabs>
+    <div className="flex justify-around px-2">
+      {TABS.map((tab) => {
+        const isActive = tab.key === activeTab;
+        const Icon = tab.icon;
+        return (
+          <button
+            key={tab.key}
+            onClick={() => {
+              if (!isActive) {
+                haptic.selection();
+                router.push(tab.path);
+              }
+            }}
+            className="flex flex-col items-center gap-1 py-1 px-4"
+          >
+            <Icon
+              width={22}
+              height={22}
+              style={{ color: isActive ? '#2470ff' : '#6a6a7a' }}
+              strokeWidth={isActive ? 2 : 1.5}
+            />
+            <span
+              className="text-[11px] font-semibold"
+              style={{ color: isActive ? '#2470ff' : '#6a6a7a' }}
+            >
+              {tab.label}
+            </span>
+          </button>
+        );
+      })}
+    </div>
   );
 }

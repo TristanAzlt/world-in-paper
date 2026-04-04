@@ -1,14 +1,15 @@
 'use client';
 
-import { TopBar, Spinner } from '@worldcoin/mini-apps-ui-kit-react';
-import { NavArrowLeft, Check } from 'iconoir-react';
+import { TopBar } from '@worldcoin/mini-apps-ui-kit-react';
+import { NavArrowLeft } from 'iconoir-react';
+import { LoadingSpinner, SuccessState } from '@/components/LoadingState';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { haptic } from '@/lib/haptics';
 import { Page } from '@/components/PageLayout';
 
-const STEPS = ['Buy-in', 'Players', 'Capital', 'Start', 'Duration'];
+const STEPS = ['Name', 'Buy-in', 'Players', 'Capital', 'Start', 'Duration'];
 
 const BUYIN_PRESETS = [5, 10, 25, 50, 100, 250];
 const CAPITAL_PRESETS = [500, 1000, 5000, 10000, 50000, 100000];
@@ -32,9 +33,7 @@ const DURATION_PRESETS = [
 ];
 
 function formatCapital(v: number): string {
-  if (v >= 1000000) return `$${v / 1000000}M`;
-  if (v >= 1000) return `$${v / 1000}K`;
-  return `$${v}`;
+  return `$${v.toLocaleString('en-US')}`;
 }
 
 function formatStartTime(minutes: number): string {
@@ -55,6 +54,7 @@ function formatDuration(minutes: number): string {
 export default function CreateGamePage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
+  const [gameName, setGameName] = useState('');
   const [buyIn, setBuyIn] = useState('10');
   const [maxPlayers, setMaxPlayers] = useState(10);
   const [startingCapital, setStartingCapital] = useState(5000);
@@ -67,10 +67,11 @@ export default function CreateGamePage() {
   const totalSteps = STEPS.length;
 
   const canNext =
-    step === 0 ? buyInNum > 0 :
-    step === 1 ? maxPlayers >= 2 :
-    step === 2 ? (customCapital ? Number(customCapital) >= 100 : startingCapital >= 100) :
-    step === 3 ? true :
+    step === 0 ? gameName.trim().length > 0 :
+    step === 1 ? buyInNum > 0 :
+    step === 2 ? maxPlayers >= 2 :
+    step === 3 ? (customCapital ? Number(customCapital) >= 100 : startingCapital >= 100) :
+    step === 4 ? true :
     duration > 0;
 
   const handleNext = () => {
@@ -107,13 +108,13 @@ export default function CreateGamePage() {
             <button
               onClick={handleBack}
               className="flex h-10 w-10 items-center justify-center rounded-full active:scale-90 transition-transform"
-              style={{ backgroundColor: '#f0f0f0' }}
+              style={{ backgroundColor: '#24242e' }}
             >
-              <NavArrowLeft width={20} height={20} style={{ color: '#555' }} />
+              <NavArrowLeft width={20} height={20} style={{ color: '#9898aa' }} />
             </button>
           }
           endAdornment={
-            <span className="text-sm font-semibold" style={{ color: '#aaa' }}>
+            <span className="text-sm font-semibold" style={{ color: '#9898aa' }}>
               {step + 1}/{totalSteps}
             </span>
           }
@@ -129,33 +130,58 @@ export default function CreateGamePage() {
                 <div
                   key={i}
                   className="h-1 flex-1 rounded-full transition-all duration-300"
-                  style={{ backgroundColor: i <= step ? '#111' : '#e5e5e5' }}
+                  style={{ backgroundColor: i <= step ? '#2470ff' : '#2e2e3a' }}
                 />
               ))}
             </div>
 
-            {/* Step 1: Buy-in */}
+            {/* Step 0: Name */}
             {step === 0 && (
               <div>
-                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#111' }}>
+                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#ffffff' }}>
+                  Game name
+                </h2>
+                <p className="text-sm mb-8" style={{ color: '#9898aa' }}>
+                  Give your game a name
+                </p>
+
+                <div className="rounded-2xl px-5 py-4" style={{ backgroundColor: '#1c1c24' }}>
+                  <input
+                    data-trade-input
+                    type="text"
+                    value={gameName}
+                    onChange={(e) => setGameName(e.target.value)}
+                    className="w-full bg-transparent text-2xl font-extrabold outline-none"
+                    style={{ color: '#ffffff' }}
+                    placeholder="Speed Round"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Step 1: Buy-in */}
+            {step === 1 && (
+              <div>
+                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#ffffff' }}>
                   Buy-in amount
                 </h2>
-                <p className="text-sm mb-8" style={{ color: '#aaa' }}>
+                <p className="text-sm mb-8" style={{ color: '#9898aa' }}>
                   How much USDC to enter the game
                 </p>
 
-                <div className="rounded-2xl px-5 py-4 mb-6" style={{ backgroundColor: '#f7f7f7' }}>
+                <div className="rounded-2xl px-5 py-4 mb-6" style={{ backgroundColor: '#1c1c24' }}>
                   <div className="flex items-center gap-2">
                     <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={28} height={28} />
                     <input
+                      data-trade-input
                       type="number"
                       inputMode="decimal"
                       value={buyIn}
                       onChange={(e) => setBuyIn(e.target.value)}
                       className="w-full bg-transparent text-3xl font-extrabold outline-none"
-                      style={{ color: '#111' }}
+                      style={{ color: '#ffffff' }}
                     />
-                    <span className="text-lg font-bold" style={{ color: '#aaa' }}>USDC</span>
+                    <span className="text-lg font-bold" style={{ color: '#9898aa' }}>USDC</span>
                   </div>
                 </div>
 
@@ -167,8 +193,8 @@ export default function CreateGamePage() {
                       className="rounded-2xl text-base font-bold active:scale-95 transition-all"
                       style={{
                         height: '52px',
-                        backgroundColor: buyInNum === v ? '#111' : '#f0f0f0',
-                        color: buyInNum === v ? '#fff' : '#555',
+                        backgroundColor: buyInNum === v ? '#2470ff' : '#24242e',
+                        color: buyInNum === v ? '#ffffff' : '#6a6a7a',
                       }}
                     >
                       {v}
@@ -179,18 +205,18 @@ export default function CreateGamePage() {
             )}
 
             {/* Step 2: Players */}
-            {step === 1 && (
+            {step === 2 && (
               <div>
-                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#111' }}>
+                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#ffffff' }}>
                   Max players
                 </h2>
-                <p className="text-sm mb-8" style={{ color: '#aaa' }}>
+                <p className="text-sm mb-8" style={{ color: '#9898aa' }}>
                   Between 2 and 100 players
                 </p>
 
                 <div className="flex flex-col items-center mb-10">
-                  <span className="text-5xl font-extrabold" style={{ color: '#111' }}>{maxPlayers}</span>
-                  <span className="text-sm mt-1" style={{ color: '#aaa' }}>players</span>
+                  <span className="text-5xl font-extrabold" style={{ color: '#ffffff' }}>{maxPlayers}</span>
+                  <span className="text-sm mt-1" style={{ color: '#9898aa' }}>players</span>
                 </div>
 
                 <div className="px-2 mb-6">
@@ -205,10 +231,10 @@ export default function CreateGamePage() {
                       height: '8px',
                       borderRadius: '4px',
                       appearance: 'none',
-                      background: `linear-gradient(to right, #111 ${((maxPlayers - 2) / 98) * 100}%, #e5e5e5 ${((maxPlayers - 2) / 98) * 100}%)`,
+                      background: `linear-gradient(to right, #2470ff ${((maxPlayers - 2) / 98) * 100}%, #2e2e3a ${((maxPlayers - 2) / 98) * 100}%)`,
                     }}
                   />
-                  <div className="flex justify-between mt-2 text-xs" style={{ color: '#aaa' }}>
+                  <div className="flex justify-between mt-2 text-xs" style={{ color: '#9898aa' }}>
                     <span>2</span>
                     <span>100</span>
                   </div>
@@ -217,19 +243,20 @@ export default function CreateGamePage() {
             )}
 
             {/* Step 3: Capital */}
-            {step === 2 && (
+            {step === 3 && (
               <div>
-                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#111' }}>
+                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#ffffff' }}>
                   Starting capital
                 </h2>
-                <p className="text-sm mb-8" style={{ color: '#aaa' }}>
+                <p className="text-sm mb-8" style={{ color: '#9898aa' }}>
                   Virtual trading balance ($100 — $1M)
                 </p>
 
-                <div className="rounded-2xl px-5 py-4 mb-6" style={{ backgroundColor: '#f7f7f7' }}>
+                <div className="rounded-2xl px-5 py-4 mb-6" style={{ backgroundColor: '#1c1c24' }}>
                   <div className="flex items-center gap-1">
-                    <span className="text-3xl font-extrabold" style={{ color: '#111' }}>$</span>
+                    <span className="text-3xl font-extrabold" style={{ color: '#ffffff' }}>$</span>
                     <input
+                      data-trade-input
                       type="number"
                       inputMode="decimal"
                       value={customCapital || startingCapital}
@@ -238,7 +265,7 @@ export default function CreateGamePage() {
                         setStartingCapital(0);
                       }}
                       className="w-full bg-transparent text-3xl font-extrabold outline-none"
-                      style={{ color: '#111' }}
+                      style={{ color: '#ffffff' }}
                     />
                   </div>
                 </div>
@@ -255,8 +282,8 @@ export default function CreateGamePage() {
                       className="rounded-2xl text-[14px] font-bold active:scale-95 transition-all"
                       style={{
                         height: '48px',
-                        backgroundColor: startingCapital === v && !customCapital ? '#111' : '#f0f0f0',
-                        color: startingCapital === v && !customCapital ? '#fff' : '#555',
+                        backgroundColor: startingCapital === v && !customCapital ? '#2470ff' : '#24242e',
+                        color: startingCapital === v && !customCapital ? '#ffffff' : '#6a6a7a',
                       }}
                     >
                       {formatCapital(v)}
@@ -267,23 +294,23 @@ export default function CreateGamePage() {
             )}
 
             {/* Step 4: Start time */}
-            {step === 3 && (
+            {step === 4 && (
               <div>
-                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#111' }}>
+                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#ffffff' }}>
                   Start time
                 </h2>
-                <p className="text-sm mb-8" style={{ color: '#aaa' }}>
+                <p className="text-sm mb-8" style={{ color: '#9898aa' }}>
                   When should the game begin?
                 </p>
 
                 <div className="mb-6 text-center">
-                  <span className="text-lg font-bold" style={{ color: '#111' }}>
+                  <span className="text-lg font-bold" style={{ color: '#ffffff' }}>
                     {formatStartTime(startDelay)}
                   </span>
                 </div>
 
-                <div className="rounded-2xl px-4 py-3 mb-6 flex items-start gap-2" style={{ backgroundColor: '#fef3c7' }}>
-                  <span className="text-sm" style={{ color: '#92400e' }}>
+                <div className="rounded-2xl px-4 py-3 mb-6 flex items-start gap-2" style={{ backgroundColor: '#2470ff15', border: '1px solid #2470ff30' }}>
+                  <span className="text-[13px]" style={{ color: '#9898bb' }}>
                     Players can only join before the game starts. Share the link early.
                   </span>
                 </div>
@@ -296,8 +323,8 @@ export default function CreateGamePage() {
                       className="rounded-2xl text-[14px] font-bold active:scale-95 transition-all"
                       style={{
                         height: '52px',
-                        backgroundColor: startDelay === preset.minutes ? '#111' : '#f0f0f0',
-                        color: startDelay === preset.minutes ? '#fff' : '#555',
+                        backgroundColor: startDelay === preset.minutes ? '#2470ff' : '#24242e',
+                        color: startDelay === preset.minutes ? '#ffffff' : '#6a6a7a',
                       }}
                     >
                       {preset.label}
@@ -308,17 +335,17 @@ export default function CreateGamePage() {
             )}
 
             {/* Step 5: Duration */}
-            {step === 4 && (
+            {step === 5 && (
               <div>
-                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#111' }}>
+                <h2 className="text-2xl font-extrabold mb-1" style={{ color: '#ffffff' }}>
                   Duration
                 </h2>
-                <p className="text-sm mb-8" style={{ color: '#aaa' }}>
+                <p className="text-sm mb-8" style={{ color: '#9898aa' }}>
                   How long does the game last?
                 </p>
 
                 <div className="mb-6 text-center">
-                  <span className="text-lg font-bold" style={{ color: '#111' }}>
+                  <span className="text-lg font-bold" style={{ color: '#ffffff' }}>
                     {formatDuration(duration)}
                   </span>
                 </div>
@@ -331,8 +358,8 @@ export default function CreateGamePage() {
                       className="rounded-2xl text-[14px] font-bold active:scale-95 transition-all"
                       style={{
                         height: '52px',
-                        backgroundColor: duration === preset.minutes ? '#111' : '#f0f0f0',
-                        color: duration === preset.minutes ? '#fff' : '#555',
+                        backgroundColor: duration === preset.minutes ? '#2470ff' : '#24242e',
+                        color: duration === preset.minutes ? '#ffffff' : '#6a6a7a',
                       }}
                     >
                       {preset.label}
@@ -348,7 +375,7 @@ export default function CreateGamePage() {
                 onClick={handleNext}
                 disabled={!canNext}
                 className="w-full rounded-2xl text-[17px] font-bold active:scale-[0.97] transition-all disabled:opacity-30"
-                style={{ height: '60px', backgroundColor: '#111', color: '#fff' }}
+                style={{ height: '60px', backgroundColor: '#2470ff', color: '#ffffff' }}
               >
                 {step < totalSteps - 1 ? 'Next' : 'Create Game'}
               </button>
@@ -356,24 +383,8 @@ export default function CreateGamePage() {
           </>
         )}
 
-        {state === 'pending' && (
-          <div className="flex flex-col items-center justify-center gap-5 py-20">
-            <Spinner />
-            <p className="text-lg font-semibold" style={{ color: '#555' }}>Creating game...</p>
-          </div>
-        )}
-
-        {state === 'success' && (
-          <div className="flex flex-col items-center justify-center gap-5 py-20">
-            <div
-              className="flex h-20 w-20 items-center justify-center rounded-full"
-              style={{ backgroundColor: '#dcfce7' }}
-            >
-              <Check width={36} height={36} style={{ color: '#16a34a' }} />
-            </div>
-            <p className="text-xl font-bold" style={{ color: '#111' }}>Game created</p>
-          </div>
-        )}
+        {state === 'pending' && <LoadingSpinner label="Creating game..." />}
+        {state === 'success' && <SuccessState title="Game created" subtitle="Share it with your friends" />}
       </Page.Main>
     </>
   );
