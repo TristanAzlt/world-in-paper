@@ -2,5 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { WorldInPaperAbi } from "./WorldInPaperAbi";
+export type { WorldInPaperObserverAbi } from "./WorldInPaperObserverAbi";
 export * as factories from "./factories";
 export { WorldInPaperAbi__factory } from "./factories/WorldInPaperAbi__factory";
+export { WorldInPaperObserverAbi__factory } from "./factories/WorldInPaperObserverAbi__factory";

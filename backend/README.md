@@ -367,14 +367,15 @@ Notes:
 
 ### `WorldInPaperService`
 
--   TypeChain wrapper around `WorldInPaper` contract.
--   Exposes reads: recent, created, joined games, ranking, and portfolio.
+-   Uses `WorldInPaper` (main state contract) + `WorldInPaperObserver` (read-optimized contract).
+-   Exposes reads: recent, created, joined games, ranking, and portfolio via observer.
 
 ## Main Environment Variables
 
 -   `PORT`
 -   `RPC_URL`
 -   `CONTRACT_ADDRESS`
+-   `OBSERVER_CONTRACT_ADDRESS`
 -   `REDIS_URL`
 -   `UNISWAP_API_KEY`
 -   `REQUEST_TIMEOUT_MS`

@@ -58,18 +58,6 @@ export declare namespace WorldInPaper {
     exists: boolean;
   };
 
-  export type GameRankingEntryViewStruct = {
-    player: AddressLike;
-    place: BigNumberish;
-    wipBalance: BigNumberish;
-  };
-
-  export type GameRankingEntryViewStructOutput = [
-    player: string,
-    place: bigint,
-    wipBalance: bigint
-  ] & { player: string; place: bigint; wipBalance: bigint };
-
   export type TradeStruct = {
     id: BigNumberish;
     trader: AddressLike;
@@ -96,50 +84,6 @@ export declare namespace WorldInPaper {
     isBuy: boolean;
     amountIn: bigint;
     amountOut: bigint;
-  };
-
-  export type PortfolioTokenViewStruct = {
-    asset_address: string;
-    origin: BigNumberish;
-    balance: BigNumberish;
-    trades: WorldInPaper.TradeStruct[];
-  };
-
-  export type PortfolioTokenViewStructOutput = [
-    asset_address: string,
-    origin: bigint,
-    balance: bigint,
-    trades: WorldInPaper.TradeStructOutput[]
-  ] & {
-    asset_address: string;
-    origin: bigint;
-    balance: bigint;
-    trades: WorldInPaper.TradeStructOutput[];
-  };
-
-  export type PlayerPortfolioViewStruct = {
-    gameId: BigNumberish;
-    player: AddressLike;
-    wipBalance: BigNumberish;
-    claimed: boolean;
-    claimableAmount: BigNumberish;
-    tokens: WorldInPaper.PortfolioTokenViewStruct[];
-  };
-
-  export type PlayerPortfolioViewStructOutput = [
-    gameId: bigint,
-    player: string,
-    wipBalance: bigint,
-    claimed: boolean,
-    claimableAmount: bigint,
-    tokens: WorldInPaper.PortfolioTokenViewStructOutput[]
-  ] & {
-    gameId: bigint;
-    player: string;
-    wipBalance: bigint;
-    claimed: boolean;
-    claimableAmount: bigint;
-    tokens: WorldInPaper.PortfolioTokenViewStructOutput[];
   };
 
   export type TradeToSettleStruct = {
@@ -222,21 +166,18 @@ export interface WorldInPaperAbiInterface extends Interface {
       | "USDC"
       | "claimGame"
       | "createGame"
-      | "getCreatedGames"
       | "getExpectedAuthor"
       | "getExpectedWorkflowId"
       | "getExpectedWorkflowName"
       | "getForwarderAddress"
       | "getGame"
       | "getGamePlayers"
-      | "getGameRanking"
       | "getGameTradeCount"
       | "getGameTrades"
-      | "getJoinedGames"
-      | "getPlayerPortfolio"
-      | "getRecentGames"
+      | "getPlayerWipBalance"
       | "getTotalSettlementRequestsCreated"
       | "getTradeToSettle"
+      | "hasClaimed"
       | "hasJoined"
       | "joinGame"
       | "nextGameId"
@@ -308,10 +249,6 @@ export interface WorldInPaperAbiInterface extends Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "getCreatedGames",
-    values: [AddressLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getExpectedAuthor",
     values?: undefined
   ): string;
@@ -336,10 +273,6 @@ export interface WorldInPaperAbiInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getGameRanking",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getGameTradeCount",
     values: [BigNumberish]
   ): string;
@@ -348,16 +281,8 @@ export interface WorldInPaperAbiInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getJoinedGames",
-    values: [AddressLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getPlayerPortfolio",
+    functionFragment: "getPlayerWipBalance",
     values: [BigNumberish, AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getRecentGames",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getTotalSettlementRequestsCreated",
@@ -366,6 +291,10 @@ export interface WorldInPaperAbiInterface extends Interface {
   encodeFunctionData(
     functionFragment: "getTradeToSettle",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasClaimed",
+    values: [BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "hasJoined",
@@ -461,10 +390,6 @@ export interface WorldInPaperAbiInterface extends Interface {
   decodeFunctionResult(functionFragment: "claimGame", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "createGame", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getCreatedGames",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getExpectedAuthor",
     data: BytesLike
   ): Result;
@@ -486,10 +411,6 @@ export interface WorldInPaperAbiInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getGameRanking",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getGameTradeCount",
     data: BytesLike
   ): Result;
@@ -498,15 +419,7 @@ export interface WorldInPaperAbiInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getJoinedGames",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getPlayerPortfolio",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getRecentGames",
+    functionFragment: "getPlayerWipBalance",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -517,6 +430,7 @@ export interface WorldInPaperAbiInterface extends Interface {
     functionFragment: "getTradeToSettle",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "hasClaimed", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasJoined", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "joinGame", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nextGameId", data: BytesLike): Result;
@@ -905,12 +819,6 @@ export interface WorldInPaperAbi extends BaseContract {
     "nonpayable"
   >;
 
-  getCreatedGames: TypedContractMethod<
-    [creator: AddressLike, limit: BigNumberish],
-    [WorldInPaper.GameViewStructOutput[]],
-    "view"
-  >;
-
   getExpectedAuthor: TypedContractMethod<[], [string], "view">;
 
   getExpectedWorkflowId: TypedContractMethod<[], [string], "view">;
@@ -931,12 +839,6 @@ export interface WorldInPaperAbi extends BaseContract {
     "view"
   >;
 
-  getGameRanking: TypedContractMethod<
-    [gameId: BigNumberish],
-    [WorldInPaper.GameRankingEntryViewStructOutput[]],
-    "view"
-  >;
-
   getGameTradeCount: TypedContractMethod<
     [gameId: BigNumberish],
     [bigint],
@@ -949,21 +851,9 @@ export interface WorldInPaperAbi extends BaseContract {
     "view"
   >;
 
-  getJoinedGames: TypedContractMethod<
-    [player: AddressLike, limit: BigNumberish],
-    [WorldInPaper.GameViewStructOutput[]],
-    "view"
-  >;
-
-  getPlayerPortfolio: TypedContractMethod<
+  getPlayerWipBalance: TypedContractMethod<
     [gameId: BigNumberish, player: AddressLike],
-    [WorldInPaper.PlayerPortfolioViewStructOutput],
-    "view"
-  >;
-
-  getRecentGames: TypedContractMethod<
-    [limit: BigNumberish],
-    [WorldInPaper.GameViewStructOutput[]],
+    [bigint],
     "view"
   >;
 
@@ -972,6 +862,12 @@ export interface WorldInPaperAbi extends BaseContract {
   getTradeToSettle: TypedContractMethod<
     [tradeId: BigNumberish],
     [WorldInPaper.TradeToSettleStructOutput],
+    "view"
+  >;
+
+  hasClaimed: TypedContractMethod<
+    [gameId: BigNumberish, player: AddressLike],
+    [boolean],
     "view"
   >;
 
@@ -1091,13 +987,6 @@ export interface WorldInPaperAbi extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "getCreatedGames"
-  ): TypedContractMethod<
-    [creator: AddressLike, limit: BigNumberish],
-    [WorldInPaper.GameViewStructOutput[]],
-    "view"
-  >;
-  getFunction(
     nameOrSignature: "getExpectedAuthor"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -1120,13 +1009,6 @@ export interface WorldInPaperAbi extends BaseContract {
     nameOrSignature: "getGamePlayers"
   ): TypedContractMethod<[gameId: BigNumberish], [string[]], "view">;
   getFunction(
-    nameOrSignature: "getGameRanking"
-  ): TypedContractMethod<
-    [gameId: BigNumberish],
-    [WorldInPaper.GameRankingEntryViewStructOutput[]],
-    "view"
-  >;
-  getFunction(
     nameOrSignature: "getGameTradeCount"
   ): TypedContractMethod<[gameId: BigNumberish], [bigint], "view">;
   getFunction(
@@ -1137,24 +1019,10 @@ export interface WorldInPaperAbi extends BaseContract {
     "view"
   >;
   getFunction(
-    nameOrSignature: "getJoinedGames"
-  ): TypedContractMethod<
-    [player: AddressLike, limit: BigNumberish],
-    [WorldInPaper.GameViewStructOutput[]],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getPlayerPortfolio"
+    nameOrSignature: "getPlayerWipBalance"
   ): TypedContractMethod<
     [gameId: BigNumberish, player: AddressLike],
-    [WorldInPaper.PlayerPortfolioViewStructOutput],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getRecentGames"
-  ): TypedContractMethod<
-    [limit: BigNumberish],
-    [WorldInPaper.GameViewStructOutput[]],
+    [bigint],
     "view"
   >;
   getFunction(
@@ -1165,6 +1033,13 @@ export interface WorldInPaperAbi extends BaseContract {
   ): TypedContractMethod<
     [tradeId: BigNumberish],
     [WorldInPaper.TradeToSettleStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "hasClaimed"
+  ): TypedContractMethod<
+    [gameId: BigNumberish, player: AddressLike],
+    [boolean],
     "view"
   >;
   getFunction(

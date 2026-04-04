@@ -173,77 +173,6 @@ const _abi = [
   },
   {
     type: "function",
-    name: "getCreatedGames",
-    inputs: [
-      {
-        name: "creator",
-        type: "address",
-        internalType: "address",
-      },
-      {
-        name: "limit",
-        type: "uint256",
-        internalType: "uint256",
-      },
-    ],
-    outputs: [
-      {
-        name: "games",
-        type: "tuple[]",
-        internalType: "struct WorldInPaper.GameView[]",
-        components: [
-          {
-            name: "id",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "entryAmount",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "startingWIPBalance",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "startTime",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "endTime",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "maxPlayers",
-            type: "uint16",
-            internalType: "uint16",
-          },
-          {
-            name: "playerCount",
-            type: "uint16",
-            internalType: "uint16",
-          },
-          {
-            name: "creator",
-            type: "address",
-            internalType: "address",
-          },
-          {
-            name: "exists",
-            type: "bool",
-            internalType: "bool",
-          },
-        ],
-      },
-    ],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
     name: "getExpectedAuthor",
     inputs: [],
     outputs: [
@@ -381,42 +310,6 @@ const _abi = [
   },
   {
     type: "function",
-    name: "getGameRanking",
-    inputs: [
-      {
-        name: "gameId",
-        type: "uint256",
-        internalType: "uint256",
-      },
-    ],
-    outputs: [
-      {
-        name: "ranking",
-        type: "tuple[]",
-        internalType: "struct WorldInPaper.GameRankingEntryView[]",
-        components: [
-          {
-            name: "player",
-            type: "address",
-            internalType: "address",
-          },
-          {
-            name: "place",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "wipBalance",
-            type: "uint256",
-            internalType: "uint256",
-          },
-        ],
-      },
-    ],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
     name: "getGameTradeCount",
     inputs: [
       {
@@ -492,78 +385,7 @@ const _abi = [
   },
   {
     type: "function",
-    name: "getJoinedGames",
-    inputs: [
-      {
-        name: "player",
-        type: "address",
-        internalType: "address",
-      },
-      {
-        name: "limit",
-        type: "uint256",
-        internalType: "uint256",
-      },
-    ],
-    outputs: [
-      {
-        name: "games",
-        type: "tuple[]",
-        internalType: "struct WorldInPaper.GameView[]",
-        components: [
-          {
-            name: "id",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "entryAmount",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "startingWIPBalance",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "startTime",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "endTime",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "maxPlayers",
-            type: "uint16",
-            internalType: "uint16",
-          },
-          {
-            name: "playerCount",
-            type: "uint16",
-            internalType: "uint16",
-          },
-          {
-            name: "creator",
-            type: "address",
-            internalType: "address",
-          },
-          {
-            name: "exists",
-            type: "bool",
-            internalType: "bool",
-          },
-        ],
-      },
-    ],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "getPlayerPortfolio",
+    name: "getPlayerWipBalance",
     inputs: [
       {
         name: "gameId",
@@ -578,166 +400,9 @@ const _abi = [
     ],
     outputs: [
       {
-        name: "portfolio",
-        type: "tuple",
-        internalType: "struct WorldInPaper.PlayerPortfolioView",
-        components: [
-          {
-            name: "gameId",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "player",
-            type: "address",
-            internalType: "address",
-          },
-          {
-            name: "wipBalance",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "claimed",
-            type: "bool",
-            internalType: "bool",
-          },
-          {
-            name: "claimableAmount",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "tokens",
-            type: "tuple[]",
-            internalType: "struct WorldInPaper.PortfolioTokenView[]",
-            components: [
-              {
-                name: "asset_address",
-                type: "string",
-                internalType: "string",
-              },
-              {
-                name: "origin",
-                type: "uint8",
-                internalType: "enum WorldInPaper.Origin",
-              },
-              {
-                name: "balance",
-                type: "uint256",
-                internalType: "uint256",
-              },
-              {
-                name: "trades",
-                type: "tuple[]",
-                internalType: "struct WorldInPaper.Trade[]",
-                components: [
-                  {
-                    name: "id",
-                    type: "uint256",
-                    internalType: "uint256",
-                  },
-                  {
-                    name: "trader",
-                    type: "address",
-                    internalType: "address",
-                  },
-                  {
-                    name: "asset_address",
-                    type: "string",
-                    internalType: "string",
-                  },
-                  {
-                    name: "origin",
-                    type: "uint8",
-                    internalType: "enum WorldInPaper.Origin",
-                  },
-                  {
-                    name: "isBuy",
-                    type: "bool",
-                    internalType: "bool",
-                  },
-                  {
-                    name: "amountIn",
-                    type: "uint256",
-                    internalType: "uint256",
-                  },
-                  {
-                    name: "amountOut",
-                    type: "uint256",
-                    internalType: "uint256",
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "getRecentGames",
-    inputs: [
-      {
-        name: "limit",
+        name: "",
         type: "uint256",
         internalType: "uint256",
-      },
-    ],
-    outputs: [
-      {
-        name: "games",
-        type: "tuple[]",
-        internalType: "struct WorldInPaper.GameView[]",
-        components: [
-          {
-            name: "id",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "entryAmount",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "startingWIPBalance",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "startTime",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "endTime",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "maxPlayers",
-            type: "uint16",
-            internalType: "uint16",
-          },
-          {
-            name: "playerCount",
-            type: "uint16",
-            internalType: "uint16",
-          },
-          {
-            name: "creator",
-            type: "address",
-            internalType: "address",
-          },
-          {
-            name: "exists",
-            type: "bool",
-            internalType: "bool",
-          },
-        ],
       },
     ],
     stateMutability: "view",
@@ -807,6 +472,30 @@ const _abi = [
             internalType: "bool",
           },
         ],
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "hasClaimed",
+    inputs: [
+      {
+        name: "gameId",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "player",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "bool",
+        internalType: "bool",
       },
     ],
     stateMutability: "view",

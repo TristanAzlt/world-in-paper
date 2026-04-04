@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { WorldInPaperAbi__factory } from "./WorldInPaperAbi__factory";
+export { WorldInPaperObserverAbi__factory } from "./WorldInPaperObserverAbi__factory";

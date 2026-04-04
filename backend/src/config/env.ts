@@ -6,6 +6,7 @@ const envSchema = z.object({
     PORT: z.coerce.number().int().positive().default(3000),
     RPC_URL: z.string().url().default('https://ethereum-sepolia-rpc.publicnode.com'),
     CONTRACT_ADDRESS: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid EVM contract address').default('0x0000000000000000000000000000000000000000'),
+    OBSERVER_CONTRACT_ADDRESS: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid EVM contract address').default('0x0000000000000000000000000000000000000000'),
     REDIS_URL: z.string().url().default('redis://127.0.0.1:6379'),
     REQUEST_TIMEOUT_MS: z.coerce.number().int().positive().default(20_000),
     RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(60_000),

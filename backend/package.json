@@ -5,7 +5,7 @@
   "scripts": {
     "start": "npm run build && node dist/start.js",
     "build": "npm run generate:types && node ./node_modules/typescript/bin/tsc",
-    "generate:types": "typechain --target ethers-v6 --out-dir src/types/typechain \"src/abis/WorldInPaper.abi.json\"",
+    "generate:types": "typechain --target ethers-v6 --out-dir src/types/typechain \"src/abis/*.abi.json\"",
     "serve": "node dist/start.js"
   },
   "dependencies": {
