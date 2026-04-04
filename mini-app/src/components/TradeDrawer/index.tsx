@@ -250,9 +250,8 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
     try {
       const tradesBefore = await getAssetTradeCount(selectedAsset.address);
 
-      // Buy: amount in USDC (6 dec). Sell: amount in token native decimals.
-      const decimals = side === 'buy' ? 6 : (selectedAsset.decimals ?? 6);
-      const amountIn = BigInt(toRawAmount(amountNum, decimals));
+      // Contract stores all balances in 6 decimals
+      const amountIn = BigInt(toRawAmount(amountNum, 6));
       const result = await submitTrade(
         BigInt(gameId),
         selectedAsset.address,
