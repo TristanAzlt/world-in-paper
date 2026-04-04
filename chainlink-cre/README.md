@@ -5,7 +5,7 @@ Custom oracle that fetches real swap quotes from multiple chains/providers and p
 ## How it works
 
 ```
-WIP Contract emits SettlementRequest(tradeId, assetId, origin, isBuy, amount)
+WIP Contract emits SettlementRequest(tradeId, gameId, assetId, origin, isBuy, amount)
     |
 CRE Workflow (EVM Log Trigger) picks up the event
     |
@@ -46,6 +46,7 @@ All quotes return **USD price per 1 token** with price impact baked in (except H
 ```solidity
 event SettlementRequest(
     uint256 indexed tradeId,
+    uint256 indexed gameId,
     string assetId,      // token address, symbol, or @index ("BTC", "@12", "0xc063...", "Dfh5Dz...")
     uint8 origin,        // enum Origin
     bool isBuy,          // true = buy, false = sell

@@ -20,7 +20,7 @@ const WETH = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
 const ORIGIN = { SOLANA: 0, BASE: 1, ETHEREUM: 2, BSC: 3, WORLD: 4, HYPERLIQUID: 5 };
 
 const SETTLEMENT_REQUEST_SIG = keccak256(
-  toHex("SettlementRequest(uint256,string,uint8,bool,uint256)"),
+  toHex("SettlementRequest(uint256,uint256,string,uint8,bool,uint256)"),
 );
 
 const encodeMockLogData = (assetId: string, origin: number, isBuy: boolean, amount: bigint) => {
@@ -114,14 +114,22 @@ describe("initWorkflow", () => {
 // ============================================================
 
 describe("event signature", () => {
-  test("matches SettlementRequest(uint256,string,uint8,bool,uint256)", () => {
+  test("matches SettlementRequest(uint256,uint256,string,uint8,bool,uint256)", () => {
     expect(SETTLEMENT_REQUEST_SIG).toBe(
-      keccak256(toHex("SettlementRequest(uint256,string,uint8,bool,uint256)")),
+      keccak256(toHex("SettlementRequest(uint256,uint256,string,uint8,bool,uint256)")),
     );
   });
 
   test("is a valid 32-byte hex hash", () => {
     expect(SETTLEMENT_REQUEST_SIG).toMatch(/^0x[a-f0-9]{64}$/);
+  });
+
+  test("supports the extra indexed gameId topic", () => {
+    const tradeId = 1n;
+    const gameId = 42n;
+
+    expect(BigInt(toHex(tradeId, { size: 32 }))).toBe(tradeId);
+    expect(BigInt(toHex(gameId, { size: 32 }))).toBe(gameId);
   });
 });
 

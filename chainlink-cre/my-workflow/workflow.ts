@@ -66,8 +66,10 @@ const USDC_SOL = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const SOLANA_RPC = "https://api.mainnet-beta.solana.com";
 const DUMMY_SWAPPER = "0x0000000000000000000000000000000000000001";
 
-// SettlementRequest(uint256 indexed tradeId, string assetId, uint8 origin, bool isBuy, uint256 amount)
-const SETTLEMENT_REQUEST_SIG = keccak256(toHex("SettlementRequest(uint256,string,uint8,bool,uint256)"));
+// SettlementRequest(uint256 indexed tradeId, uint256 indexed gameId, string assetId, uint8 origin, bool isBuy, uint256 amount)
+const SETTLEMENT_REQUEST_SIG = keccak256(
+  toHex("SettlementRequest(uint256,uint256,string,uint8,bool,uint256)"),
+);
 
 // ============================================================
 // Price Fetchers — all return USD price per 1 token
@@ -278,14 +280,21 @@ const onSettlementRequest = (runtime: Runtime<Config>, log: EVMLog) => {
   const uniswapApiKey = runtime.getSecret({ id: "UNISWAP_API_KEY" }).result().value;
 
   // --- Decode event ---
+  if (log.topics.length < 3) {
+    throw new Error(`Unexpected SettlementRequest topic count: ${log.topics.length}`);
+  }
+
   const tradeId = BigInt(bytesToHex(log.topics[1]) as Hex);
+  const gameId = BigInt(bytesToHex(log.topics[2]) as Hex);
 
   const [assetId, origin, isBuy, amount] = decodeAbiParameters(
     parseAbiParameters("string assetId, uint8 origin, bool isBuy, uint256 amount"),
     bytesToHex(log.data) as Hex,
   );
 
-  runtime.log(`SettlementRequest: trade=${tradeId} asset=${assetId} origin=${origin} isBuy=${isBuy} amount=${amount}`);
+  runtime.log(
+    `SettlementRequest: game=${gameId} trade=${tradeId} asset=${assetId} origin=${origin} isBuy=${isBuy} amount=${amount}`,
+  );
 
   // --- Fetch quote with DON consensus (median) ---
   const httpClient = new cre.capabilities.HTTPClient();
