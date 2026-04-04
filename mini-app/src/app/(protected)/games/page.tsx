@@ -163,7 +163,7 @@ export default function ExplorePage() {
             <div
               key={i}
               className="flex-shrink-0 rounded-3xl overflow-hidden"
-              style={{ background: card.bg, width: 'calc(80%)', scrollSnapAlign: 'start', border: `1px solid ${card.border}` }}
+              style={{ background: card.bg, width: 'calc(88%)', scrollSnapAlign: 'start', border: `1px solid ${card.border}` }}
             >
               <div className="p-5" style={{ minHeight: '150px' }}>
                 <h3 className="text-[15px] font-extrabold tracking-tight" style={{ color: '#fff' }}>{card.title}</h3>

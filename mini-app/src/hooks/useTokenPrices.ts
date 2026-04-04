@@ -18,6 +18,7 @@ interface TokenInfo {
   symbol: string;
   name: string;
   image: string;
+  decimals: number;
 }
 
 export function useTokenPrices(tokens: PortfolioToken[]) {
@@ -45,6 +46,7 @@ export function useTokenPrices(tokens: PortfolioToken[]) {
               symbol: asset.symbol,
               name: asset.name,
               image: asset.image,
+              decimals: asset.decimals ?? 6,
             };
           }
         } catch (e) {

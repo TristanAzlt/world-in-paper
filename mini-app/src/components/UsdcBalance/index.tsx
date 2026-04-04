@@ -150,7 +150,7 @@ export function UsdcBalance() {
                     <Xmark width={20} height={20} style={{ color: '#9898aa' }} />
                   </button>
                 </div>
-                <p className="text-sm mb-5" style={{ color: '#9898aa' }}>Swap your tokens to USDC to join games</p>
+                <p className="text-sm mb-4" style={{ color: '#9898aa' }}>Swap your tokens to USDC to join games</p>
 
                 <div className="space-y-2 mb-4">
                   {balances.filter((t) => t.symbol !== 'USDC' && t.symbol !== 'ETH').map((token) => {
@@ -190,32 +190,6 @@ export function UsdcBalance() {
                   )}
                 </div>
 
-                {walletAddress && (
-                  <button
-                    onClick={handleCopy}
-                    className="w-full flex items-center justify-between rounded-2xl active:scale-[0.98] transition-all mb-4"
-                    style={{ backgroundColor: '#1c1c24', padding: '16px' }}
-                  >
-                    <div>
-                      <div className="text-xs font-semibold mb-1" style={{ color: '#6a6a7a' }}>Your address (World Chain)</div>
-                      <div className="text-sm font-bold" style={{ color: '#9898aa' }}>
-                        {walletAddress.slice(0, 8)}...{walletAddress.slice(-6)}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Copy width={16} height={16} style={{ color: '#9898aa' }} />
-                      <span className="text-xs font-semibold" style={{ color: copied ? '#34c759' : '#9898aa' }}>
-                        {copied ? 'Copied' : 'Copy'}
-                      </span>
-                    </div>
-                  </button>
-                )}
-
-                <div className="rounded-2xl px-4 py-3" style={{ backgroundColor: '#2470ff15', border: '1px solid #2470ff30' }}>
-                  <p className="text-[13px]" style={{ color: '#9898bb' }}>
-                    Tap a token to swap it to USDC, or send USDC on World Chain to your address.
-                  </p>
-                </div>
               </>
             )}
 

@@ -106,7 +106,8 @@ export default function GameViewPage() {
   const positionsValue = portfolio
     ? portfolio.tokens.reduce((sum, t) => {
         const info = tokenPrices[t.asset_address.toLowerCase()];
-        const bal = formatWipBalance(t.balance);
+        const decimals = info?.decimals ?? 6;
+        const bal = Number(t.balance) / 10 ** decimals;
         return sum + (info ? bal * info.price : 0);
       }, 0)
     : 0;
@@ -300,11 +301,18 @@ export default function GameViewPage() {
                 </div>
               ))}
             </div>
-          ) : portfolio && portfolio.tokens.filter((t) => formatWipBalance(t.balance) > 0.0001).length > 0 ? (
+          ) : portfolio && portfolio.tokens.filter((t) => {
+                const d = tokenPrices[t.asset_address.toLowerCase()]?.decimals ?? 6;
+                return Number(t.balance) / 10 ** d > 0.0001;
+              }).length > 0 ? (
             <div className="space-y-2">
-              {portfolio.tokens.filter((t) => formatWipBalance(t.balance) > 0.0001).map((token) => {
+              {portfolio.tokens.filter((t) => {
+                const d = tokenPrices[t.asset_address.toLowerCase()]?.decimals ?? 6;
+                return Number(t.balance) / 10 ** d > 0.0001;
+              }).map((token) => {
                 const info = tokenPrices[token.asset_address.toLowerCase()];
-                const bal = formatWipBalance(token.balance);
+                const decimals = info?.decimals ?? 6;
+                const bal = Number(token.balance) / 10 ** decimals;
                 const value = info ? bal * info.price : 0;
                 const totalBought = token.trades
                   .filter((t) => t.isBuy)
@@ -433,10 +441,10 @@ export default function GameViewPage() {
         gameId={gameId}
         preselectedAsset={preselectedAsset}
         walletAddress={walletAddress}
-        positions={portfolio?.tokens.map((t) => ({
-          symbol: t.asset_address,
-          quantity: formatWipBalance(t.balance),
-        })) ?? []}
+        positions={portfolio?.tokens.map((t) => {
+          const d = tokenPrices[t.asset_address.toLowerCase()]?.decimals ?? 6;
+          return { symbol: t.asset_address, quantity: Number(t.balance) / 10 ** d };
+        }) ?? []}
         onTradeSuccess={refreshPortfolio}
       />
     </>
