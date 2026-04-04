@@ -1,3 +1,4 @@
+// Must match smart contract enum Origin
 export enum Origin {
   Solana = 0,
   Base = 1,
@@ -7,11 +8,105 @@ export enum Origin {
   Hyperliquid = 5,
 }
 
+export type OriginKey = 'solana' | 'base' | 'ethereum' | 'bsc' | 'worldchain' | 'hyperliquid';
+
 export enum GameStatus {
   Upcoming = 'upcoming',
   Active = 'active',
   Ended = 'ended',
 }
+
+// Backend response types
+
+export interface GameView {
+  id: string;
+  entryAmount: string;
+  startingWIPBalance: string;
+  startTime: string;
+  endTime: string;
+  maxPlayers: number;
+  playerCount: number;
+  creator: string;
+  exists: boolean;
+}
+
+export interface GameRankingEntry {
+  player: string;
+  place: string;
+  wipBalance: string;
+}
+
+export interface TradeView {
+  id: string;
+  trader: string;
+  asset_address: string;
+  origin: string;
+  isBuy: boolean;
+  amountIn: string;
+  amountOut: string;
+}
+
+export interface PortfolioToken {
+  asset_address: string;
+  origin: string;
+  balance: string;
+  trades: TradeView[];
+}
+
+export interface PlayerPortfolio {
+  gameId: string;
+  player: string;
+  wipBalance: string;
+  claimed: boolean;
+  claimableAmount: string;
+  tokens: PortfolioToken[];
+}
+
+export interface AssetToken {
+  origin: string;
+  address: string;
+  name: string;
+  symbol: string;
+  image: string;
+  price: number;
+  market_cap: number;
+}
+
+export interface HyperliquidAssets {
+  origin: string;
+  tokens: AssetToken[];
+  categories: {
+    crypto: AssetToken[];
+    stocks: AssetToken[];
+    indices: AssetToken[];
+    commodities: AssetToken[];
+  };
+}
+
+export interface QuoteResponse {
+  assetId: string;
+  origin: string;
+  isBuy: boolean;
+  amount: string;
+  price: number;
+}
+
+// Helpers
+
+export function getGameStatus(game: GameView): GameStatus {
+  const now = Date.now() / 1000;
+  const start = Number(game.startTime);
+  const end = Number(game.endTime);
+  if (now < start) return GameStatus.Upcoming;
+  if (now >= end) return GameStatus.Ended;
+  return GameStatus.Active;
+}
+
+export function formatWipBalance(raw: string): number {
+  return Number(raw) / 1e6;
+}
+
+// Legacy types for existing components
 
 export type AssetCategory = 'crypto' | 'stocks' | 'solana';
 
