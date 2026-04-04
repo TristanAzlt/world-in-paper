@@ -1,0 +1,204 @@
+{
+    "assets": [
+        {
+            "name": "BTC",
+            "category": "crypto"
+        },
+        {
+            "name": "ETH",
+            "category": "crypto"
+        },
+        {
+            "name": "HYPE",
+            "category": "crypto"
+        },
+        {
+            "name": "SOL",
+            "category": "crypto"
+        },
+        {
+            "name": "XRP",
+            "category": "crypto"
+        },
+        {
+            "name": "ZEC",
+            "category": "crypto"
+        },
+        {
+            "name": "TAO",
+            "category": "crypto"
+        },
+        {
+            "name": "PAXG",
+            "category": "crypto"
+        },
+        {
+            "name": "ZRO",
+            "category": "crypto"
+        },
+        {
+            "name": "AVAX",
+            "category": "crypto"
+        },
+        {
+            "name": "LINK",
+            "category": "crypto"
+        },
+        {
+            "name": "PUMP",
+            "category": "crypto"
+        },
+        {
+            "name": "XMR",
+            "category": "crypto"
+        },
+        {
+            "name": "AAVE",
+            "category": "crypto"
+        },
+        {
+            "name": "DOGE",
+            "category": "crypto"
+        },
+        {
+            "name": "SUI",
+            "category": "crypto"
+        },
+        {
+            "name": "TRUMP",
+            "category": "crypto"
+        },
+        {
+            "name": "ADA",
+            "category": "crypto"
+        },
+        {
+            "name": "ENA",
+            "category": "crypto"
+        },
+        {
+            "name": "TRX",
+            "category": "crypto"
+        },
+        {
+            "name": "BCH",
+            "category": "crypto"
+        },
+        {
+            "name": "LTC",
+            "category": "crypto"
+        },
+        {
+            "name": "UNI",
+            "category": "crypto"
+        },
+        {
+            "name": "TON",
+            "category": "crypto"
+        },
+        {
+            "name": "WLD",
+            "category": "crypto"
+        },
+        {
+            "name": "ALGO",
+            "category": "crypto"
+        },
+        {
+            "name": "APT",
+            "category": "crypto"
+        },
+        {
+            "name": "FET",
+            "category": "crypto"
+        },
+        {
+            "name": "DOT",
+            "category": "crypto"
+        },
+        {
+            "name": "NEAR",
+            "category": "crypto"
+        },
+        {
+            "name": "xyz:NVDA",
+            "category": "stocks"
+        },
+        {
+            "name": "xyz:MU",
+            "category": "stocks"
+        },
+        {
+            "name": "xyz:TSLA",
+            "category": "stocks"
+        },
+        {
+            "name": "xyz:GOOGL",
+            "category": "stocks"
+        },
+        {
+            "name": "xyz:SNDK",
+            "category": "stocks"
+        },
+        {
+            "name": "xyz:CRCL",
+            "category": "stocks"
+        },
+        {
+            "name": "xyz:MSFT",
+            "category": "stocks"
+        },
+        {
+            "name": "xyz:HOOD",
+            "category": "stocks"
+        },
+        {
+            "name": "xyz:MSTR",
+            "category": "stocks"
+        },
+        {
+            "name": "xyz:TSM",
+            "category": "stocks"
+        },
+        {
+            "name": "xyz:AAPL",
+            "category": "stocks"
+        },
+        {
+            "name": "xyz:META",
+            "category": "stocks"
+        },
+        {
+            "name": "xyz:SP500",
+            "category": "indices"
+        },
+        {
+            "name": "xyz:XYZ100",
+            "category": "indices"
+        },
+        {
+            "name": "xyz:EUR",
+            "category": "indices"
+        },
+        {
+            "name": "xyz:JPY",
+            "category": "indices"
+        },
+        {
+            "name": "xyz:CL",
+            "category": "commodities"
+        },
+        {
+            "name": "xyz:BRENTOIL",
+            "category": "commodities"
+        },
+        {
+            "name": "xyz:GOLD",
+            "category": "commodities"
+        },
+        {
+            "name": "xyz:SILVER",
+            "category": "commodities"
+        }
+    ]
+}

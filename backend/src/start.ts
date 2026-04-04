@@ -9,6 +9,7 @@ import { env } from './config';
 import { closeRedis, connectRedis } from './utils/redis';
 import { AssetsRoute } from './routes/assets.route';
 import { GeckoTerminalService } from './services/gecko-terminal/gecko-terminal.service';
+import { HyperliquidService } from './services/hyperliquid/hyperliquid.service';
 
 const app = express();
 
@@ -125,9 +126,10 @@ app.use(hpp());
 
         // SERVICES
         const geckoTerminalService = new GeckoTerminalService();
+        const hyperliquidService = new HyperliquidService();
 
         // ROUTES
-        const assetsRoute = new AssetsRoute(geckoTerminalService);
+        const assetsRoute = new AssetsRoute(geckoTerminalService, hyperliquidService);
 
         app.use('/assets', assetsRoute.router);
 

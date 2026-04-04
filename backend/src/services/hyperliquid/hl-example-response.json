@@ -1,0 +1,4714 @@
+{
+    "origin": "hyperliquid",
+    "tokens": [
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:btc",
+            "name": "BTC",
+            "symbol": "BTC",
+            "image": "https://app.hyperliquid.xyz/coins/BTC.svg",
+            "price": 66997,
+            "market_cap": 1905797274.35258
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:eth",
+            "name": "ETH",
+            "symbol": "ETH",
+            "image": "https://app.hyperliquid.xyz/coins/ETH.svg",
+            "price": 2053.8,
+            "market_cap": 1139163536.0826
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:atom",
+            "name": "ATOM",
+            "symbol": "ATOM",
+            "image": "https://app.hyperliquid.xyz/coins/ATOM.svg",
+            "price": 1.6999,
+            "market_cap": 3587765.524554
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:dydx",
+            "name": "DYDX",
+            "symbol": "DYDX",
+            "image": "https://app.hyperliquid.xyz/coins/DYDX.svg",
+            "price": 0.1022,
+            "market_cap": 2214222.5826
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:sol",
+            "name": "SOL",
+            "symbol": "SOL",
+            "image": "https://app.hyperliquid.xyz/coins/SOL.svg",
+            "price": 80.24,
+            "market_cap": 296457859.0368
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:avax",
+            "name": "AVAX",
+            "symbol": "AVAX",
+            "image": "https://app.hyperliquid.xyz/coins/AVAX.svg",
+            "price": 8.8825,
+            "market_cap": 38944517.9167
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:bnb",
+            "name": "BNB",
+            "symbol": "BNB",
+            "image": "https://app.hyperliquid.xyz/coins/BNB.svg",
+            "price": 590.96,
+            "market_cap": 21133838.24096
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:ape",
+            "name": "APE",
+            "symbol": "APE",
+            "image": "https://app.hyperliquid.xyz/coins/APE.svg",
+            "price": 0.08547,
+            "market_cap": 670431.141534
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:op",
+            "name": "OP",
+            "symbol": "OP",
+            "image": "https://app.hyperliquid.xyz/coins/OP.svg",
+            "price": 0.11018,
+            "market_cap": 3860723.440532
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:ltc",
+            "name": "LTC",
+            "symbol": "LTC",
+            "image": "https://app.hyperliquid.xyz/coins/LTC.svg",
+            "price": 53.179,
+            "market_cap": 11493390.07992
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:arb",
+            "name": "ARB",
+            "symbol": "ARB",
+            "image": "https://app.hyperliquid.xyz/coins/ARB.svg",
+            "price": 0.09198,
+            "market_cap": 3306547.040328
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:doge",
+            "name": "DOGE",
+            "symbol": "DOGE",
+            "image": "https://app.hyperliquid.xyz/coins/DOGE.svg",
+            "price": 0.091188,
+            "market_cap": 23670092.454696
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:inj",
+            "name": "INJ",
+            "symbol": "INJ",
+            "image": "https://app.hyperliquid.xyz/coins/INJ.svg",
+            "price": 2.8046,
+            "market_cap": 1593625.32464
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:sui",
+            "name": "SUI",
+            "symbol": "SUI",
+            "image": "https://app.hyperliquid.xyz/coins/SUI.svg",
+            "price": 0.86985,
+            "market_cap": 14314576.74993
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:kpepe",
+            "name": "kPEPE",
+            "symbol": "kPEPE",
+            "image": "https://app.hyperliquid.xyz/coins/kPEPE.svg",
+            "price": 0.003377,
+            "market_cap": 16115668.150648
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:crv",
+            "name": "CRV",
+            "symbol": "CRV",
+            "image": "https://app.hyperliquid.xyz/coins/CRV.svg",
+            "price": 0.21155,
+            "market_cap": 5417942.61187
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:ldo",
+            "name": "LDO",
+            "symbol": "LDO",
+            "image": "https://app.hyperliquid.xyz/coins/LDO.svg",
+            "price": 0.31776,
+            "market_cap": 4786986.0816
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:link",
+            "name": "LINK",
+            "symbol": "LINK",
+            "image": "https://app.hyperliquid.xyz/coins/LINK.svg",
+            "price": 8.6717,
+            "market_cap": 30995774.14332
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:stx",
+            "name": "STX",
+            "symbol": "STX",
+            "image": "https://app.hyperliquid.xyz/coins/STX.svg",
+            "price": 0.21326,
+            "market_cap": 1170562.17422
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:cfx",
+            "name": "CFX",
+            "symbol": "CFX",
+            "image": "https://app.hyperliquid.xyz/coins/CFX.svg",
+            "price": 0.051837,
+            "market_cap": 2239421.848488
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:gmx",
+            "name": "GMX",
+            "symbol": "GMX",
+            "image": "https://app.hyperliquid.xyz/coins/GMX.svg",
+            "price": 5.9812,
+            "market_cap": 456691.894272
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:snx",
+            "name": "SNX",
+            "symbol": "SNX",
+            "image": "https://app.hyperliquid.xyz/coins/SNX.svg",
+            "price": 0.2766,
+            "market_cap": 404708.17512
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:xrp",
+            "name": "XRP",
+            "symbol": "XRP",
+            "image": "https://app.hyperliquid.xyz/coins/XRP.svg",
+            "price": 1.3153,
+            "market_cap": 71088747.7762
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:bch",
+            "name": "BCH",
+            "symbol": "BCH",
+            "image": "https://app.hyperliquid.xyz/coins/BCH.svg",
+            "price": 443.51,
+            "market_cap": 11597067.12678
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:apt",
+            "name": "APT",
+            "symbol": "APT",
+            "image": "https://app.hyperliquid.xyz/coins/APT.svg",
+            "price": 0.8427,
+            "market_cap": 7016224.9749
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:aave",
+            "name": "AAVE",
+            "symbol": "AAVE",
+            "image": "https://app.hyperliquid.xyz/coins/AAVE.svg",
+            "price": 94.932,
+            "market_cap": 27247213.66104
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:comp",
+            "name": "COMP",
+            "symbol": "COMP",
+            "image": "https://app.hyperliquid.xyz/coins/COMP.svg",
+            "price": 16.835,
+            "market_cap": 780766.2226
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:wld",
+            "name": "WLD",
+            "symbol": "WLD",
+            "image": "https://app.hyperliquid.xyz/coins/WLD.svg",
+            "price": 0.26406,
+            "market_cap": 7976269.24056
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:ygg",
+            "name": "YGG",
+            "symbol": "YGG",
+            "image": "https://app.hyperliquid.xyz/coins/YGG.svg",
+            "price": 0.035232,
+            "market_cap": 369637.373568
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:trx",
+            "name": "TRX",
+            "symbol": "TRX",
+            "image": "https://app.hyperliquid.xyz/coins/TRX.svg",
+            "price": 0.31687,
+            "market_cap": 11622271.29946
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:kshib",
+            "name": "kSHIB",
+            "symbol": "kSHIB",
+            "image": "https://app.hyperliquid.xyz/coins/kSHIB.svg",
+            "price": 0.005902,
+            "market_cap": 1628162.111732
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:uni",
+            "name": "UNI",
+            "symbol": "UNI",
+            "image": "https://app.hyperliquid.xyz/coins/UNI.svg",
+            "price": 3.152,
+            "market_cap": 11001484.2272
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:sei",
+            "name": "SEI",
+            "symbol": "SEI",
+            "image": "https://app.hyperliquid.xyz/coins/SEI.svg",
+            "price": 0.05423,
+            "market_cap": 2547293.83766
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:rune",
+            "name": "RUNE",
+            "symbol": "RUNE",
+            "image": "https://app.hyperliquid.xyz/coins/RUNE.svg",
+            "price": 0.39317,
+            "market_cap": 994250.104582
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:zro",
+            "name": "ZRO",
+            "symbol": "ZRO",
+            "image": "https://app.hyperliquid.xyz/coins/ZRO.svg",
+            "price": 1.9259,
+            "market_cap": 44480436.95016
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:dot",
+            "name": "DOT",
+            "symbol": "DOT",
+            "image": "https://app.hyperliquid.xyz/coins/DOT.svg",
+            "price": 1.245,
+            "market_cap": 5706819.546
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:banana",
+            "name": "BANANA",
+            "symbol": "BANANA",
+            "image": "https://app.hyperliquid.xyz/coins/BANANA.svg",
+            "price": 3.3366,
+            "market_cap": 162880.13292
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:trb",
+            "name": "TRB",
+            "symbol": "TRB",
+            "image": "https://app.hyperliquid.xyz/coins/TRB.svg",
+            "price": 14.675,
+            "market_cap": 430245.4655
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:ftt",
+            "name": "FTT",
+            "symbol": "FTT",
+            "image": "https://app.hyperliquid.xyz/coins/FTT.svg",
+            "price": 0.28523,
+            "market_cap": 249657.82578
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:ark",
+            "name": "ARK",
+            "symbol": "ARK",
+            "image": "https://app.hyperliquid.xyz/coins/ARK.svg",
+            "price": 0.16525,
+            "market_cap": 147724.246
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:bigtime",
+            "name": "BIGTIME",
+            "symbol": "BIGTIME",
+            "image": "https://app.hyperliquid.xyz/coins/BIGTIME.svg",
+            "price": 0.01219,
+            "market_cap": 308068.45932
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:kas",
+            "name": "KAS",
+            "symbol": "KAS",
+            "image": "https://app.hyperliquid.xyz/coins/KAS.svg",
+            "price": 0.031129,
+            "market_cap": 872923.651544
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:blur",
+            "name": "BLUR",
+            "symbol": "BLUR",
+            "image": "https://app.hyperliquid.xyz/coins/BLUR.svg",
+            "price": 0.019957,
+            "market_cap": 1519145.679408
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:tia",
+            "name": "TIA",
+            "symbol": "TIA",
+            "image": "https://app.hyperliquid.xyz/coins/TIA.svg",
+            "price": 0.28972,
+            "market_cap": 1828220.811328
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:bsv",
+            "name": "BSV",
+            "symbol": "BSV",
+            "image": "https://app.hyperliquid.xyz/coins/BSV.svg",
+            "price": 15.439,
+            "market_cap": 627654.0182
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:ada",
+            "name": "ADA",
+            "symbol": "ADA",
+            "image": "https://app.hyperliquid.xyz/coins/ADA.svg",
+            "price": 0.24557,
+            "market_cap": 12507718.96712
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:ton",
+            "name": "TON",
+            "symbol": "TON",
+            "image": "https://app.hyperliquid.xyz/coins/TON.svg",
+            "price": 1.2309,
+            "market_cap": 8272633.21236
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:mina",
+            "name": "MINA",
+            "symbol": "MINA",
+            "image": "https://app.hyperliquid.xyz/coins/MINA.svg",
+            "price": 0.056283,
+            "market_cap": 298264.666842
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:polyx",
+            "name": "POLYX",
+            "symbol": "POLYX",
+            "image": "https://app.hyperliquid.xyz/coins/POLYX.svg",
+            "price": 0.054759,
+            "market_cap": 796569.754452
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:gas",
+            "name": "GAS",
+            "symbol": "GAS",
+            "image": "https://app.hyperliquid.xyz/coins/GAS.svg",
+            "price": 1.8408,
+            "market_cap": 766527.528
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:pendle",
+            "name": "PENDLE",
+            "symbol": "PENDLE",
+            "image": "https://app.hyperliquid.xyz/coins/PENDLE.svg",
+            "price": 1.0501,
+            "market_cap": 3758257.4952
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:fet",
+            "name": "FET",
+            "symbol": "FET",
+            "image": "https://app.hyperliquid.xyz/coins/FET.svg",
+            "price": 0.23841,
+            "market_cap": 6587620.66998
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:near",
+            "name": "NEAR",
+            "symbol": "NEAR",
+            "image": "https://app.hyperliquid.xyz/coins/NEAR.svg",
+            "price": 1.2325,
+            "market_cap": 22309374.533
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:meme",
+            "name": "MEME",
+            "symbol": "MEME",
+            "image": "https://app.hyperliquid.xyz/coins/MEME.svg",
+            "price": 0.000502,
+            "market_cap": 597988.79548
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:ordi",
+            "name": "ORDI",
+            "symbol": "ORDI",
+            "image": "https://app.hyperliquid.xyz/coins/ORDI.svg",
+            "price": 2.4614,
+            "market_cap": 142798.908648
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:neo",
+            "name": "NEO",
+            "symbol": "NEO",
+            "image": "https://app.hyperliquid.xyz/coins/NEO.svg",
+            "price": 2.817,
+            "market_cap": 447649.92072
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:zen",
+            "name": "ZEN",
+            "symbol": "ZEN",
+            "image": "https://app.hyperliquid.xyz/coins/ZEN.svg",
+            "price": 5.1906,
+            "market_cap": 809843.329284
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:fil",
+            "name": "FIL",
+            "symbol": "FIL",
+            "image": "https://app.hyperliquid.xyz/coins/FIL.svg",
+            "price": 0.84204,
+            "market_cap": 2226016.270368
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:pyth",
+            "name": "PYTH",
+            "symbol": "PYTH",
+            "image": "https://app.hyperliquid.xyz/coins/PYTH.svg",
+            "price": 0.041526,
+            "market_cap": 1358034.32898
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:sushi",
+            "name": "SUSHI",
+            "symbol": "SUSHI",
+            "image": "https://app.hyperliquid.xyz/coins/SUSHI.svg",
+            "price": 0.19234,
+            "market_cap": 403572.634968
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:imx",
+            "name": "IMX",
+            "symbol": "IMX",
+            "image": "https://app.hyperliquid.xyz/coins/IMX.svg",
+            "price": 0.13648,
+            "market_cap": 652158.434048
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:kbonk",
+            "name": "kBONK",
+            "symbol": "kBONK",
+            "image": "https://app.hyperliquid.xyz/coins/kBONK.svg",
+            "price": 0.005692,
+            "market_cap": 4646139.090232
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:gmt",
+            "name": "GMT",
+            "symbol": "GMT",
+            "image": "https://app.hyperliquid.xyz/coins/GMT.svg",
+            "price": 0.010366,
+            "market_cap": 304257.939248
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:super",
+            "name": "SUPER",
+            "symbol": "SUPER",
+            "image": "https://app.hyperliquid.xyz/coins/SUPER.svg",
+            "price": 0.0969,
+            "market_cap": 318781.4262
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:ustc",
+            "name": "USTC",
+            "symbol": "USTC",
+            "image": "https://app.hyperliquid.xyz/coins/USTC.svg",
+            "price": 0.004375,
+            "market_cap": 213501.8375
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:jup",
+            "name": "JUP",
+            "symbol": "JUP",
+            "image": "https://app.hyperliquid.xyz/coins/JUP.svg",
+            "price": 0.16258,
+            "market_cap": 4730414.02328
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:klunc",
+            "name": "kLUNC",
+            "symbol": "kLUNC",
+            "image": "https://app.hyperliquid.xyz/coins/kLUNC.svg",
+            "price": 0.036279,
+            "market_cap": 200510.622774
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:rsr",
+            "name": "RSR",
+            "symbol": "RSR",
+            "image": "https://app.hyperliquid.xyz/coins/RSR.svg",
+            "price": 0.001408,
+            "market_cap": 100131.080192
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:gala",
+            "name": "GALA",
+            "symbol": "GALA",
+            "image": "https://app.hyperliquid.xyz/coins/GALA.svg",
+            "price": 0.002893,
+            "market_cap": 318879.1892
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:jto",
+            "name": "JTO",
+            "symbol": "JTO",
+            "image": "https://app.hyperliquid.xyz/coins/JTO.svg",
+            "price": 0.26213,
+            "market_cap": 1610850.71268
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:ace",
+            "name": "ACE",
+            "symbol": "ACE",
+            "image": "https://app.hyperliquid.xyz/coins/ACE.svg",
+            "price": 0.1145,
+            "market_cap": 407864.69108
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:mav",
+            "name": "MAV",
+            "symbol": "MAV",
+            "image": "https://app.hyperliquid.xyz/coins/MAV.svg",
+            "price": 0.01365,
+            "market_cap": 156694.4379
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:wif",
+            "name": "WIF",
+            "symbol": "WIF",
+            "image": "https://app.hyperliquid.xyz/coins/WIF.svg",
+            "price": 0.18009,
+            "market_cap": 4782961.32552
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:cake",
+            "name": "CAKE",
+            "symbol": "CAKE",
+            "image": "https://app.hyperliquid.xyz/coins/CAKE.svg",
+            "price": 1.3759,
+            "market_cap": 991649.6552
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:people",
+            "name": "PEOPLE",
+            "symbol": "PEOPLE",
+            "image": "https://app.hyperliquid.xyz/coins/PEOPLE.svg",
+            "price": 0.00658,
+            "market_cap": 109378.353
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:ens",
+            "name": "ENS",
+            "symbol": "ENS",
+            "image": "https://app.hyperliquid.xyz/coins/ENS.svg",
+            "price": 5.5546,
+            "market_cap": 1741158.24704
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:etc",
+            "name": "ETC",
+            "symbol": "ETC",
+            "image": "https://app.hyperliquid.xyz/coins/ETC.svg",
+            "price": 8.287,
+            "market_cap": 1231662.0046
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:xai",
+            "name": "XAI",
+            "symbol": "XAI",
+            "image": "https://app.hyperliquid.xyz/coins/XAI.svg",
+            "price": 0.00905,
+            "market_cap": 861300.60347
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:manta",
+            "name": "MANTA",
+            "symbol": "MANTA",
+            "image": "https://app.hyperliquid.xyz/coins/MANTA.svg",
+            "price": 0.06307,
+            "market_cap": 239354.736936
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:uma",
+            "name": "UMA",
+            "symbol": "UMA",
+            "image": "https://app.hyperliquid.xyz/coins/UMA.svg",
+            "price": 0.40487,
+            "market_cap": 330738.545922
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:ondo",
+            "name": "ONDO",
+            "symbol": "ONDO",
+            "image": "https://app.hyperliquid.xyz/coins/ONDO.svg",
+            "price": 0.25889,
+            "market_cap": 3047182.41798
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:alt",
+            "name": "ALT",
+            "symbol": "ALT",
+            "image": "https://app.hyperliquid.xyz/coins/ALT.svg",
+            "price": 0.006428,
+            "market_cap": 740611.893408
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:zeta",
+            "name": "ZETA",
+            "symbol": "ZETA",
+            "image": "https://app.hyperliquid.xyz/coins/ZETA.svg",
+            "price": 0.04888,
+            "market_cap": 698609.48144
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:dym",
+            "name": "DYM",
+            "symbol": "DYM",
+            "image": "https://app.hyperliquid.xyz/coins/DYM.svg",
+            "price": 0.02128,
+            "market_cap": 268913.070272
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:mavia",
+            "name": "MAVIA",
+            "symbol": "MAVIA",
+            "image": "https://app.hyperliquid.xyz/coins/MAVIA.svg",
+            "price": 0.0278,
+            "market_cap": 1544569.51232
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:w",
+            "name": "W",
+            "symbol": "W",
+            "image": "https://app.hyperliquid.xyz/coins/W.svg",
+            "price": 0.01309,
+            "market_cap": 787762.12977
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:strk",
+            "name": "STRK",
+            "symbol": "STRK",
+            "image": "https://app.hyperliquid.xyz/coins/STRK.svg",
+            "price": 0.03347,
+            "market_cap": 2849067.131312
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:tao",
+            "name": "TAO",
+            "symbol": "TAO",
+            "image": "https://app.hyperliquid.xyz/coins/TAO.svg",
+            "price": 308.65,
+            "market_cap": 47992167.517
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:ar",
+            "name": "AR",
+            "symbol": "AR",
+            "image": "https://app.hyperliquid.xyz/coins/AR.svg",
+            "price": 1.6679,
+            "market_cap": 355079.331074
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:kfloki",
+            "name": "kFLOKI",
+            "symbol": "kFLOKI",
+            "image": "https://app.hyperliquid.xyz/coins/kFLOKI.svg",
+            "price": 0.02669,
+            "market_cap": 424671.95644
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:bome",
+            "name": "BOME",
+            "symbol": "BOME",
+            "image": "https://app.hyperliquid.xyz/coins/BOME.svg",
+            "price": 0.000378,
+            "market_cap": 109398.944088
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:ethfi",
+            "name": "ETHFI",
+            "symbol": "ETHFI",
+            "image": "https://app.hyperliquid.xyz/coins/ETHFI.svg",
+            "price": 0.44215,
+            "market_cap": 3071253.75229
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:ena",
+            "name": "ENA",
+            "symbol": "ENA",
+            "image": "https://app.hyperliquid.xyz/coins/ENA.svg",
+            "price": 0.079963,
+            "market_cap": 11741128.975186
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:mnt",
+            "name": "MNT",
+            "symbol": "MNT",
+            "image": "https://app.hyperliquid.xyz/coins/MNT.svg",
+            "price": 0.67556,
+            "market_cap": 4576719.439576
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:tnsr",
+            "name": "TNSR",
+            "symbol": "TNSR",
+            "image": "https://app.hyperliquid.xyz/coins/TNSR.svg",
+            "price": 0.03648,
+            "market_cap": 85776.744576
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:saga",
+            "name": "SAGA",
+            "symbol": "SAGA",
+            "image": "https://app.hyperliquid.xyz/coins/SAGA.svg",
+            "price": 0.02831,
+            "market_cap": 1216640.28347
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:merl",
+            "name": "MERL",
+            "symbol": "MERL",
+            "image": "https://app.hyperliquid.xyz/coins/MERL.svg",
+            "price": 0.022643,
+            "market_cap": 523243.365342
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:hbar",
+            "name": "HBAR",
+            "symbol": "HBAR",
+            "image": "https://app.hyperliquid.xyz/coins/HBAR.svg",
+            "price": 0.087352,
+            "market_cap": 4342960.271952
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:popcat",
+            "name": "POPCAT",
+            "symbol": "POPCAT",
+            "image": "https://app.hyperliquid.xyz/coins/POPCAT.svg",
+            "price": 0.047783,
+            "market_cap": 1821845.472406
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:eigen",
+            "name": "EIGEN",
+            "symbol": "EIGEN",
+            "image": "https://app.hyperliquid.xyz/coins/EIGEN.svg",
+            "price": 0.1521,
+            "market_cap": 1706378.996322
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:rez",
+            "name": "REZ",
+            "symbol": "REZ",
+            "image": "https://app.hyperliquid.xyz/coins/REZ.svg",
+            "price": 0.003432,
+            "market_cap": 724018.591296
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:not",
+            "name": "NOT",
+            "symbol": "NOT",
+            "image": "https://app.hyperliquid.xyz/coins/NOT.svg",
+            "price": 0.000355,
+            "market_cap": 121408.3457
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:turbo",
+            "name": "TURBO",
+            "symbol": "TURBO",
+            "image": "https://app.hyperliquid.xyz/coins/TURBO.svg",
+            "price": 0.001009,
+            "market_cap": 460934.390856
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:brett",
+            "name": "BRETT",
+            "symbol": "BRETT",
+            "image": "https://app.hyperliquid.xyz/coins/BRETT.svg",
+            "price": 0.00609,
+            "market_cap": 319209.44496
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:io",
+            "name": "IO",
+            "symbol": "IO",
+            "image": "https://app.hyperliquid.xyz/coins/IO.svg",
+            "price": 0.09916,
+            "market_cap": 292763.315776
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:zk",
+            "name": "ZK",
+            "symbol": "ZK",
+            "image": "https://app.hyperliquid.xyz/coins/ZK.svg",
+            "price": 0.015453,
+            "market_cap": 2843800.384248
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:blast",
+            "name": "BLAST",
+            "symbol": "BLAST",
+            "image": "https://app.hyperliquid.xyz/coins/BLAST.svg",
+            "price": 0.000442,
+            "market_cap": 1122328.168
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:mew",
+            "name": "MEW",
+            "symbol": "MEW",
+            "image": "https://app.hyperliquid.xyz/coins/MEW.svg",
+            "price": 0.00055,
+            "market_cap": 77015.8521
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:render",
+            "name": "RENDER",
+            "symbol": "RENDER",
+            "image": "https://app.hyperliquid.xyz/coins/RENDER.svg",
+            "price": 1.926,
+            "market_cap": 3100312.6308
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:pol",
+            "name": "POL",
+            "symbol": "POL",
+            "image": "https://app.hyperliquid.xyz/coins/POL.svg",
+            "price": 0.092839,
+            "market_cap": 2575667.098786
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:celo",
+            "name": "CELO",
+            "symbol": "CELO",
+            "image": "https://app.hyperliquid.xyz/coins/CELO.svg",
+            "price": 0.084642,
+            "market_cap": 392116.930584
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:hmstr",
+            "name": "HMSTR",
+            "symbol": "HMSTR",
+            "image": "https://app.hyperliquid.xyz/coins/HMSTR.svg",
+            "price": 0.000139,
+            "market_cap": 1013655.967942
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:scr",
+            "name": "SCR",
+            "symbol": "SCR",
+            "image": "https://app.hyperliquid.xyz/coins/SCR.svg",
+            "price": 0.0427,
+            "market_cap": 202943.84264
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:kneiro",
+            "name": "kNEIRO",
+            "symbol": "kNEIRO",
+            "image": "https://app.hyperliquid.xyz/coins/kNEIRO.svg",
+            "price": 0.05519,
+            "market_cap": 222807.681456
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:goat",
+            "name": "GOAT",
+            "symbol": "GOAT",
+            "image": "https://app.hyperliquid.xyz/coins/GOAT.svg",
+            "price": 0.016863,
+            "market_cap": 378148.626702
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:moodeng",
+            "name": "MOODENG",
+            "symbol": "MOODENG",
+            "image": "https://app.hyperliquid.xyz/coins/MOODENG.svg",
+            "price": 0.04485,
+            "market_cap": 849099.8412
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:grass",
+            "name": "GRASS",
+            "symbol": "GRASS",
+            "image": "https://app.hyperliquid.xyz/coins/GRASS.svg",
+            "price": 0.27932,
+            "market_cap": 1505051.185352
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:purr",
+            "name": "PURR",
+            "symbol": "PURR",
+            "image": "https://app.hyperliquid.xyz/coins/PURR.svg",
+            "price": 0.073092,
+            "market_cap": 3603568.919808
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:pnut",
+            "name": "PNUT",
+            "symbol": "PNUT",
+            "image": "https://app.hyperliquid.xyz/coins/PNUT.svg",
+            "price": 0.04026,
+            "market_cap": 426693.170244
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:xlm",
+            "name": "XLM",
+            "symbol": "XLM",
+            "image": "https://app.hyperliquid.xyz/coins/XLM.svg",
+            "price": 0.16153,
+            "market_cap": 3183930.42934
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:chillguy",
+            "name": "CHILLGUY",
+            "symbol": "CHILLGUY",
+            "image": "https://app.hyperliquid.xyz/coins/CHILLGUY.svg",
+            "price": 0.007964,
+            "market_cap": 263847.765984
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:sand",
+            "name": "SAND",
+            "symbol": "SAND",
+            "image": "https://app.hyperliquid.xyz/coins/SAND.svg",
+            "price": 0.078014,
+            "market_cap": 400922.52754
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:iota",
+            "name": "IOTA",
+            "symbol": "IOTA",
+            "image": "https://app.hyperliquid.xyz/coins/IOTA.svg",
+            "price": 0.062577,
+            "market_cap": 445133.604798
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:algo",
+            "name": "ALGO",
+            "symbol": "ALGO",
+            "image": "https://app.hyperliquid.xyz/coins/ALGO.svg",
+            "price": 0.12105,
+            "market_cap": 7519641.2523
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:hype",
+            "name": "HYPE",
+            "symbol": "HYPE",
+            "image": "https://app.hyperliquid.xyz/coins/HYPE.svg",
+            "price": 35.763,
+            "market_cap": 761732721.73362
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:me",
+            "name": "ME",
+            "symbol": "ME",
+            "image": "https://app.hyperliquid.xyz/coins/ME.svg",
+            "price": 0.09959,
+            "market_cap": 190380.2276
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:move",
+            "name": "MOVE",
+            "symbol": "MOVE",
+            "image": "https://app.hyperliquid.xyz/coins/MOVE.svg",
+            "price": 0.017361,
+            "market_cap": 581435.271846
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:virtual",
+            "name": "VIRTUAL",
+            "symbol": "VIRTUAL",
+            "image": "https://app.hyperliquid.xyz/coins/VIRTUAL.svg",
+            "price": 0.63558,
+            "market_cap": 10981032.860952
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:pengu",
+            "name": "PENGU",
+            "symbol": "PENGU",
+            "image": "https://app.hyperliquid.xyz/coins/PENGU.svg",
+            "price": 0.006232,
+            "market_cap": 2343427.522768
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:usual",
+            "name": "USUAL",
+            "symbol": "USUAL",
+            "image": "https://app.hyperliquid.xyz/coins/USUAL.svg",
+            "price": 0.01254,
+            "market_cap": 316210.352964
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:fartcoin",
+            "name": "FARTCOIN",
+            "symbol": "FARTCOIN",
+            "image": "https://app.hyperliquid.xyz/coins/FARTCOIN.svg",
+            "price": 0.16355,
+            "market_cap": 39144413.93152
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:aixbt",
+            "name": "AIXBT",
+            "symbol": "AIXBT",
+            "image": "https://app.hyperliquid.xyz/coins/AIXBT.svg",
+            "price": 0.022456,
+            "market_cap": 620721.34152
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:zerebro",
+            "name": "ZEREBRO",
+            "symbol": "ZEREBRO",
+            "image": "https://app.hyperliquid.xyz/coins/ZEREBRO.svg",
+            "price": 0.007043,
+            "market_cap": 914206.571682
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:bio",
+            "name": "BIO",
+            "symbol": "BIO",
+            "image": "https://app.hyperliquid.xyz/coins/BIO.svg",
+            "price": 0.017911,
+            "market_cap": 247141.924452
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:griffain",
+            "name": "GRIFFAIN",
+            "symbol": "GRIFFAIN",
+            "image": "https://app.hyperliquid.xyz/coins/GRIFFAIN.svg",
+            "price": 0.011806,
+            "market_cap": 3989831.44282
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:spx",
+            "name": "SPX",
+            "symbol": "SPX",
+            "image": "https://app.hyperliquid.xyz/coins/SPX.svg",
+            "price": 0.26326,
+            "market_cap": 1745925.103572
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:s",
+            "name": "S",
+            "symbol": "S",
+            "image": "https://app.hyperliquid.xyz/coins/S.svg",
+            "price": 0.041328,
+            "market_cap": 1133999.570592
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:morpho",
+            "name": "MORPHO",
+            "symbol": "MORPHO",
+            "image": "https://app.hyperliquid.xyz/coins/MORPHO.svg",
+            "price": 1.4776,
+            "market_cap": 4638149.46
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:trump",
+            "name": "TRUMP",
+            "symbol": "TRUMP",
+            "image": "https://app.hyperliquid.xyz/coins/TRUMP.svg",
+            "price": 2.85,
+            "market_cap": 12924541.38
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:melania",
+            "name": "MELANIA",
+            "symbol": "MELANIA",
+            "image": "https://app.hyperliquid.xyz/coins/MELANIA.svg",
+            "price": 0.10685,
+            "market_cap": 1146975.27729
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:anime",
+            "name": "ANIME",
+            "symbol": "ANIME",
+            "image": "https://app.hyperliquid.xyz/coins/ANIME.svg",
+            "price": 0.004495,
+            "market_cap": 670394.92618
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:vine",
+            "name": "VINE",
+            "symbol": "VINE",
+            "image": "https://app.hyperliquid.xyz/coins/VINE.svg",
+            "price": 0.018774,
+            "market_cap": 750401.84898
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:vvv",
+            "name": "VVV",
+            "symbol": "VVV",
+            "image": "https://app.hyperliquid.xyz/coins/VVV.svg",
+            "price": 6.9289,
+            "market_cap": 15558941.538866
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:bera",
+            "name": "BERA",
+            "symbol": "BERA",
+            "image": "https://app.hyperliquid.xyz/coins/BERA.svg",
+            "price": 0.41055,
+            "market_cap": 2525165.04051
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:tst",
+            "name": "TST",
+            "symbol": "TST",
+            "image": "https://app.hyperliquid.xyz/coins/TST.svg",
+            "price": 0.008664,
+            "market_cap": 131151.21336
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:layer",
+            "name": "LAYER",
+            "symbol": "LAYER",
+            "image": "https://app.hyperliquid.xyz/coins/LAYER.svg",
+            "price": 0.076414,
+            "market_cap": 654155.343036
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:ip",
+            "name": "IP",
+            "symbol": "IP",
+            "image": "https://app.hyperliquid.xyz/coins/IP.svg",
+            "price": 0.50067,
+            "market_cap": 3896964.44433
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:kaito",
+            "name": "KAITO",
+            "symbol": "KAITO",
+            "image": "https://app.hyperliquid.xyz/coins/KAITO.svg",
+            "price": 0.41837,
+            "market_cap": 2559273.8825
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:nil",
+            "name": "NIL",
+            "symbol": "NIL",
+            "image": "https://app.hyperliquid.xyz/coins/NIL.svg",
+            "price": 0.033895,
+            "market_cap": 229520.6704
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:paxg",
+            "name": "PAXG",
+            "symbol": "PAXG",
+            "image": "https://app.hyperliquid.xyz/coins/PAXG.svg",
+            "price": 4648.8,
+            "market_cap": 47294538.9072
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:prompt",
+            "name": "PROMPT",
+            "symbol": "PROMPT",
+            "image": "https://app.hyperliquid.xyz/coins/PROMPT.svg",
+            "price": 0.032779,
+            "market_cap": 1595422.43811
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:baby",
+            "name": "BABY",
+            "symbol": "BABY",
+            "image": "https://app.hyperliquid.xyz/coins/BABY.svg",
+            "price": 0.014255,
+            "market_cap": 438871.33643
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:wct",
+            "name": "WCT",
+            "symbol": "WCT",
+            "image": "https://app.hyperliquid.xyz/coins/WCT.svg",
+            "price": 0.054668,
+            "market_cap": 308247.267376
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:hyper",
+            "name": "HYPER",
+            "symbol": "HYPER",
+            "image": "https://app.hyperliquid.xyz/coins/HYPER.svg",
+            "price": 0.085755,
+            "market_cap": 254545.70895
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:zora",
+            "name": "ZORA",
+            "symbol": "ZORA",
+            "image": "https://app.hyperliquid.xyz/coins/ZORA.svg",
+            "price": 0.014028,
+            "market_cap": 1048841.520048
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:init",
+            "name": "INIT",
+            "symbol": "INIT",
+            "image": "https://app.hyperliquid.xyz/coins/INIT.svg",
+            "price": 0.082318,
+            "market_cap": 674853.829976
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:dood",
+            "name": "DOOD",
+            "symbol": "DOOD",
+            "image": "https://app.hyperliquid.xyz/coins/DOOD.svg",
+            "price": 0.002919,
+            "market_cap": 737141.772024
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:nxpc",
+            "name": "NXPC",
+            "symbol": "NXPC",
+            "image": "https://app.hyperliquid.xyz/coins/NXPC.svg",
+            "price": 0.28338,
+            "market_cap": 1099907.73144
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:soph",
+            "name": "SOPH",
+            "symbol": "SOPH",
+            "image": "https://app.hyperliquid.xyz/coins/SOPH.svg",
+            "price": 0.008163,
+            "market_cap": 624334.271742
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:resolv",
+            "name": "RESOLV",
+            "symbol": "RESOLV",
+            "image": "https://app.hyperliquid.xyz/coins/RESOLV.svg",
+            "price": 0.039291,
+            "market_cap": 923380.54137
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:syrup",
+            "name": "SYRUP",
+            "symbol": "SYRUP",
+            "image": "https://app.hyperliquid.xyz/coins/SYRUP.svg",
+            "price": 0.2065,
+            "market_cap": 1736266.455
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:pump",
+            "name": "PUMP",
+            "symbol": "PUMP",
+            "image": "https://app.hyperliquid.xyz/coins/PUMP.svg",
+            "price": 0.001658,
+            "market_cap": 30312622.385808
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:prove",
+            "name": "PROVE",
+            "symbol": "PROVE",
+            "image": "https://app.hyperliquid.xyz/coins/PROVE.svg",
+            "price": 0.2187,
+            "market_cap": 399179.5506
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:yzy",
+            "name": "YZY",
+            "symbol": "YZY",
+            "image": "https://app.hyperliquid.xyz/coins/YZY.svg",
+            "price": 0.32495,
+            "market_cap": 459078.3117
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:xpl",
+            "name": "XPL",
+            "symbol": "XPL",
+            "image": "https://app.hyperliquid.xyz/coins/XPL.svg",
+            "price": 0.1127,
+            "market_cap": 22691646.866
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:wlfi",
+            "name": "WLFI",
+            "symbol": "WLFI",
+            "image": "https://app.hyperliquid.xyz/coins/WLFI.svg",
+            "price": 0.098346,
+            "market_cap": 19061865.063768
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:linea",
+            "name": "LINEA",
+            "symbol": "LINEA",
+            "image": "https://app.hyperliquid.xyz/coins/LINEA.svg",
+            "price": 0.003229,
+            "market_cap": 2773030.494708
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:sky",
+            "name": "SKY",
+            "symbol": "SKY",
+            "image": "https://app.hyperliquid.xyz/coins/SKY.svg",
+            "price": 0.074669,
+            "market_cap": 2165595.1394
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:aster",
+            "name": "ASTER",
+            "symbol": "ASTER",
+            "image": "https://app.hyperliquid.xyz/coins/ASTER.svg",
+            "price": 0.66217,
+            "market_cap": 57108423.88818
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:avnt",
+            "name": "AVNT",
+            "symbol": "AVNT",
+            "image": "https://app.hyperliquid.xyz/coins/AVNT.svg",
+            "price": 0.12414,
+            "market_cap": 786258.0696
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:stbl",
+            "name": "STBL",
+            "symbol": "STBL",
+            "image": "https://app.hyperliquid.xyz/coins/STBL.svg",
+            "price": 0.034185,
+            "market_cap": 3635447.99202
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:0g",
+            "name": "0G",
+            "symbol": "0G",
+            "image": "https://app.hyperliquid.xyz/coins/0G.svg",
+            "price": 0.50531,
+            "market_cap": 582871.04252
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:hemi",
+            "name": "HEMI",
+            "symbol": "HEMI",
+            "image": "https://app.hyperliquid.xyz/coins/HEMI.svg",
+            "price": 0.008014,
+            "market_cap": 2031483.413424
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:apex",
+            "name": "APEX",
+            "symbol": "APEX",
+            "image": "https://app.hyperliquid.xyz/coins/APEX.svg",
+            "price": 0.26331,
+            "market_cap": 1684575.22728
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:2z",
+            "name": "2Z",
+            "symbol": "2Z",
+            "image": "https://app.hyperliquid.xyz/coins/2Z.svg",
+            "price": 0.076097,
+            "market_cap": 1587141.43154
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:zec",
+            "name": "ZEC",
+            "symbol": "ZEC",
+            "image": "https://app.hyperliquid.xyz/coins/ZEC.svg",
+            "price": 237.06,
+            "market_cap": 66429664.38
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:mon",
+            "name": "MON",
+            "symbol": "MON",
+            "image": "https://app.hyperliquid.xyz/coins/MON.svg",
+            "price": 0.027558,
+            "market_cap": 42232816.772568
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:met",
+            "name": "MET",
+            "symbol": "MET",
+            "image": "https://app.hyperliquid.xyz/coins/MET.svg",
+            "price": 0.12885,
+            "market_cap": 1430791.632
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:mega",
+            "name": "MEGA",
+            "symbol": "MEGA",
+            "image": "https://app.hyperliquid.xyz/coins/MEGA.svg",
+            "price": 0.12983,
+            "market_cap": 3166654.18842
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:cc",
+            "name": "CC",
+            "symbol": "CC",
+            "image": "https://app.hyperliquid.xyz/coins/CC.svg",
+            "price": 0.14008,
+            "market_cap": 5567015.9352
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:icp",
+            "name": "ICP",
+            "symbol": "ICP",
+            "image": "https://app.hyperliquid.xyz/coins/ICP.svg",
+            "price": 2.3076,
+            "market_cap": 3024941.45904
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:aero",
+            "name": "AERO",
+            "symbol": "AERO",
+            "image": "https://app.hyperliquid.xyz/coins/AERO.svg",
+            "price": 0.31174,
+            "market_cap": 1924367.9026
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:stable",
+            "name": "STABLE",
+            "symbol": "STABLE",
+            "image": "https://app.hyperliquid.xyz/coins/STABLE.svg",
+            "price": 0.027189,
+            "market_cap": 2735539.994268
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:fogo",
+            "name": "FOGO",
+            "symbol": "FOGO",
+            "image": "https://app.hyperliquid.xyz/coins/FOGO.svg",
+            "price": 0.016819,
+            "market_cap": 486949.137356
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:lit",
+            "name": "LIT",
+            "symbol": "LIT",
+            "image": "https://app.hyperliquid.xyz/coins/LIT.svg",
+            "price": 0.9529,
+            "market_cap": 44107253.931
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:xmr",
+            "name": "XMR",
+            "symbol": "XMR",
+            "image": "https://app.hyperliquid.xyz/coins/XMR.svg",
+            "price": 319.88,
+            "market_cap": 27401340.48256
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:axs",
+            "name": "AXS",
+            "symbol": "AXS",
+            "image": "https://app.hyperliquid.xyz/coins/AXS.svg",
+            "price": 1.1073,
+            "market_cap": 2086699.54182
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:dash",
+            "name": "DASH",
+            "symbol": "DASH",
+            "image": "https://app.hyperliquid.xyz/coins/DASH.svg",
+            "price": 29.62,
+            "market_cap": 720825.2112
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:skr",
+            "name": "SKR",
+            "symbol": "SKR",
+            "image": "https://app.hyperliquid.xyz/coins/SKR.svg",
+            "price": 0.017584,
+            "market_cap": 524902.44576
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "crypto",
+            "address": "hyperliquid:aztec",
+            "name": "AZTEC",
+            "symbol": "AZTEC",
+            "image": "https://app.hyperliquid.xyz/coins/AZTEC.svg",
+            "price": 0.018519,
+            "market_cap": 658080.739284
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:xyz100",
+            "name": "xyz:XYZ100",
+            "symbol": "XYZ100",
+            "image": "https://app.hyperliquid.xyz/coins/XYZ100.svg",
+            "price": 23891,
+            "market_cap": 233774285.5196
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:tsla",
+            "name": "xyz:TSLA",
+            "symbol": "TSLA",
+            "image": "https://app.hyperliquid.xyz/coins/TSLA.svg",
+            "price": 359.89,
+            "market_cap": 26332537.32766
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:nvda",
+            "name": "xyz:NVDA",
+            "symbol": "NVDA",
+            "image": "https://app.hyperliquid.xyz/coins/NVDA.svg",
+            "price": 176.03,
+            "market_cap": 58598847.79368
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:gold",
+            "name": "xyz:GOLD",
+            "symbol": "GOLD",
+            "image": "https://app.hyperliquid.xyz/coins/GOLD.svg",
+            "price": 4667,
+            "market_cap": 146833242.673
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:hood",
+            "name": "xyz:HOOD",
+            "symbol": "HOOD",
+            "image": "https://app.hyperliquid.xyz/coins/HOOD.svg",
+            "price": 68.719,
+            "market_cap": 8806195.127786
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:intc",
+            "name": "xyz:INTC",
+            "symbol": "INTC",
+            "image": "https://app.hyperliquid.xyz/coins/INTC.svg",
+            "price": 50.022,
+            "market_cap": 4219225.6428
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:pltr",
+            "name": "xyz:PLTR",
+            "symbol": "PLTR",
+            "image": "https://app.hyperliquid.xyz/coins/PLTR.svg",
+            "price": 147.61,
+            "market_cap": 4451949.77898
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:coin",
+            "name": "xyz:COIN",
+            "symbol": "COIN",
+            "image": "https://app.hyperliquid.xyz/coins/COIN.svg",
+            "price": 171.51,
+            "market_cap": 5182677.51732
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:meta",
+            "name": "xyz:META",
+            "symbol": "META",
+            "image": "https://app.hyperliquid.xyz/coins/META.svg",
+            "price": 572.96,
+            "market_cap": 5599185.13664
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:aapl",
+            "name": "xyz:AAPL",
+            "symbol": "AAPL",
+            "image": "https://app.hyperliquid.xyz/coins/AAPL.svg",
+            "price": 254.56,
+            "market_cap": 5745284.79232
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:msft",
+            "name": "xyz:MSFT",
+            "symbol": "MSFT",
+            "image": "https://app.hyperliquid.xyz/coins/MSFT.svg",
+            "price": 372.4,
+            "market_cap": 9519574.8032
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:orcl",
+            "name": "xyz:ORCL",
+            "symbol": "ORCL",
+            "image": "https://app.hyperliquid.xyz/coins/ORCL.svg",
+            "price": 145.44,
+            "market_cap": 2909820.11616
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:googl",
+            "name": "xyz:GOOGL",
+            "symbol": "GOOGL",
+            "image": "https://app.hyperliquid.xyz/coins/GOOGL.svg",
+            "price": 294.93,
+            "market_cap": 24495982.13448
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:amzn",
+            "name": "xyz:AMZN",
+            "symbol": "AMZN",
+            "image": "https://app.hyperliquid.xyz/coins/AMZN.svg",
+            "price": 208.93,
+            "market_cap": 4444616.77962
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:amd",
+            "name": "xyz:AMD",
+            "symbol": "AMD",
+            "image": "https://app.hyperliquid.xyz/coins/AMD.svg",
+            "price": 215.46,
+            "market_cap": 2063011.40136
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:mu",
+            "name": "xyz:MU",
+            "symbol": "MU",
+            "image": "https://app.hyperliquid.xyz/coins/MU.svg",
+            "price": 362.02,
+            "market_cap": 43921529.12576
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:sndk",
+            "name": "xyz:SNDK",
+            "symbol": "SNDK",
+            "image": "https://app.hyperliquid.xyz/coins/SNDK.svg",
+            "price": 685.05,
+            "market_cap": 21693252.2835
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:mstr",
+            "name": "xyz:MSTR",
+            "symbol": "MSTR",
+            "image": "https://app.hyperliquid.xyz/coins/MSTR.svg",
+            "price": 120.26,
+            "market_cap": 8668669.83136
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:crcl",
+            "name": "xyz:CRCL",
+            "symbol": "CRCL",
+            "image": "https://app.hyperliquid.xyz/coins/CRCL.svg",
+            "price": 90.484,
+            "market_cap": 15447102.556632
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:nflx",
+            "name": "xyz:NFLX",
+            "symbol": "NFLX",
+            "image": "https://app.hyperliquid.xyz/coins/NFLX.svg",
+            "price": 98.104,
+            "market_cap": 4182895.173024
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:cost",
+            "name": "xyz:COST",
+            "symbol": "COST",
+            "image": "https://app.hyperliquid.xyz/coins/COST.svg",
+            "price": 1012.6,
+            "market_cap": 133744.00548
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:lly",
+            "name": "xyz:LLY",
+            "symbol": "LLY",
+            "image": "https://app.hyperliquid.xyz/coins/LLY.svg",
+            "price": 937.92,
+            "market_cap": 974579.353536
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:skhx",
+            "name": "xyz:SKHX",
+            "symbol": "SKHX",
+            "image": "https://app.hyperliquid.xyz/coins/SKHX.svg",
+            "price": 569.5,
+            "market_cap": 12046320.275
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:tsm",
+            "name": "xyz:TSM",
+            "symbol": "TSM",
+            "image": "https://app.hyperliquid.xyz/coins/TSM.svg",
+            "price": 336.26,
+            "market_cap": 8463207.55892
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:jpy",
+            "name": "xyz:JPY",
+            "symbol": "JPY",
+            "image": "https://app.hyperliquid.xyz/coins/JPY.svg",
+            "price": 159.49,
+            "market_cap": 5340401.4376
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:eur",
+            "name": "xyz:EUR",
+            "symbol": "EUR",
+            "image": "https://app.hyperliquid.xyz/coins/EUR.svg",
+            "price": 1.1506,
+            "market_cap": 15840395.57452
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:silver",
+            "name": "xyz:SILVER",
+            "symbol": "SILVER",
+            "image": "https://app.hyperliquid.xyz/coins/SILVER.svg",
+            "price": 72.951,
+            "market_cap": 104211472.28928
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:rivn",
+            "name": "xyz:RIVN",
+            "symbol": "RIVN",
+            "image": "https://app.hyperliquid.xyz/coins/RIVN.svg",
+            "price": 15.397,
+            "market_cap": 301592.43278
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:baba",
+            "name": "xyz:BABA",
+            "symbol": "BABA",
+            "image": "https://app.hyperliquid.xyz/coins/BABA.svg",
+            "price": 121.43,
+            "market_cap": 1914358.27874
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:cl",
+            "name": "xyz:CL",
+            "symbol": "CL",
+            "image": "https://app.hyperliquid.xyz/coins/CL.svg",
+            "price": 111.37,
+            "market_cap": 559102441.5445
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:copper",
+            "name": "xyz:COPPER",
+            "symbol": "COPPER",
+            "image": "https://app.hyperliquid.xyz/coins/COPPER.svg",
+            "price": 5.651,
+            "market_cap": 10283144.59152
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:natgas",
+            "name": "xyz:NATGAS",
+            "symbol": "NATGAS",
+            "image": "https://app.hyperliquid.xyz/coins/NATGAS.svg",
+            "price": 2.8118,
+            "market_cap": 19380271.88984
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:smsn",
+            "name": "xyz:SMSN",
+            "symbol": "SMSN",
+            "image": "https://app.hyperliquid.xyz/coins/SMSN.svg",
+            "price": 119.24,
+            "market_cap": 1446704.10192
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:platinum",
+            "name": "xyz:PLATINUM",
+            "symbol": "PLATINUM",
+            "image": "https://app.hyperliquid.xyz/coins/PLATINUM.svg",
+            "price": 1995.6,
+            "market_cap": 2266603.27824
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:usar",
+            "name": "xyz:USAR",
+            "symbol": "USAR",
+            "image": "https://app.hyperliquid.xyz/coins/USAR.svg",
+            "price": 16.113,
+            "market_cap": 284078.6352
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:crwv",
+            "name": "xyz:CRWV",
+            "symbol": "CRWV",
+            "image": "https://app.hyperliquid.xyz/coins/CRWV.svg",
+            "price": 80.96,
+            "market_cap": 1582802.0032
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:urnm",
+            "name": "xyz:URNM",
+            "symbol": "URNM",
+            "image": "https://app.hyperliquid.xyz/coins/URNM.svg",
+            "price": 63.285,
+            "market_cap": 706978.2519
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:palladium",
+            "name": "xyz:PALLADIUM",
+            "symbol": "PALLADIUM",
+            "image": "https://app.hyperliquid.xyz/coins/PALLADIUM.svg",
+            "price": 1506.5,
+            "market_cap": 370678.2419
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:hyundai",
+            "name": "xyz:HYUNDAI",
+            "symbol": "HYUNDAI",
+            "image": "https://app.hyperliquid.xyz/coins/HYUNDAI.svg",
+            "price": 308.34,
+            "market_cap": 288711.0756
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:ewy",
+            "name": "xyz:EWY",
+            "symbol": "EWY",
+            "image": "https://app.hyperliquid.xyz/coins/EWY.svg",
+            "price": 121.35,
+            "market_cap": 17162138.2968
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:ewj",
+            "name": "xyz:EWJ",
+            "symbol": "EWJ",
+            "image": "https://app.hyperliquid.xyz/coins/EWJ.svg",
+            "price": 85.055,
+            "market_cap": 1262513.21206
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:brentoil",
+            "name": "xyz:BRENTOIL",
+            "symbol": "BRENTOIL",
+            "image": "https://app.hyperliquid.xyz/coins/BRENTOIL.svg",
+            "price": 109.83,
+            "market_cap": 558011572.0452
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:hims",
+            "name": "xyz:HIMS",
+            "symbol": "HIMS",
+            "image": "https://app.hyperliquid.xyz/coins/HIMS.svg",
+            "price": 19.214,
+            "market_cap": 312765.87628
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:sp500",
+            "name": "xyz:SP500",
+            "symbol": "SP500",
+            "image": "https://app.hyperliquid.xyz/coins/SP500.svg",
+            "price": 6542.3,
+            "market_cap": 245472827.0548
+        },
+        {
+            "origin": "hyperliquid",
+            "category": "stocks",
+            "address": "hyperliquid:xyz:dkng",
+            "name": "xyz:DKNG",
+            "symbol": "DKNG",
+            "image": "https://app.hyperliquid.xyz/coins/DKNG.svg",
+            "price": 23.065,
+            "market_cap": 86869.7095
+        }
+    ],
+    "categories": {
+        "crypto": [
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:btc",
+                "name": "BTC",
+                "symbol": "BTC",
+                "image": "https://app.hyperliquid.xyz/coins/BTC.svg",
+                "price": 66997,
+                "market_cap": 1905797274.35258
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:eth",
+                "name": "ETH",
+                "symbol": "ETH",
+                "image": "https://app.hyperliquid.xyz/coins/ETH.svg",
+                "price": 2053.8,
+                "market_cap": 1139163536.0826
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:atom",
+                "name": "ATOM",
+                "symbol": "ATOM",
+                "image": "https://app.hyperliquid.xyz/coins/ATOM.svg",
+                "price": 1.6999,
+                "market_cap": 3587765.524554
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:dydx",
+                "name": "DYDX",
+                "symbol": "DYDX",
+                "image": "https://app.hyperliquid.xyz/coins/DYDX.svg",
+                "price": 0.1022,
+                "market_cap": 2214222.5826
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:sol",
+                "name": "SOL",
+                "symbol": "SOL",
+                "image": "https://app.hyperliquid.xyz/coins/SOL.svg",
+                "price": 80.24,
+                "market_cap": 296457859.0368
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:avax",
+                "name": "AVAX",
+                "symbol": "AVAX",
+                "image": "https://app.hyperliquid.xyz/coins/AVAX.svg",
+                "price": 8.8825,
+                "market_cap": 38944517.9167
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:bnb",
+                "name": "BNB",
+                "symbol": "BNB",
+                "image": "https://app.hyperliquid.xyz/coins/BNB.svg",
+                "price": 590.96,
+                "market_cap": 21133838.24096
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:ape",
+                "name": "APE",
+                "symbol": "APE",
+                "image": "https://app.hyperliquid.xyz/coins/APE.svg",
+                "price": 0.08547,
+                "market_cap": 670431.141534
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:op",
+                "name": "OP",
+                "symbol": "OP",
+                "image": "https://app.hyperliquid.xyz/coins/OP.svg",
+                "price": 0.11018,
+                "market_cap": 3860723.440532
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:ltc",
+                "name": "LTC",
+                "symbol": "LTC",
+                "image": "https://app.hyperliquid.xyz/coins/LTC.svg",
+                "price": 53.179,
+                "market_cap": 11493390.07992
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:arb",
+                "name": "ARB",
+                "symbol": "ARB",
+                "image": "https://app.hyperliquid.xyz/coins/ARB.svg",
+                "price": 0.09198,
+                "market_cap": 3306547.040328
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:doge",
+                "name": "DOGE",
+                "symbol": "DOGE",
+                "image": "https://app.hyperliquid.xyz/coins/DOGE.svg",
+                "price": 0.091188,
+                "market_cap": 23670092.454696
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:inj",
+                "name": "INJ",
+                "symbol": "INJ",
+                "image": "https://app.hyperliquid.xyz/coins/INJ.svg",
+                "price": 2.8046,
+                "market_cap": 1593625.32464
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:sui",
+                "name": "SUI",
+                "symbol": "SUI",
+                "image": "https://app.hyperliquid.xyz/coins/SUI.svg",
+                "price": 0.86985,
+                "market_cap": 14314576.74993
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:kpepe",
+                "name": "kPEPE",
+                "symbol": "kPEPE",
+                "image": "https://app.hyperliquid.xyz/coins/kPEPE.svg",
+                "price": 0.003377,
+                "market_cap": 16115668.150648
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:crv",
+                "name": "CRV",
+                "symbol": "CRV",
+                "image": "https://app.hyperliquid.xyz/coins/CRV.svg",
+                "price": 0.21155,
+                "market_cap": 5417942.61187
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:ldo",
+                "name": "LDO",
+                "symbol": "LDO",
+                "image": "https://app.hyperliquid.xyz/coins/LDO.svg",
+                "price": 0.31776,
+                "market_cap": 4786986.0816
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:link",
+                "name": "LINK",
+                "symbol": "LINK",
+                "image": "https://app.hyperliquid.xyz/coins/LINK.svg",
+                "price": 8.6717,
+                "market_cap": 30995774.14332
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:stx",
+                "name": "STX",
+                "symbol": "STX",
+                "image": "https://app.hyperliquid.xyz/coins/STX.svg",
+                "price": 0.21326,
+                "market_cap": 1170562.17422
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:cfx",
+                "name": "CFX",
+                "symbol": "CFX",
+                "image": "https://app.hyperliquid.xyz/coins/CFX.svg",
+                "price": 0.051837,
+                "market_cap": 2239421.848488
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:gmx",
+                "name": "GMX",
+                "symbol": "GMX",
+                "image": "https://app.hyperliquid.xyz/coins/GMX.svg",
+                "price": 5.9812,
+                "market_cap": 456691.894272
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:snx",
+                "name": "SNX",
+                "symbol": "SNX",
+                "image": "https://app.hyperliquid.xyz/coins/SNX.svg",
+                "price": 0.2766,
+                "market_cap": 404708.17512
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:xrp",
+                "name": "XRP",
+                "symbol": "XRP",
+                "image": "https://app.hyperliquid.xyz/coins/XRP.svg",
+                "price": 1.3153,
+                "market_cap": 71088747.7762
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:bch",
+                "name": "BCH",
+                "symbol": "BCH",
+                "image": "https://app.hyperliquid.xyz/coins/BCH.svg",
+                "price": 443.51,
+                "market_cap": 11597067.12678
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:apt",
+                "name": "APT",
+                "symbol": "APT",
+                "image": "https://app.hyperliquid.xyz/coins/APT.svg",
+                "price": 0.8427,
+                "market_cap": 7016224.9749
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:aave",
+                "name": "AAVE",
+                "symbol": "AAVE",
+                "image": "https://app.hyperliquid.xyz/coins/AAVE.svg",
+                "price": 94.932,
+                "market_cap": 27247213.66104
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:comp",
+                "name": "COMP",
+                "symbol": "COMP",
+                "image": "https://app.hyperliquid.xyz/coins/COMP.svg",
+                "price": 16.835,
+                "market_cap": 780766.2226
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:wld",
+                "name": "WLD",
+                "symbol": "WLD",
+                "image": "https://app.hyperliquid.xyz/coins/WLD.svg",
+                "price": 0.26406,
+                "market_cap": 7976269.24056
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:ygg",
+                "name": "YGG",
+                "symbol": "YGG",
+                "image": "https://app.hyperliquid.xyz/coins/YGG.svg",
+                "price": 0.035232,
+                "market_cap": 369637.373568
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:trx",
+                "name": "TRX",
+                "symbol": "TRX",
+                "image": "https://app.hyperliquid.xyz/coins/TRX.svg",
+                "price": 0.31687,
+                "market_cap": 11622271.29946
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:kshib",
+                "name": "kSHIB",
+                "symbol": "kSHIB",
+                "image": "https://app.hyperliquid.xyz/coins/kSHIB.svg",
+                "price": 0.005902,
+                "market_cap": 1628162.111732
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:uni",
+                "name": "UNI",
+                "symbol": "UNI",
+                "image": "https://app.hyperliquid.xyz/coins/UNI.svg",
+                "price": 3.152,
+                "market_cap": 11001484.2272
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:sei",
+                "name": "SEI",
+                "symbol": "SEI",
+                "image": "https://app.hyperliquid.xyz/coins/SEI.svg",
+                "price": 0.05423,
+                "market_cap": 2547293.83766
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:rune",
+                "name": "RUNE",
+                "symbol": "RUNE",
+                "image": "https://app.hyperliquid.xyz/coins/RUNE.svg",
+                "price": 0.39317,
+                "market_cap": 994250.104582
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:zro",
+                "name": "ZRO",
+                "symbol": "ZRO",
+                "image": "https://app.hyperliquid.xyz/coins/ZRO.svg",
+                "price": 1.9259,
+                "market_cap": 44480436.95016
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:dot",
+                "name": "DOT",
+                "symbol": "DOT",
+                "image": "https://app.hyperliquid.xyz/coins/DOT.svg",
+                "price": 1.245,
+                "market_cap": 5706819.546
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:banana",
+                "name": "BANANA",
+                "symbol": "BANANA",
+                "image": "https://app.hyperliquid.xyz/coins/BANANA.svg",
+                "price": 3.3366,
+                "market_cap": 162880.13292
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:trb",
+                "name": "TRB",
+                "symbol": "TRB",
+                "image": "https://app.hyperliquid.xyz/coins/TRB.svg",
+                "price": 14.675,
+                "market_cap": 430245.4655
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:ftt",
+                "name": "FTT",
+                "symbol": "FTT",
+                "image": "https://app.hyperliquid.xyz/coins/FTT.svg",
+                "price": 0.28523,
+                "market_cap": 249657.82578
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:ark",
+                "name": "ARK",
+                "symbol": "ARK",
+                "image": "https://app.hyperliquid.xyz/coins/ARK.svg",
+                "price": 0.16525,
+                "market_cap": 147724.246
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:bigtime",
+                "name": "BIGTIME",
+                "symbol": "BIGTIME",
+                "image": "https://app.hyperliquid.xyz/coins/BIGTIME.svg",
+                "price": 0.01219,
+                "market_cap": 308068.45932
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:kas",
+                "name": "KAS",
+                "symbol": "KAS",
+                "image": "https://app.hyperliquid.xyz/coins/KAS.svg",
+                "price": 0.031129,
+                "market_cap": 872923.651544
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:blur",
+                "name": "BLUR",
+                "symbol": "BLUR",
+                "image": "https://app.hyperliquid.xyz/coins/BLUR.svg",
+                "price": 0.019957,
+                "market_cap": 1519145.679408
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:tia",
+                "name": "TIA",
+                "symbol": "TIA",
+                "image": "https://app.hyperliquid.xyz/coins/TIA.svg",
+                "price": 0.28972,
+                "market_cap": 1828220.811328
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:bsv",
+                "name": "BSV",
+                "symbol": "BSV",
+                "image": "https://app.hyperliquid.xyz/coins/BSV.svg",
+                "price": 15.439,
+                "market_cap": 627654.0182
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:ada",
+                "name": "ADA",
+                "symbol": "ADA",
+                "image": "https://app.hyperliquid.xyz/coins/ADA.svg",
+                "price": 0.24557,
+                "market_cap": 12507718.96712
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:ton",
+                "name": "TON",
+                "symbol": "TON",
+                "image": "https://app.hyperliquid.xyz/coins/TON.svg",
+                "price": 1.2309,
+                "market_cap": 8272633.21236
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:mina",
+                "name": "MINA",
+                "symbol": "MINA",
+                "image": "https://app.hyperliquid.xyz/coins/MINA.svg",
+                "price": 0.056283,
+                "market_cap": 298264.666842
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:polyx",
+                "name": "POLYX",
+                "symbol": "POLYX",
+                "image": "https://app.hyperliquid.xyz/coins/POLYX.svg",
+                "price": 0.054759,
+                "market_cap": 796569.754452
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:gas",
+                "name": "GAS",
+                "symbol": "GAS",
+                "image": "https://app.hyperliquid.xyz/coins/GAS.svg",
+                "price": 1.8408,
+                "market_cap": 766527.528
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:pendle",
+                "name": "PENDLE",
+                "symbol": "PENDLE",
+                "image": "https://app.hyperliquid.xyz/coins/PENDLE.svg",
+                "price": 1.0501,
+                "market_cap": 3758257.4952
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:fet",
+                "name": "FET",
+                "symbol": "FET",
+                "image": "https://app.hyperliquid.xyz/coins/FET.svg",
+                "price": 0.23841,
+                "market_cap": 6587620.66998
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:near",
+                "name": "NEAR",
+                "symbol": "NEAR",
+                "image": "https://app.hyperliquid.xyz/coins/NEAR.svg",
+                "price": 1.2325,
+                "market_cap": 22309374.533
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:meme",
+                "name": "MEME",
+                "symbol": "MEME",
+                "image": "https://app.hyperliquid.xyz/coins/MEME.svg",
+                "price": 0.000502,
+                "market_cap": 597988.79548
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:ordi",
+                "name": "ORDI",
+                "symbol": "ORDI",
+                "image": "https://app.hyperliquid.xyz/coins/ORDI.svg",
+                "price": 2.4614,
+                "market_cap": 142798.908648
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:neo",
+                "name": "NEO",
+                "symbol": "NEO",
+                "image": "https://app.hyperliquid.xyz/coins/NEO.svg",
+                "price": 2.817,
+                "market_cap": 447649.92072
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:zen",
+                "name": "ZEN",
+                "symbol": "ZEN",
+                "image": "https://app.hyperliquid.xyz/coins/ZEN.svg",
+                "price": 5.1906,
+                "market_cap": 809843.329284
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:fil",
+                "name": "FIL",
+                "symbol": "FIL",
+                "image": "https://app.hyperliquid.xyz/coins/FIL.svg",
+                "price": 0.84204,
+                "market_cap": 2226016.270368
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:pyth",
+                "name": "PYTH",
+                "symbol": "PYTH",
+                "image": "https://app.hyperliquid.xyz/coins/PYTH.svg",
+                "price": 0.041526,
+                "market_cap": 1358034.32898
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:sushi",
+                "name": "SUSHI",
+                "symbol": "SUSHI",
+                "image": "https://app.hyperliquid.xyz/coins/SUSHI.svg",
+                "price": 0.19234,
+                "market_cap": 403572.634968
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:imx",
+                "name": "IMX",
+                "symbol": "IMX",
+                "image": "https://app.hyperliquid.xyz/coins/IMX.svg",
+                "price": 0.13648,
+                "market_cap": 652158.434048
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:kbonk",
+                "name": "kBONK",
+                "symbol": "kBONK",
+                "image": "https://app.hyperliquid.xyz/coins/kBONK.svg",
+                "price": 0.005692,
+                "market_cap": 4646139.090232
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:gmt",
+                "name": "GMT",
+                "symbol": "GMT",
+                "image": "https://app.hyperliquid.xyz/coins/GMT.svg",
+                "price": 0.010366,
+                "market_cap": 304257.939248
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:super",
+                "name": "SUPER",
+                "symbol": "SUPER",
+                "image": "https://app.hyperliquid.xyz/coins/SUPER.svg",
+                "price": 0.0969,
+                "market_cap": 318781.4262
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:ustc",
+                "name": "USTC",
+                "symbol": "USTC",
+                "image": "https://app.hyperliquid.xyz/coins/USTC.svg",
+                "price": 0.004375,
+                "market_cap": 213501.8375
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:jup",
+                "name": "JUP",
+                "symbol": "JUP",
+                "image": "https://app.hyperliquid.xyz/coins/JUP.svg",
+                "price": 0.16258,
+                "market_cap": 4730414.02328
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:klunc",
+                "name": "kLUNC",
+                "symbol": "kLUNC",
+                "image": "https://app.hyperliquid.xyz/coins/kLUNC.svg",
+                "price": 0.036279,
+                "market_cap": 200510.622774
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:rsr",
+                "name": "RSR",
+                "symbol": "RSR",
+                "image": "https://app.hyperliquid.xyz/coins/RSR.svg",
+                "price": 0.001408,
+                "market_cap": 100131.080192
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:gala",
+                "name": "GALA",
+                "symbol": "GALA",
+                "image": "https://app.hyperliquid.xyz/coins/GALA.svg",
+                "price": 0.002893,
+                "market_cap": 318879.1892
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:jto",
+                "name": "JTO",
+                "symbol": "JTO",
+                "image": "https://app.hyperliquid.xyz/coins/JTO.svg",
+                "price": 0.26213,
+                "market_cap": 1610850.71268
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:ace",
+                "name": "ACE",
+                "symbol": "ACE",
+                "image": "https://app.hyperliquid.xyz/coins/ACE.svg",
+                "price": 0.1145,
+                "market_cap": 407864.69108
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:mav",
+                "name": "MAV",
+                "symbol": "MAV",
+                "image": "https://app.hyperliquid.xyz/coins/MAV.svg",
+                "price": 0.01365,
+                "market_cap": 156694.4379
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:wif",
+                "name": "WIF",
+                "symbol": "WIF",
+                "image": "https://app.hyperliquid.xyz/coins/WIF.svg",
+                "price": 0.18009,
+                "market_cap": 4782961.32552
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:cake",
+                "name": "CAKE",
+                "symbol": "CAKE",
+                "image": "https://app.hyperliquid.xyz/coins/CAKE.svg",
+                "price": 1.3759,
+                "market_cap": 991649.6552
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:people",
+                "name": "PEOPLE",
+                "symbol": "PEOPLE",
+                "image": "https://app.hyperliquid.xyz/coins/PEOPLE.svg",
+                "price": 0.00658,
+                "market_cap": 109378.353
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:ens",
+                "name": "ENS",
+                "symbol": "ENS",
+                "image": "https://app.hyperliquid.xyz/coins/ENS.svg",
+                "price": 5.5546,
+                "market_cap": 1741158.24704
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:etc",
+                "name": "ETC",
+                "symbol": "ETC",
+                "image": "https://app.hyperliquid.xyz/coins/ETC.svg",
+                "price": 8.287,
+                "market_cap": 1231662.0046
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:xai",
+                "name": "XAI",
+                "symbol": "XAI",
+                "image": "https://app.hyperliquid.xyz/coins/XAI.svg",
+                "price": 0.00905,
+                "market_cap": 861300.60347
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:manta",
+                "name": "MANTA",
+                "symbol": "MANTA",
+                "image": "https://app.hyperliquid.xyz/coins/MANTA.svg",
+                "price": 0.06307,
+                "market_cap": 239354.736936
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:uma",
+                "name": "UMA",
+                "symbol": "UMA",
+                "image": "https://app.hyperliquid.xyz/coins/UMA.svg",
+                "price": 0.40487,
+                "market_cap": 330738.545922
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:ondo",
+                "name": "ONDO",
+                "symbol": "ONDO",
+                "image": "https://app.hyperliquid.xyz/coins/ONDO.svg",
+                "price": 0.25889,
+                "market_cap": 3047182.41798
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:alt",
+                "name": "ALT",
+                "symbol": "ALT",
+                "image": "https://app.hyperliquid.xyz/coins/ALT.svg",
+                "price": 0.006428,
+                "market_cap": 740611.893408
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:zeta",
+                "name": "ZETA",
+                "symbol": "ZETA",
+                "image": "https://app.hyperliquid.xyz/coins/ZETA.svg",
+                "price": 0.04888,
+                "market_cap": 698609.48144
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:dym",
+                "name": "DYM",
+                "symbol": "DYM",
+                "image": "https://app.hyperliquid.xyz/coins/DYM.svg",
+                "price": 0.02128,
+                "market_cap": 268913.070272
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:mavia",
+                "name": "MAVIA",
+                "symbol": "MAVIA",
+                "image": "https://app.hyperliquid.xyz/coins/MAVIA.svg",
+                "price": 0.0278,
+                "market_cap": 1544569.51232
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:w",
+                "name": "W",
+                "symbol": "W",
+                "image": "https://app.hyperliquid.xyz/coins/W.svg",
+                "price": 0.01309,
+                "market_cap": 787762.12977
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:strk",
+                "name": "STRK",
+                "symbol": "STRK",
+                "image": "https://app.hyperliquid.xyz/coins/STRK.svg",
+                "price": 0.03347,
+                "market_cap": 2849067.131312
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:tao",
+                "name": "TAO",
+                "symbol": "TAO",
+                "image": "https://app.hyperliquid.xyz/coins/TAO.svg",
+                "price": 308.65,
+                "market_cap": 47992167.517
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:ar",
+                "name": "AR",
+                "symbol": "AR",
+                "image": "https://app.hyperliquid.xyz/coins/AR.svg",
+                "price": 1.6679,
+                "market_cap": 355079.331074
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:kfloki",
+                "name": "kFLOKI",
+                "symbol": "kFLOKI",
+                "image": "https://app.hyperliquid.xyz/coins/kFLOKI.svg",
+                "price": 0.02669,
+                "market_cap": 424671.95644
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:bome",
+                "name": "BOME",
+                "symbol": "BOME",
+                "image": "https://app.hyperliquid.xyz/coins/BOME.svg",
+                "price": 0.000378,
+                "market_cap": 109398.944088
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:ethfi",
+                "name": "ETHFI",
+                "symbol": "ETHFI",
+                "image": "https://app.hyperliquid.xyz/coins/ETHFI.svg",
+                "price": 0.44215,
+                "market_cap": 3071253.75229
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:ena",
+                "name": "ENA",
+                "symbol": "ENA",
+                "image": "https://app.hyperliquid.xyz/coins/ENA.svg",
+                "price": 0.079963,
+                "market_cap": 11741128.975186
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:mnt",
+                "name": "MNT",
+                "symbol": "MNT",
+                "image": "https://app.hyperliquid.xyz/coins/MNT.svg",
+                "price": 0.67556,
+                "market_cap": 4576719.439576
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:tnsr",
+                "name": "TNSR",
+                "symbol": "TNSR",
+                "image": "https://app.hyperliquid.xyz/coins/TNSR.svg",
+                "price": 0.03648,
+                "market_cap": 85776.744576
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:saga",
+                "name": "SAGA",
+                "symbol": "SAGA",
+                "image": "https://app.hyperliquid.xyz/coins/SAGA.svg",
+                "price": 0.02831,
+                "market_cap": 1216640.28347
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:merl",
+                "name": "MERL",
+                "symbol": "MERL",
+                "image": "https://app.hyperliquid.xyz/coins/MERL.svg",
+                "price": 0.022643,
+                "market_cap": 523243.365342
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:hbar",
+                "name": "HBAR",
+                "symbol": "HBAR",
+                "image": "https://app.hyperliquid.xyz/coins/HBAR.svg",
+                "price": 0.087352,
+                "market_cap": 4342960.271952
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:popcat",
+                "name": "POPCAT",
+                "symbol": "POPCAT",
+                "image": "https://app.hyperliquid.xyz/coins/POPCAT.svg",
+                "price": 0.047783,
+                "market_cap": 1821845.472406
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:eigen",
+                "name": "EIGEN",
+                "symbol": "EIGEN",
+                "image": "https://app.hyperliquid.xyz/coins/EIGEN.svg",
+                "price": 0.1521,
+                "market_cap": 1706378.996322
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:rez",
+                "name": "REZ",
+                "symbol": "REZ",
+                "image": "https://app.hyperliquid.xyz/coins/REZ.svg",
+                "price": 0.003432,
+                "market_cap": 724018.591296
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:not",
+                "name": "NOT",
+                "symbol": "NOT",
+                "image": "https://app.hyperliquid.xyz/coins/NOT.svg",
+                "price": 0.000355,
+                "market_cap": 121408.3457
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:turbo",
+                "name": "TURBO",
+                "symbol": "TURBO",
+                "image": "https://app.hyperliquid.xyz/coins/TURBO.svg",
+                "price": 0.001009,
+                "market_cap": 460934.390856
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:brett",
+                "name": "BRETT",
+                "symbol": "BRETT",
+                "image": "https://app.hyperliquid.xyz/coins/BRETT.svg",
+                "price": 0.00609,
+                "market_cap": 319209.44496
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:io",
+                "name": "IO",
+                "symbol": "IO",
+                "image": "https://app.hyperliquid.xyz/coins/IO.svg",
+                "price": 0.09916,
+                "market_cap": 292763.315776
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:zk",
+                "name": "ZK",
+                "symbol": "ZK",
+                "image": "https://app.hyperliquid.xyz/coins/ZK.svg",
+                "price": 0.015453,
+                "market_cap": 2843800.384248
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:blast",
+                "name": "BLAST",
+                "symbol": "BLAST",
+                "image": "https://app.hyperliquid.xyz/coins/BLAST.svg",
+                "price": 0.000442,
+                "market_cap": 1122328.168
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:mew",
+                "name": "MEW",
+                "symbol": "MEW",
+                "image": "https://app.hyperliquid.xyz/coins/MEW.svg",
+                "price": 0.00055,
+                "market_cap": 77015.8521
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:render",
+                "name": "RENDER",
+                "symbol": "RENDER",
+                "image": "https://app.hyperliquid.xyz/coins/RENDER.svg",
+                "price": 1.926,
+                "market_cap": 3100312.6308
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:pol",
+                "name": "POL",
+                "symbol": "POL",
+                "image": "https://app.hyperliquid.xyz/coins/POL.svg",
+                "price": 0.092839,
+                "market_cap": 2575667.098786
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:celo",
+                "name": "CELO",
+                "symbol": "CELO",
+                "image": "https://app.hyperliquid.xyz/coins/CELO.svg",
+                "price": 0.084642,
+                "market_cap": 392116.930584
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:hmstr",
+                "name": "HMSTR",
+                "symbol": "HMSTR",
+                "image": "https://app.hyperliquid.xyz/coins/HMSTR.svg",
+                "price": 0.000139,
+                "market_cap": 1013655.967942
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:scr",
+                "name": "SCR",
+                "symbol": "SCR",
+                "image": "https://app.hyperliquid.xyz/coins/SCR.svg",
+                "price": 0.0427,
+                "market_cap": 202943.84264
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:kneiro",
+                "name": "kNEIRO",
+                "symbol": "kNEIRO",
+                "image": "https://app.hyperliquid.xyz/coins/kNEIRO.svg",
+                "price": 0.05519,
+                "market_cap": 222807.681456
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:goat",
+                "name": "GOAT",
+                "symbol": "GOAT",
+                "image": "https://app.hyperliquid.xyz/coins/GOAT.svg",
+                "price": 0.016863,
+                "market_cap": 378148.626702
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:moodeng",
+                "name": "MOODENG",
+                "symbol": "MOODENG",
+                "image": "https://app.hyperliquid.xyz/coins/MOODENG.svg",
+                "price": 0.04485,
+                "market_cap": 849099.8412
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:grass",
+                "name": "GRASS",
+                "symbol": "GRASS",
+                "image": "https://app.hyperliquid.xyz/coins/GRASS.svg",
+                "price": 0.27932,
+                "market_cap": 1505051.185352
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:purr",
+                "name": "PURR",
+                "symbol": "PURR",
+                "image": "https://app.hyperliquid.xyz/coins/PURR.svg",
+                "price": 0.073092,
+                "market_cap": 3603568.919808
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:pnut",
+                "name": "PNUT",
+                "symbol": "PNUT",
+                "image": "https://app.hyperliquid.xyz/coins/PNUT.svg",
+                "price": 0.04026,
+                "market_cap": 426693.170244
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:xlm",
+                "name": "XLM",
+                "symbol": "XLM",
+                "image": "https://app.hyperliquid.xyz/coins/XLM.svg",
+                "price": 0.16153,
+                "market_cap": 3183930.42934
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:chillguy",
+                "name": "CHILLGUY",
+                "symbol": "CHILLGUY",
+                "image": "https://app.hyperliquid.xyz/coins/CHILLGUY.svg",
+                "price": 0.007964,
+                "market_cap": 263847.765984
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:sand",
+                "name": "SAND",
+                "symbol": "SAND",
+                "image": "https://app.hyperliquid.xyz/coins/SAND.svg",
+                "price": 0.078014,
+                "market_cap": 400922.52754
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:iota",
+                "name": "IOTA",
+                "symbol": "IOTA",
+                "image": "https://app.hyperliquid.xyz/coins/IOTA.svg",
+                "price": 0.062577,
+                "market_cap": 445133.604798
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:algo",
+                "name": "ALGO",
+                "symbol": "ALGO",
+                "image": "https://app.hyperliquid.xyz/coins/ALGO.svg",
+                "price": 0.12105,
+                "market_cap": 7519641.2523
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:hype",
+                "name": "HYPE",
+                "symbol": "HYPE",
+                "image": "https://app.hyperliquid.xyz/coins/HYPE.svg",
+                "price": 35.763,
+                "market_cap": 761732721.73362
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:me",
+                "name": "ME",
+                "symbol": "ME",
+                "image": "https://app.hyperliquid.xyz/coins/ME.svg",
+                "price": 0.09959,
+                "market_cap": 190380.2276
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:move",
+                "name": "MOVE",
+                "symbol": "MOVE",
+                "image": "https://app.hyperliquid.xyz/coins/MOVE.svg",
+                "price": 0.017361,
+                "market_cap": 581435.271846
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:virtual",
+                "name": "VIRTUAL",
+                "symbol": "VIRTUAL",
+                "image": "https://app.hyperliquid.xyz/coins/VIRTUAL.svg",
+                "price": 0.63558,
+                "market_cap": 10981032.860952
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:pengu",
+                "name": "PENGU",
+                "symbol": "PENGU",
+                "image": "https://app.hyperliquid.xyz/coins/PENGU.svg",
+                "price": 0.006232,
+                "market_cap": 2343427.522768
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:usual",
+                "name": "USUAL",
+                "symbol": "USUAL",
+                "image": "https://app.hyperliquid.xyz/coins/USUAL.svg",
+                "price": 0.01254,
+                "market_cap": 316210.352964
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:fartcoin",
+                "name": "FARTCOIN",
+                "symbol": "FARTCOIN",
+                "image": "https://app.hyperliquid.xyz/coins/FARTCOIN.svg",
+                "price": 0.16355,
+                "market_cap": 39144413.93152
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:aixbt",
+                "name": "AIXBT",
+                "symbol": "AIXBT",
+                "image": "https://app.hyperliquid.xyz/coins/AIXBT.svg",
+                "price": 0.022456,
+                "market_cap": 620721.34152
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:zerebro",
+                "name": "ZEREBRO",
+                "symbol": "ZEREBRO",
+                "image": "https://app.hyperliquid.xyz/coins/ZEREBRO.svg",
+                "price": 0.007043,
+                "market_cap": 914206.571682
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:bio",
+                "name": "BIO",
+                "symbol": "BIO",
+                "image": "https://app.hyperliquid.xyz/coins/BIO.svg",
+                "price": 0.017911,
+                "market_cap": 247141.924452
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:griffain",
+                "name": "GRIFFAIN",
+                "symbol": "GRIFFAIN",
+                "image": "https://app.hyperliquid.xyz/coins/GRIFFAIN.svg",
+                "price": 0.011806,
+                "market_cap": 3989831.44282
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:spx",
+                "name": "SPX",
+                "symbol": "SPX",
+                "image": "https://app.hyperliquid.xyz/coins/SPX.svg",
+                "price": 0.26326,
+                "market_cap": 1745925.103572
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:s",
+                "name": "S",
+                "symbol": "S",
+                "image": "https://app.hyperliquid.xyz/coins/S.svg",
+                "price": 0.041328,
+                "market_cap": 1133999.570592
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:morpho",
+                "name": "MORPHO",
+                "symbol": "MORPHO",
+                "image": "https://app.hyperliquid.xyz/coins/MORPHO.svg",
+                "price": 1.4776,
+                "market_cap": 4638149.46
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:trump",
+                "name": "TRUMP",
+                "symbol": "TRUMP",
+                "image": "https://app.hyperliquid.xyz/coins/TRUMP.svg",
+                "price": 2.85,
+                "market_cap": 12924541.38
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:melania",
+                "name": "MELANIA",
+                "symbol": "MELANIA",
+                "image": "https://app.hyperliquid.xyz/coins/MELANIA.svg",
+                "price": 0.10685,
+                "market_cap": 1146975.27729
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:anime",
+                "name": "ANIME",
+                "symbol": "ANIME",
+                "image": "https://app.hyperliquid.xyz/coins/ANIME.svg",
+                "price": 0.004495,
+                "market_cap": 670394.92618
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:vine",
+                "name": "VINE",
+                "symbol": "VINE",
+                "image": "https://app.hyperliquid.xyz/coins/VINE.svg",
+                "price": 0.018774,
+                "market_cap": 750401.84898
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:vvv",
+                "name": "VVV",
+                "symbol": "VVV",
+                "image": "https://app.hyperliquid.xyz/coins/VVV.svg",
+                "price": 6.9289,
+                "market_cap": 15558941.538866
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:bera",
+                "name": "BERA",
+                "symbol": "BERA",
+                "image": "https://app.hyperliquid.xyz/coins/BERA.svg",
+                "price": 0.41055,
+                "market_cap": 2525165.04051
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:tst",
+                "name": "TST",
+                "symbol": "TST",
+                "image": "https://app.hyperliquid.xyz/coins/TST.svg",
+                "price": 0.008664,
+                "market_cap": 131151.21336
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:layer",
+                "name": "LAYER",
+                "symbol": "LAYER",
+                "image": "https://app.hyperliquid.xyz/coins/LAYER.svg",
+                "price": 0.076414,
+                "market_cap": 654155.343036
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:ip",
+                "name": "IP",
+                "symbol": "IP",
+                "image": "https://app.hyperliquid.xyz/coins/IP.svg",
+                "price": 0.50067,
+                "market_cap": 3896964.44433
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:kaito",
+                "name": "KAITO",
+                "symbol": "KAITO",
+                "image": "https://app.hyperliquid.xyz/coins/KAITO.svg",
+                "price": 0.41837,
+                "market_cap": 2559273.8825
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:nil",
+                "name": "NIL",
+                "symbol": "NIL",
+                "image": "https://app.hyperliquid.xyz/coins/NIL.svg",
+                "price": 0.033895,
+                "market_cap": 229520.6704
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:paxg",
+                "name": "PAXG",
+                "symbol": "PAXG",
+                "image": "https://app.hyperliquid.xyz/coins/PAXG.svg",
+                "price": 4648.8,
+                "market_cap": 47294538.9072
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:prompt",
+                "name": "PROMPT",
+                "symbol": "PROMPT",
+                "image": "https://app.hyperliquid.xyz/coins/PROMPT.svg",
+                "price": 0.032779,
+                "market_cap": 1595422.43811
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:baby",
+                "name": "BABY",
+                "symbol": "BABY",
+                "image": "https://app.hyperliquid.xyz/coins/BABY.svg",
+                "price": 0.014255,
+                "market_cap": 438871.33643
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:wct",
+                "name": "WCT",
+                "symbol": "WCT",
+                "image": "https://app.hyperliquid.xyz/coins/WCT.svg",
+                "price": 0.054668,
+                "market_cap": 308247.267376
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:hyper",
+                "name": "HYPER",
+                "symbol": "HYPER",
+                "image": "https://app.hyperliquid.xyz/coins/HYPER.svg",
+                "price": 0.085755,
+                "market_cap": 254545.70895
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:zora",
+                "name": "ZORA",
+                "symbol": "ZORA",
+                "image": "https://app.hyperliquid.xyz/coins/ZORA.svg",
+                "price": 0.014028,
+                "market_cap": 1048841.520048
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:init",
+                "name": "INIT",
+                "symbol": "INIT",
+                "image": "https://app.hyperliquid.xyz/coins/INIT.svg",
+                "price": 0.082318,
+                "market_cap": 674853.829976
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:dood",
+                "name": "DOOD",
+                "symbol": "DOOD",
+                "image": "https://app.hyperliquid.xyz/coins/DOOD.svg",
+                "price": 0.002919,
+                "market_cap": 737141.772024
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:nxpc",
+                "name": "NXPC",
+                "symbol": "NXPC",
+                "image": "https://app.hyperliquid.xyz/coins/NXPC.svg",
+                "price": 0.28338,
+                "market_cap": 1099907.73144
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:soph",
+                "name": "SOPH",
+                "symbol": "SOPH",
+                "image": "https://app.hyperliquid.xyz/coins/SOPH.svg",
+                "price": 0.008163,
+                "market_cap": 624334.271742
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:resolv",
+                "name": "RESOLV",
+                "symbol": "RESOLV",
+                "image": "https://app.hyperliquid.xyz/coins/RESOLV.svg",
+                "price": 0.039291,
+                "market_cap": 923380.54137
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:syrup",
+                "name": "SYRUP",
+                "symbol": "SYRUP",
+                "image": "https://app.hyperliquid.xyz/coins/SYRUP.svg",
+                "price": 0.2065,
+                "market_cap": 1736266.455
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:pump",
+                "name": "PUMP",
+                "symbol": "PUMP",
+                "image": "https://app.hyperliquid.xyz/coins/PUMP.svg",
+                "price": 0.001658,
+                "market_cap": 30312622.385808
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:prove",
+                "name": "PROVE",
+                "symbol": "PROVE",
+                "image": "https://app.hyperliquid.xyz/coins/PROVE.svg",
+                "price": 0.2187,
+                "market_cap": 399179.5506
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:yzy",
+                "name": "YZY",
+                "symbol": "YZY",
+                "image": "https://app.hyperliquid.xyz/coins/YZY.svg",
+                "price": 0.32495,
+                "market_cap": 459078.3117
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:xpl",
+                "name": "XPL",
+                "symbol": "XPL",
+                "image": "https://app.hyperliquid.xyz/coins/XPL.svg",
+                "price": 0.1127,
+                "market_cap": 22691646.866
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:wlfi",
+                "name": "WLFI",
+                "symbol": "WLFI",
+                "image": "https://app.hyperliquid.xyz/coins/WLFI.svg",
+                "price": 0.098346,
+                "market_cap": 19061865.063768
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:linea",
+                "name": "LINEA",
+                "symbol": "LINEA",
+                "image": "https://app.hyperliquid.xyz/coins/LINEA.svg",
+                "price": 0.003229,
+                "market_cap": 2773030.494708
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:sky",
+                "name": "SKY",
+                "symbol": "SKY",
+                "image": "https://app.hyperliquid.xyz/coins/SKY.svg",
+                "price": 0.074669,
+                "market_cap": 2165595.1394
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:aster",
+                "name": "ASTER",
+                "symbol": "ASTER",
+                "image": "https://app.hyperliquid.xyz/coins/ASTER.svg",
+                "price": 0.66217,
+                "market_cap": 57108423.88818
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:avnt",
+                "name": "AVNT",
+                "symbol": "AVNT",
+                "image": "https://app.hyperliquid.xyz/coins/AVNT.svg",
+                "price": 0.12414,
+                "market_cap": 786258.0696
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:stbl",
+                "name": "STBL",
+                "symbol": "STBL",
+                "image": "https://app.hyperliquid.xyz/coins/STBL.svg",
+                "price": 0.034185,
+                "market_cap": 3635447.99202
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:0g",
+                "name": "0G",
+                "symbol": "0G",
+                "image": "https://app.hyperliquid.xyz/coins/0G.svg",
+                "price": 0.50531,
+                "market_cap": 582871.04252
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:hemi",
+                "name": "HEMI",
+                "symbol": "HEMI",
+                "image": "https://app.hyperliquid.xyz/coins/HEMI.svg",
+                "price": 0.008014,
+                "market_cap": 2031483.413424
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:apex",
+                "name": "APEX",
+                "symbol": "APEX",
+                "image": "https://app.hyperliquid.xyz/coins/APEX.svg",
+                "price": 0.26331,
+                "market_cap": 1684575.22728
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:2z",
+                "name": "2Z",
+                "symbol": "2Z",
+                "image": "https://app.hyperliquid.xyz/coins/2Z.svg",
+                "price": 0.076097,
+                "market_cap": 1587141.43154
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:zec",
+                "name": "ZEC",
+                "symbol": "ZEC",
+                "image": "https://app.hyperliquid.xyz/coins/ZEC.svg",
+                "price": 237.06,
+                "market_cap": 66429664.38
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:mon",
+                "name": "MON",
+                "symbol": "MON",
+                "image": "https://app.hyperliquid.xyz/coins/MON.svg",
+                "price": 0.027558,
+                "market_cap": 42232816.772568
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:met",
+                "name": "MET",
+                "symbol": "MET",
+                "image": "https://app.hyperliquid.xyz/coins/MET.svg",
+                "price": 0.12885,
+                "market_cap": 1430791.632
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:mega",
+                "name": "MEGA",
+                "symbol": "MEGA",
+                "image": "https://app.hyperliquid.xyz/coins/MEGA.svg",
+                "price": 0.12983,
+                "market_cap": 3166654.18842
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:cc",
+                "name": "CC",
+                "symbol": "CC",
+                "image": "https://app.hyperliquid.xyz/coins/CC.svg",
+                "price": 0.14008,
+                "market_cap": 5567015.9352
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:icp",
+                "name": "ICP",
+                "symbol": "ICP",
+                "image": "https://app.hyperliquid.xyz/coins/ICP.svg",
+                "price": 2.3076,
+                "market_cap": 3024941.45904
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:aero",
+                "name": "AERO",
+                "symbol": "AERO",
+                "image": "https://app.hyperliquid.xyz/coins/AERO.svg",
+                "price": 0.31174,
+                "market_cap": 1924367.9026
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:stable",
+                "name": "STABLE",
+                "symbol": "STABLE",
+                "image": "https://app.hyperliquid.xyz/coins/STABLE.svg",
+                "price": 0.027189,
+                "market_cap": 2735539.994268
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:fogo",
+                "name": "FOGO",
+                "symbol": "FOGO",
+                "image": "https://app.hyperliquid.xyz/coins/FOGO.svg",
+                "price": 0.016819,
+                "market_cap": 486949.137356
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:lit",
+                "name": "LIT",
+                "symbol": "LIT",
+                "image": "https://app.hyperliquid.xyz/coins/LIT.svg",
+                "price": 0.9529,
+                "market_cap": 44107253.931
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:xmr",
+                "name": "XMR",
+                "symbol": "XMR",
+                "image": "https://app.hyperliquid.xyz/coins/XMR.svg",
+                "price": 319.88,
+                "market_cap": 27401340.48256
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:axs",
+                "name": "AXS",
+                "symbol": "AXS",
+                "image": "https://app.hyperliquid.xyz/coins/AXS.svg",
+                "price": 1.1073,
+                "market_cap": 2086699.54182
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:dash",
+                "name": "DASH",
+                "symbol": "DASH",
+                "image": "https://app.hyperliquid.xyz/coins/DASH.svg",
+                "price": 29.62,
+                "market_cap": 720825.2112
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:skr",
+                "name": "SKR",
+                "symbol": "SKR",
+                "image": "https://app.hyperliquid.xyz/coins/SKR.svg",
+                "price": 0.017584,
+                "market_cap": 524902.44576
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "crypto",
+                "address": "hyperliquid:aztec",
+                "name": "AZTEC",
+                "symbol": "AZTEC",
+                "image": "https://app.hyperliquid.xyz/coins/AZTEC.svg",
+                "price": 0.018519,
+                "market_cap": 658080.739284
+            }
+        ],
+        "stocks": [
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:xyz100",
+                "name": "xyz:XYZ100",
+                "symbol": "XYZ100",
+                "image": "https://app.hyperliquid.xyz/coins/XYZ100.svg",
+                "price": 23891,
+                "market_cap": 233774285.5196
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:tsla",
+                "name": "xyz:TSLA",
+                "symbol": "TSLA",
+                "image": "https://app.hyperliquid.xyz/coins/TSLA.svg",
+                "price": 359.89,
+                "market_cap": 26332537.32766
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:nvda",
+                "name": "xyz:NVDA",
+                "symbol": "NVDA",
+                "image": "https://app.hyperliquid.xyz/coins/NVDA.svg",
+                "price": 176.03,
+                "market_cap": 58598847.79368
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:gold",
+                "name": "xyz:GOLD",
+                "symbol": "GOLD",
+                "image": "https://app.hyperliquid.xyz/coins/GOLD.svg",
+                "price": 4667,
+                "market_cap": 146833242.673
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:hood",
+                "name": "xyz:HOOD",
+                "symbol": "HOOD",
+                "image": "https://app.hyperliquid.xyz/coins/HOOD.svg",
+                "price": 68.719,
+                "market_cap": 8806195.127786
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:intc",
+                "name": "xyz:INTC",
+                "symbol": "INTC",
+                "image": "https://app.hyperliquid.xyz/coins/INTC.svg",
+                "price": 50.022,
+                "market_cap": 4219225.6428
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:pltr",
+                "name": "xyz:PLTR",
+                "symbol": "PLTR",
+                "image": "https://app.hyperliquid.xyz/coins/PLTR.svg",
+                "price": 147.61,
+                "market_cap": 4451949.77898
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:coin",
+                "name": "xyz:COIN",
+                "symbol": "COIN",
+                "image": "https://app.hyperliquid.xyz/coins/COIN.svg",
+                "price": 171.51,
+                "market_cap": 5182677.51732
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:meta",
+                "name": "xyz:META",
+                "symbol": "META",
+                "image": "https://app.hyperliquid.xyz/coins/META.svg",
+                "price": 572.96,
+                "market_cap": 5599185.13664
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:aapl",
+                "name": "xyz:AAPL",
+                "symbol": "AAPL",
+                "image": "https://app.hyperliquid.xyz/coins/AAPL.svg",
+                "price": 254.56,
+                "market_cap": 5745284.79232
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:msft",
+                "name": "xyz:MSFT",
+                "symbol": "MSFT",
+                "image": "https://app.hyperliquid.xyz/coins/MSFT.svg",
+                "price": 372.4,
+                "market_cap": 9519574.8032
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:orcl",
+                "name": "xyz:ORCL",
+                "symbol": "ORCL",
+                "image": "https://app.hyperliquid.xyz/coins/ORCL.svg",
+                "price": 145.44,
+                "market_cap": 2909820.11616
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:googl",
+                "name": "xyz:GOOGL",
+                "symbol": "GOOGL",
+                "image": "https://app.hyperliquid.xyz/coins/GOOGL.svg",
+                "price": 294.93,
+                "market_cap": 24495982.13448
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:amzn",
+                "name": "xyz:AMZN",
+                "symbol": "AMZN",
+                "image": "https://app.hyperliquid.xyz/coins/AMZN.svg",
+                "price": 208.93,
+                "market_cap": 4444616.77962
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:amd",
+                "name": "xyz:AMD",
+                "symbol": "AMD",
+                "image": "https://app.hyperliquid.xyz/coins/AMD.svg",
+                "price": 215.46,
+                "market_cap": 2063011.40136
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:mu",
+                "name": "xyz:MU",
+                "symbol": "MU",
+                "image": "https://app.hyperliquid.xyz/coins/MU.svg",
+                "price": 362.02,
+                "market_cap": 43921529.12576
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:sndk",
+                "name": "xyz:SNDK",
+                "symbol": "SNDK",
+                "image": "https://app.hyperliquid.xyz/coins/SNDK.svg",
+                "price": 685.05,
+                "market_cap": 21693252.2835
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:mstr",
+                "name": "xyz:MSTR",
+                "symbol": "MSTR",
+                "image": "https://app.hyperliquid.xyz/coins/MSTR.svg",
+                "price": 120.26,
+                "market_cap": 8668669.83136
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:crcl",
+                "name": "xyz:CRCL",
+                "symbol": "CRCL",
+                "image": "https://app.hyperliquid.xyz/coins/CRCL.svg",
+                "price": 90.484,
+                "market_cap": 15447102.556632
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:nflx",
+                "name": "xyz:NFLX",
+                "symbol": "NFLX",
+                "image": "https://app.hyperliquid.xyz/coins/NFLX.svg",
+                "price": 98.104,
+                "market_cap": 4182895.173024
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:cost",
+                "name": "xyz:COST",
+                "symbol": "COST",
+                "image": "https://app.hyperliquid.xyz/coins/COST.svg",
+                "price": 1012.6,
+                "market_cap": 133744.00548
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:lly",
+                "name": "xyz:LLY",
+                "symbol": "LLY",
+                "image": "https://app.hyperliquid.xyz/coins/LLY.svg",
+                "price": 937.92,
+                "market_cap": 974579.353536
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:skhx",
+                "name": "xyz:SKHX",
+                "symbol": "SKHX",
+                "image": "https://app.hyperliquid.xyz/coins/SKHX.svg",
+                "price": 569.5,
+                "market_cap": 12046320.275
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:tsm",
+                "name": "xyz:TSM",
+                "symbol": "TSM",
+                "image": "https://app.hyperliquid.xyz/coins/TSM.svg",
+                "price": 336.26,
+                "market_cap": 8463207.55892
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:jpy",
+                "name": "xyz:JPY",
+                "symbol": "JPY",
+                "image": "https://app.hyperliquid.xyz/coins/JPY.svg",
+                "price": 159.49,
+                "market_cap": 5340401.4376
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:eur",
+                "name": "xyz:EUR",
+                "symbol": "EUR",
+                "image": "https://app.hyperliquid.xyz/coins/EUR.svg",
+                "price": 1.1506,
+                "market_cap": 15840395.57452
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:silver",
+                "name": "xyz:SILVER",
+                "symbol": "SILVER",
+                "image": "https://app.hyperliquid.xyz/coins/SILVER.svg",
+                "price": 72.951,
+                "market_cap": 104211472.28928
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:rivn",
+                "name": "xyz:RIVN",
+                "symbol": "RIVN",
+                "image": "https://app.hyperliquid.xyz/coins/RIVN.svg",
+                "price": 15.397,
+                "market_cap": 301592.43278
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:baba",
+                "name": "xyz:BABA",
+                "symbol": "BABA",
+                "image": "https://app.hyperliquid.xyz/coins/BABA.svg",
+                "price": 121.43,
+                "market_cap": 1914358.27874
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:cl",
+                "name": "xyz:CL",
+                "symbol": "CL",
+                "image": "https://app.hyperliquid.xyz/coins/CL.svg",
+                "price": 111.37,
+                "market_cap": 559102441.5445
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:copper",
+                "name": "xyz:COPPER",
+                "symbol": "COPPER",
+                "image": "https://app.hyperliquid.xyz/coins/COPPER.svg",
+                "price": 5.651,
+                "market_cap": 10283144.59152
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:natgas",
+                "name": "xyz:NATGAS",
+                "symbol": "NATGAS",
+                "image": "https://app.hyperliquid.xyz/coins/NATGAS.svg",
+                "price": 2.8118,
+                "market_cap": 19380271.88984
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:smsn",
+                "name": "xyz:SMSN",
+                "symbol": "SMSN",
+                "image": "https://app.hyperliquid.xyz/coins/SMSN.svg",
+                "price": 119.24,
+                "market_cap": 1446704.10192
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:platinum",
+                "name": "xyz:PLATINUM",
+                "symbol": "PLATINUM",
+                "image": "https://app.hyperliquid.xyz/coins/PLATINUM.svg",
+                "price": 1995.6,
+                "market_cap": 2266603.27824
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:usar",
+                "name": "xyz:USAR",
+                "symbol": "USAR",
+                "image": "https://app.hyperliquid.xyz/coins/USAR.svg",
+                "price": 16.113,
+                "market_cap": 284078.6352
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:crwv",
+                "name": "xyz:CRWV",
+                "symbol": "CRWV",
+                "image": "https://app.hyperliquid.xyz/coins/CRWV.svg",
+                "price": 80.96,
+                "market_cap": 1582802.0032
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:urnm",
+                "name": "xyz:URNM",
+                "symbol": "URNM",
+                "image": "https://app.hyperliquid.xyz/coins/URNM.svg",
+                "price": 63.285,
+                "market_cap": 706978.2519
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:palladium",
+                "name": "xyz:PALLADIUM",
+                "symbol": "PALLADIUM",
+                "image": "https://app.hyperliquid.xyz/coins/PALLADIUM.svg",
+                "price": 1506.5,
+                "market_cap": 370678.2419
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:hyundai",
+                "name": "xyz:HYUNDAI",
+                "symbol": "HYUNDAI",
+                "image": "https://app.hyperliquid.xyz/coins/HYUNDAI.svg",
+                "price": 308.34,
+                "market_cap": 288711.0756
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:ewy",
+                "name": "xyz:EWY",
+                "symbol": "EWY",
+                "image": "https://app.hyperliquid.xyz/coins/EWY.svg",
+                "price": 121.35,
+                "market_cap": 17162138.2968
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:ewj",
+                "name": "xyz:EWJ",
+                "symbol": "EWJ",
+                "image": "https://app.hyperliquid.xyz/coins/EWJ.svg",
+                "price": 85.055,
+                "market_cap": 1262513.21206
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:brentoil",
+                "name": "xyz:BRENTOIL",
+                "symbol": "BRENTOIL",
+                "image": "https://app.hyperliquid.xyz/coins/BRENTOIL.svg",
+                "price": 109.83,
+                "market_cap": 558011572.0452
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:hims",
+                "name": "xyz:HIMS",
+                "symbol": "HIMS",
+                "image": "https://app.hyperliquid.xyz/coins/HIMS.svg",
+                "price": 19.214,
+                "market_cap": 312765.87628
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:sp500",
+                "name": "xyz:SP500",
+                "symbol": "SP500",
+                "image": "https://app.hyperliquid.xyz/coins/SP500.svg",
+                "price": 6542.3,
+                "market_cap": 245472827.0548
+            },
+            {
+                "origin": "hyperliquid",
+                "category": "stocks",
+                "address": "hyperliquid:xyz:dkng",
+                "name": "xyz:DKNG",
+                "symbol": "DKNG",
+                "image": "https://app.hyperliquid.xyz/coins/DKNG.svg",
+                "price": 23.065,
+                "market_cap": 86869.7095
+            }
+        ],
+        "indices": [],
+        "commodities": [],
+        "other": []
+    }
+}

@@ -1,11 +1,10 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { GeckoTerminalService, geckoTerminalService } from '../services/gecko-terminal/gecko-terminal.service';
+import { GeckoTerminalService } from '../services/gecko-terminal/gecko-terminal.service';
+import { HyperliquidService } from '../services/hyperliquid/hyperliquid.service';
 import { ORIGINS } from '../types/origin';
 import { verifyZod } from '../utils/verify-zod';
 import { getRedisClient } from '../utils/redis';
-
-const router = Router();
 
 const getAssetsQuerySchema = z.object({
     origin: z.enum(ORIGINS)
@@ -19,7 +18,10 @@ export class AssetsRoute {
 
     private redis = getRedisClient();
 
-    constructor(private readonly geckoTerminalService: GeckoTerminalService
+    constructor(
+        private readonly geckoTerminalService: GeckoTerminalService,
+        private readonly hyperliquidService: HyperliquidService
+
     ) {
         this.initializeRoutes();
     }
@@ -40,12 +42,6 @@ export class AssetsRoute {
 
         const { origin } = validated.data;
 
-        if (origin === 'hyperliquid') {
-            return res.status(501).json({
-                error: 'Origin hyperliquid is not implemented yet'
-            });
-        }
-
         const cacheKey = `assets:origin:${origin}`;
 
         try {
@@ -53,6 +49,18 @@ export class AssetsRoute {
 
             if (cached) {
                 return res.status(200).json(JSON.parse(cached));
+            }
+
+            if (origin === 'hyperliquid') {
+                const categories = await this.hyperliquidService.getCategorizedAssets();
+                const tokens = Object.values(categories).flat();
+                const payload = { origin, tokens, categories };
+
+                await this.redis.set(cacheKey, JSON.stringify(payload), {
+                    EX: CACHE_TTL_SECONDS
+                });
+
+                return res.status(200).json(payload);
             }
 
             const tokens = await this.geckoTerminalService.getTrendingAssetsByOrigin(origin);
