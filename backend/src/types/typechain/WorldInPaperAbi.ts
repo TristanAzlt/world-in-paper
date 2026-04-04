@@ -24,6 +24,28 @@ import type {
 } from "./common";
 
 export declare namespace WorldInPaper {
+  export type WorldIdVerificationStruct = {
+    root: BigNumberish;
+    signalHash: BigNumberish;
+    nullifierHash: BigNumberish;
+    externalNullifierHash: BigNumberish;
+    proof: BigNumberish[];
+  };
+
+  export type WorldIdVerificationStructOutput = [
+    root: bigint,
+    signalHash: bigint,
+    nullifierHash: bigint,
+    externalNullifierHash: bigint,
+    proof: bigint[]
+  ] & {
+    root: bigint;
+    signalHash: bigint;
+    nullifierHash: bigint;
+    externalNullifierHash: bigint;
+    proof: bigint[];
+  };
+
   export type GameViewStruct = {
     id: BigNumberish;
     name: string;
@@ -115,28 +137,6 @@ export declare namespace WorldInPaper {
     origin: bigint;
     amountIn: bigint;
     isBuy: boolean;
-  };
-
-  export type WorldIdVerificationStruct = {
-    root: BigNumberish;
-    signalHash: BigNumberish;
-    nullifierHash: BigNumberish;
-    externalNullifierHash: BigNumberish;
-    proof: BigNumberish[];
-  };
-
-  export type WorldIdVerificationStructOutput = [
-    root: bigint,
-    signalHash: bigint,
-    nullifierHash: bigint,
-    externalNullifierHash: bigint,
-    proof: bigint[]
-  ] & {
-    root: bigint;
-    signalHash: bigint;
-    nullifierHash: bigint;
-    externalNullifierHash: bigint;
-    proof: bigint[];
   };
 }
 
@@ -236,7 +236,8 @@ export interface WorldInPaperAbiInterface extends Interface {
       BigNumberish,
       BigNumberish,
       BigNumberish,
-      BigNumberish
+      BigNumberish,
+      WorldInPaper.WorldIdVerificationStruct
     ]
   ): string;
   encodeFunctionData(
@@ -293,7 +294,7 @@ export interface WorldInPaperAbiInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "joinGame",
-    values: [BigNumberish]
+    values: [BigNumberish, WorldInPaper.WorldIdVerificationStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "nextGameId",
@@ -334,14 +335,7 @@ export interface WorldInPaperAbiInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "submitTrade",
-    values: [
-      BigNumberish,
-      string,
-      BigNumberish,
-      boolean,
-      BigNumberish,
-      WorldInPaper.WorldIdVerificationStruct
-    ]
+    values: [BigNumberish, string, BigNumberish, boolean, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -817,7 +811,8 @@ export interface WorldInPaperAbi extends BaseContract {
       startingWIPBalance: BigNumberish,
       maxPlayers: BigNumberish,
       startTime: BigNumberish,
-      endTime: BigNumberish
+      endTime: BigNumberish,
+      worldId: WorldInPaper.WorldIdVerificationStruct
     ],
     [bigint],
     "nonpayable"
@@ -881,7 +876,11 @@ export interface WorldInPaperAbi extends BaseContract {
     "view"
   >;
 
-  joinGame: TypedContractMethod<[gameId: BigNumberish], [void], "nonpayable">;
+  joinGame: TypedContractMethod<
+    [gameId: BigNumberish, worldId: WorldInPaper.WorldIdVerificationStruct],
+    [void],
+    "nonpayable"
+  >;
 
   nextGameId: TypedContractMethod<[], [bigint], "view">;
 
@@ -929,8 +928,7 @@ export interface WorldInPaperAbi extends BaseContract {
       asset_address: string,
       origin: BigNumberish,
       isBuy: boolean,
-      amountIn: BigNumberish,
-      worldId: WorldInPaper.WorldIdVerificationStruct
+      amountIn: BigNumberish
     ],
     [bigint],
     "nonpayable"
@@ -989,7 +987,8 @@ export interface WorldInPaperAbi extends BaseContract {
       startingWIPBalance: BigNumberish,
       maxPlayers: BigNumberish,
       startTime: BigNumberish,
-      endTime: BigNumberish
+      endTime: BigNumberish,
+      worldId: WorldInPaper.WorldIdVerificationStruct
     ],
     [bigint],
     "nonpayable"
@@ -1059,7 +1058,11 @@ export interface WorldInPaperAbi extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "joinGame"
-  ): TypedContractMethod<[gameId: BigNumberish], [void], "nonpayable">;
+  ): TypedContractMethod<
+    [gameId: BigNumberish, worldId: WorldInPaper.WorldIdVerificationStruct],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "nextGameId"
   ): TypedContractMethod<[], [bigint], "view">;
@@ -1102,8 +1105,7 @@ export interface WorldInPaperAbi extends BaseContract {
       asset_address: string,
       origin: BigNumberish,
       isBuy: boolean,
-      amountIn: BigNumberish,
-      worldId: WorldInPaper.WorldIdVerificationStruct
+      amountIn: BigNumberish
     ],
     [bigint],
     "nonpayable"

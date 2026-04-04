@@ -179,6 +179,38 @@ const _abi = [
         type: "uint256",
         internalType: "uint256",
       },
+      {
+        name: "worldId",
+        type: "tuple",
+        internalType: "struct WorldInPaper.WorldIdVerification",
+        components: [
+          {
+            name: "root",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "signalHash",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "nullifierHash",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "externalNullifierHash",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "proof",
+            type: "uint256[8]",
+            internalType: "uint256[8]",
+          },
+        ],
+      },
     ],
     outputs: [
       {
@@ -556,6 +588,38 @@ const _abi = [
         type: "uint256",
         internalType: "uint256",
       },
+      {
+        name: "worldId",
+        type: "tuple",
+        internalType: "struct WorldInPaper.WorldIdVerification",
+        components: [
+          {
+            name: "root",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "signalHash",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "nullifierHash",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "externalNullifierHash",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "proof",
+            type: "uint256[8]",
+            internalType: "uint256[8]",
+          },
+        ],
+      },
     ],
     outputs: [],
     stateMutability: "nonpayable",
@@ -723,38 +787,6 @@ const _abi = [
         name: "amountIn",
         type: "uint256",
         internalType: "uint256",
-      },
-      {
-        name: "worldId",
-        type: "tuple",
-        internalType: "struct WorldInPaper.WorldIdVerification",
-        components: [
-          {
-            name: "root",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "signalHash",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "nullifierHash",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "externalNullifierHash",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
-            name: "proof",
-            type: "uint256[8]",
-            internalType: "uint256[8]",
-          },
-        ],
       },
     ],
     outputs: [
