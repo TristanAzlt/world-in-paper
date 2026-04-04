@@ -47,11 +47,6 @@ function formatStartTime(minutes: number): string {
   return `${date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })} at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
 }
 
-function formatDuration(minutes: number): string {
-  if (minutes < 60) return `${minutes} min`;
-  if (minutes < 1440) return `${minutes / 60} hour${minutes > 60 ? 's' : ''}`;
-  return `${minutes / 1440} day${minutes > 1440 ? 's' : ''}`;
-}
 
 export default function CreateGamePage() {
   const router = useRouter();

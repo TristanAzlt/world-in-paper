@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { Page } from '@/components/PageLayout';
 import { AuthButton } from '../components/AuthButton';
 

@@ -1,7 +1,6 @@
 'use client';
 
 import { walletAuth } from '@/auth/wallet';
-import { Spinner } from '@worldcoin/mini-apps-ui-kit-react';
 import { useMiniKit } from '@worldcoin/minikit-js/minikit-provider';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useRef, useState } from 'react';

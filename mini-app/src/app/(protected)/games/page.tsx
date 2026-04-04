@@ -14,7 +14,7 @@ import { CountdownTimer } from '@/components/CountdownTimer';
 import { SkeletonList } from '@/components/Skeleton';
 import { UsdcBalance } from '@/components/UsdcBalance';
 import { haptic } from '@/lib/haptics';
-import { getWorldIdProof, EMPTY_PROOF } from '@/lib/worldid';
+import { getWorldIdProof } from '@/lib/worldid';
 import { Page } from '@/components/PageLayout';
 
 function ExploreCard({ game, onClick }: { game: GameView; onClick: () => void }) {

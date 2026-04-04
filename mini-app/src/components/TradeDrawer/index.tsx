@@ -10,7 +10,7 @@ import { NavArrowLeft, Xmark, Search } from 'iconoir-react';
 import { LoadingSpinner, SuccessState } from '@/components/LoadingState';
 import { haptic } from '@/lib/haptics';
 import { api } from '@/lib/api';
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { AssetToken, OriginKey, PlayerPortfolio } from '@/types';
 import { useAssets } from '@/hooks/useAssets';
 import { useContract } from '@/hooks/useContract';

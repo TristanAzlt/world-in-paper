@@ -4,7 +4,7 @@ import { Drawer, DrawerContent, DrawerTitle } from '@worldcoin/mini-apps-ui-kit-
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { LoadingSpinner, SuccessState } from '@/components/LoadingState';
 import { TokenIcon } from '@/components/TokenIcon';
-import { Plus, Xmark, Copy, NavArrowLeft } from 'iconoir-react';
+import { Plus, Xmark, NavArrowLeft } from 'iconoir-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
@@ -32,7 +32,6 @@ export function UsdcBalance() {
   const { getQuote, executeSwap, quote } = useSwap(walletAddress);
 
   const [open, setOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [state, setState] = useState<'main' | 'swap' | 'confirm' | 'swapping' | 'done' | 'error'>('main');
   const [selectedToken, setSelectedToken] = useState<TokenBalance | null>(null);
   const [amount, setAmount] = useState('');
@@ -41,12 +40,10 @@ export function UsdcBalance() {
 
   const amountNum = Number(amount) || 0;
 
-  const handleCopy = () => {
+  const _handleCopy = () => {
     if (walletAddress) {
       navigator.clipboard.writeText(walletAddress);
       haptic.success();
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
     }
   };
 
