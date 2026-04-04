@@ -98,6 +98,29 @@ CRE_ETH_PRIVATE_KEY=<your_private_key_funded_on_worldchain>
 UNISWAP_API_KEY=<your_uniswap_api_key>
 ```
 
+## Auto-watch mode
+
+You can now watch `SettlementRequest` and automatically launch the same CRE simulation command in non-interactive mode:
+
+```bash
+cd my-workflow
+npm run watch:settlement
+```
+
+This watcher:
+
+- polls the RPC URL configured for `staging-settings`
+- listens to the `SettlementRequest` event on the configured `contractAddress`
+- launches `cre workflow simulate my-workflow -T staging-settings --broadcast --non-interactive`
+- passes the detected transaction hash automatically
+- passes the detected `logIndex` automatically
+
+If you need to mimic the manual flow with index `0`, run:
+
+```bash
+node ./watch-settlement-request.mjs --fixed-log-index 0
+```
+
 ## CRE limits
 
 | Limit | Value |

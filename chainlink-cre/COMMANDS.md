@@ -62,6 +62,27 @@ cre workflow simulate my-workflow -T staging-settings
 cre workflow simulate my-workflow -T staging-settings --broadcast
 ```
 
+### 6. Watch `SettlementRequest` and auto-run CRE simulation
+
+```bash
+cd my-workflow
+npm run watch:settlement
+```
+
+By default the watcher:
+
+- listens to `SettlementRequest` on the contract from `config.staging.json`
+- reads the RPC URL from `../project.yaml` for `staging-settings`
+- runs `cre workflow simulate my-workflow -T staging-settings --broadcast --non-interactive`
+- uses the real `logIndex` from the detected event
+
+If you really want to force the log index to `0`:
+
+```bash
+cd my-workflow
+node ./watch-settlement-request.mjs --fixed-log-index 0
+```
+
 ## Testing data sources manually
 
 ### Hyperliquid — Crypto perps
