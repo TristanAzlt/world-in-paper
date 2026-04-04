@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node ./node_modules/ts-node/dist/bin.js src/start.ts",
-    "build": "tsc",
+    "start": "npm run build && node dist/start.js",
+    "build": "npm run generate:types && node ./node_modules/typescript/bin/tsc",
+    "generate:types": "typechain --target ethers-v6 --out-dir src/types/typechain \"src/abis/WorldInPaper.abi.json\"",
     "serve": "node dist/start.js"
   },
   "dependencies": {
@@ -25,7 +26,9 @@
     "@types/connect-timeout": "^1.9.0",
     "@types/express": "^5.0.6",
     "@types/hpp": "^0.2.7",
+    "@typechain/ethers-v6": "^0.5.1",
     "ts-node": "^10.9.2",
+    "typechain": "^8.3.2",
     "typescript": "^5.9.3"
   }
 }

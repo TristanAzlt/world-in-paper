@@ -7,6 +7,8 @@ import timeout from 'connect-timeout';
 import { logError, logInfo } from './utils/log';
 import { env } from './config';
 import { closeRedis, connectRedis } from './utils/redis';
+import { AssetsRoute } from './routes/assets.route';
+import { GeckoTerminalService } from './services/gecko-terminal/gecko-terminal.service';
 
 const app = express();
 
@@ -115,17 +117,20 @@ app.disable('x-powered-by');
 // Prevent parameter pollution
 app.use(hpp());
 
-app.get('/test', (_req, res) => {
-    res.status(200).json({ message: 'hello world' });
-});
-
 (async () => {
     try {
         logInfo("Starting Hollow Protocol API...");
 
         await connectRedis();
 
-        // Routes/services come in a next step.
+        // SERVICES
+        const geckoTerminalService = new GeckoTerminalService();
+
+        // ROUTES
+        const assetsRoute = new AssetsRoute(geckoTerminalService);
+
+        app.use('/assets', assetsRoute.router);
+
         const PORT = env.PORT;
         app.listen(PORT, () => {
             logInfo(`HTTP Server running on port ${PORT}`);
