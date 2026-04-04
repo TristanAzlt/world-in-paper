@@ -3,7 +3,9 @@
 import {
   Drawer,
   DrawerContent,
+  DrawerTitle,
 } from '@worldcoin/mini-apps-ui-kit-react';
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { NavArrowLeft, Xmark, Search } from 'iconoir-react';
 import { LoadingSpinner, SuccessState } from '@/components/LoadingState';
 import { haptic } from '@/lib/haptics';
@@ -107,6 +109,7 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, positions = [] 
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange} dismissible={false} snapPoints={[0.92]}>
       <DrawerContent>
+        <VisuallyHidden.Root><DrawerTitle>Trade</DrawerTitle></VisuallyHidden.Root>
         {step === 'select' && (
           <div className="flex h-full flex-col">
             

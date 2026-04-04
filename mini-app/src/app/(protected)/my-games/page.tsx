@@ -100,7 +100,7 @@ export default function MyGamesPage() {
   return (
     <>
       <Page.Main>
-        <TopBar title="My Games" endAdornment={<UsdcBalance balance={142.50} />} />
+        <TopBar title="My Games" endAdornment={<UsdcBalance />} />
         <div className="mb-4" />
         <div
           className="relative mb-5 flex overflow-hidden rounded-full"

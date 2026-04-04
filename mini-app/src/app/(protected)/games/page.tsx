@@ -1,7 +1,8 @@
 'use client';
 
-import { Drawer, DrawerContent, TopBar } from '@worldcoin/mini-apps-ui-kit-react';
-import { Plus, DollarCircle, Group } from 'iconoir-react';
+import { Drawer, DrawerContent, DrawerTitle, TopBar } from '@worldcoin/mini-apps-ui-kit-react';
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
+import { Plus, Group } from 'iconoir-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -79,7 +80,7 @@ export default function ExplorePage() {
   return (
     <>
       <Page.Main className="relative">
-        <TopBar title="Explore" endAdornment={<UsdcBalance balance={142.50} />} />
+        <TopBar title="Explore" endAdornment={<UsdcBalance />} />
         <div className="mb-4" />
         <div
           className="flex gap-3 overflow-x-auto pb-1 mb-5 -mr-6 pr-6"
@@ -166,6 +167,7 @@ export default function ExplorePage() {
       {/* Join drawer */}
       <Drawer open={!!joinTarget} onOpenChange={(open) => !open && setJoinTarget(null)} dismissible={true} height="fit">
         <DrawerContent>
+          <VisuallyHidden.Root><DrawerTitle>Join Game</DrawerTitle></VisuallyHidden.Root>
           <div className="px-5 pt-6 pb-10">
             {/* Game info */}
             <div className="text-center mb-6">
