@@ -16,12 +16,12 @@
 
 # ==========================================================================
 staging-settings:
-  rpcs:
-    - chain-name: ethereum-mainnet-worldchain-1
-      url: https://worldchain-mainnet.g.alchemy.com/public
+    rpcs:
+        - chain-name: ethereum-mainnet-worldchain-1
+          url: http://localhost:8550
 
 # ==========================================================================
 production-settings:
-  rpcs:
-    - chain-name: ethereum-mainnet-worldchain-1
-      url: https://worldchain-mainnet.g.alchemy.com/public
+    rpcs:
+        - chain-name: ethereum-mainnet-worldchain-1
+          url: https://worldchain-mainnet.g.alchemy.com/public

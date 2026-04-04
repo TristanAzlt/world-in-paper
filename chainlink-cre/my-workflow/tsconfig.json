@@ -1,15 +1,15 @@
 {
-  "compilerOptions": {
-    "target": "esnext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "lib": ["ESNext"],
-    "outDir": "./dist",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "types": ["bun-types"]
-  },
-  "include": ["main.ts", "workflow.ts", "workflow.test.ts"]
+	"compilerOptions": {
+		"target": "esnext",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"lib": ["ESNext"],
+		"outDir": "./dist",
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"types": ["bun-types"]
+	},
+	"include": ["main.ts", "workflow.ts", "workflow.test.ts"]
 }

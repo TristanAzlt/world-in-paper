@@ -77,6 +77,9 @@ interface PriceResult {
   price: number;
 }
 
+const encodeJsonBody = (payload: unknown): string =>
+  Buffer.from(JSON.stringify(payload), "utf-8").toString("base64");
+
 // --- Hyperliquid ---
 
 /**
@@ -91,8 +94,8 @@ const fetchHyperliquidPrice = (sendRequester: HTTPSendRequester, symbol: string)
   // Determine if tradfi (xyz:) or crypto
   const isTradfi = symbol.startsWith("xyz:");
   const body = isTradfi
-    ? JSON.stringify({ type: "allMids", dex: "xyz" })
-    : JSON.stringify({ type: "allMids" });
+    ? encodeJsonBody({ type: "allMids", dex: "xyz" })
+    : encodeJsonBody({ type: "allMids" });
 
   const resp = sendRequester
     .sendRequest({
@@ -138,7 +141,7 @@ const fetchUniswapQuote = (
         "Content-Type": "application/json",
         "x-api-key": apiKey,
       },
-      body: JSON.stringify({
+      body: encodeJsonBody({
         type: "EXACT_INPUT",
         amount,
         tokenIn,
@@ -183,7 +186,7 @@ const getSolanaTokenDecimals = (sendRequester: HTTPSendRequester, mintAddress: s
       method: "POST",
       url: SOLANA_RPC,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+      body: encodeJsonBody({
         jsonrpc: "2.0",
         id: 1,
         method: "getAccountInfo",
