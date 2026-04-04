@@ -152,8 +152,8 @@ export function UsdcBalance() {
                 </div>
 
                 <div className="space-y-2 mb-4">
-                  {balances.filter((t) => t.symbol !== 'USDC' && t.symbol !== 'ETH' && t.symbol !== 'WETH').map((token) => {
-                    const canSwap = token.formatted > 0.001 && token.symbol !== 'ETH' && token.symbol !== 'WETH';
+                  {balances.filter((t) => t.symbol !== 'USDC' && t.symbol !== 'ETH').map((token) => {
+                    const canSwap = token.formatted > 0.001 && token.symbol !== 'ETH';
                     return (
                     <button
                       key={token.symbol}

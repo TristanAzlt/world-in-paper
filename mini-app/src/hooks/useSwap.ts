@@ -118,6 +118,50 @@ export function useSwap(walletAddress?: string) {
         });
       }
 
+      const isWETH = tokenInAddress.toLowerCase() === TOKENS.WETH.address.toLowerCase();
+
+      if (isWETH) {
+        // WETH: withdraw to ETH, then swap with value
+        console.log('WETH: Withdraw + Swap');
+
+        const wethSwapData = encodeFunctionData({
+          abi: parseAbi([
+            'function exactInputSingle((address tokenIn, address tokenOut, uint24 fee, address recipient, uint256 amountIn, uint256 amountOutMinimum, uint160 sqrtPriceLimitX96)) external payable returns (uint256 amountOut)',
+          ]),
+          functionName: 'exactInputSingle',
+          args: [{
+            tokenIn: TOKENS.WETH.address,
+            tokenOut: TOKENS.USDC.address,
+            fee: 500,
+            recipient: walletAddress as `0x${string}`,
+            amountIn: BigInt(amount),
+            amountOutMinimum: minAmountOut,
+            sqrtPriceLimitX96: 0n,
+          }],
+        });
+
+        const result = await MiniKit.sendTransaction({
+          chainId: WORLD_CHAIN_ID,
+          transactions: [
+            {
+              to: TOKENS.WETH.address,
+              data: encodeFunctionData({
+                abi: parseAbi(['function withdraw(uint256 wad)']),
+                functionName: 'withdraw',
+                args: [BigInt(amount)],
+              }),
+            },
+            {
+              to: SWAP_ROUTER,
+              data: wethSwapData,
+              value: `0x${BigInt(amount).toString(16)}`,
+            },
+          ],
+        });
+        console.log('Swap result:', JSON.stringify(result));
+        return result;
+      }
+
       const result = await MiniKit.sendTransaction({
         chainId: WORLD_CHAIN_ID,
         transactions: [
