@@ -36,26 +36,36 @@ export const AuthButton = () => {
     }
   }, [isInstalled, session.status]);
 
-  if (isPending) {
-    return (
-      <div className="flex flex-col items-center gap-4">
-        <div
-          className="h-10 w-10 rounded-full animate-spin"
-          style={{ border: '3px solid #24242e', borderTopColor: '#2470ff' }}
-        />
-        <p className="text-sm font-semibold" style={{ color: '#9898aa' }}>Connecting...</p>
-      </div>
-    );
-  }
-
   return (
-    <button
-      onClick={onClick}
-      disabled={isPending}
-      className="rounded-full text-base font-bold active:scale-95 transition-all"
-      style={{ height: '56px', width: '220px', backgroundColor: '#2470ff', color: '#ffffff' }}
-    >
-      Sign In
-    </button>
+    <div className="flex flex-col items-center gap-8">
+      <div className="flex flex-col items-center gap-4">
+        <img
+          src="/wip-logo.png"
+          alt="World In Paper"
+          className={`h-[120px] w-[120px] rounded-3xl ${isPending ? 'animate-spin' : ''}`}
+          style={isPending ? { animationDuration: '3s' } : undefined}
+        />
+        <div className="text-center">
+          <h1 className="text-3xl font-extrabold" style={{ color: '#ffffff' }}>
+            World In Paper
+          </h1>
+          <p className="mt-2 text-base" style={{ color: '#9898aa' }}>
+            Competitive paper trading
+          </p>
+        </div>
+      </div>
+
+      {isPending ? (
+        <p className="text-sm font-semibold" style={{ color: '#9898aa' }}>Connecting...</p>
+      ) : (
+        <button
+          onClick={onClick}
+          className="rounded-full text-base font-bold active:scale-95 transition-all"
+          style={{ height: '56px', width: '220px', backgroundColor: '#2470ff', color: '#ffffff' }}
+        >
+          Sign In
+        </button>
+      )}
+    </div>
   );
 };

@@ -82,10 +82,8 @@ export default function GameViewPage() {
   }, [refreshPortfolio, refreshRanking]);
 
   const { claimGame } = useContract();
-  // Collect all tokens from all players for price fetching
-  const allTokens = portfolio?.tokens ?? [];
-  const tokenPrices = useTokenPrices(allTokens);
-  const { entries: leaderboard } = useLeaderboard(gameId, ranking, tokenPrices);
+  const tokenPrices = useTokenPrices(portfolio?.tokens ?? []);
+  const { entries: leaderboard, refresh: refreshLeaderboard } = useLeaderboard(gameId, ranking);
   const [tradeOpen, setTradeOpen] = useState(false);
   const [preselectedAsset, setPreselectedAsset] = useState<{ address: string; origin: string } | null>(null);
   const [claiming, setClaiming] = useState(false);
@@ -111,7 +109,7 @@ export default function GameViewPage() {
   const positionsValue = portfolio
     ? portfolio.tokens.reduce((sum, t) => {
         const info = tokenPrices[t.asset_address.toLowerCase()];
-        const dec = info?.decimals ?? 18;
+        const dec = info?.decimals ?? 6;
         const bal = Number(t.balance) / 10 ** dec;
         return sum + (info ? bal * info.price : 0);
       }, 0)
@@ -281,7 +279,7 @@ export default function GameViewPage() {
           ) : (
             <>
               <AnimatedText className="text-4xl font-extrabold" style={{ color: '#ffffff' }}>
-                {`$${currentWip.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                {`$${currentWip.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
               </AnimatedText>
               <AnimatedText className="text-lg font-bold mt-1" style={{ color: pnl >= 0 ? '#34c759' : '#ff6b6b' }}>
                 {`${pnl >= 0 ? '+' : ''}${pnl.toFixed(1)}%`}
@@ -311,7 +309,7 @@ export default function GameViewPage() {
           </div>
           <div className="flex-1 rounded-2xl p-3 text-center" style={{ backgroundColor: '#1c1c24' }}>
             <div className="text-xs" style={{ color: '#6a6a7a' }}>Start with</div>
-            <div className="text-lg font-extrabold" style={{ color: '#ffffff' }}>${startingWip.toLocaleString()}</div>
+            <div className="text-lg font-extrabold" style={{ color: '#ffffff' }}>${startingWip.toLocaleString('en-US')}</div>
           </div>
           <div className="flex-1 rounded-2xl p-3 text-center" style={{ backgroundColor: '#1c1c24' }}>
             <div className="text-xs" style={{ color: '#6a6a7a' }}>Players</div>
@@ -335,11 +333,21 @@ export default function GameViewPage() {
                 </div>
               ))}
             </div>
-          ) : portfolio && portfolio.tokens.filter((t) => Number(t.balance) > 0).length > 0 ? (
+          ) : portfolio && portfolio.tokens.filter((t) => {
+                const i = tokenPrices[t.asset_address.toLowerCase()];
+                const d = i?.decimals ?? 6;
+                const v = i ? (Number(t.balance) / 10 ** d) * i.price : 0;
+                return v >= 1;
+              }).length > 0 ? (
             <div className="space-y-2">
-              {portfolio.tokens.filter((t) => Number(t.balance) > 0).map((token) => {
+              {portfolio.tokens.filter((t) => {
+                const i = tokenPrices[t.asset_address.toLowerCase()];
+                const d = i?.decimals ?? 6;
+                const v = i ? (Number(t.balance) / 10 ** d) * i.price : 0;
+                return v >= 1;
+              }).map((token) => {
                 const info = tokenPrices[token.asset_address.toLowerCase()];
-                const dec = info?.decimals ?? 18;
+                const dec = info?.decimals ?? 6;
                 const bal = Number(token.balance) / 10 ** dec;
                 const value = info ? bal * info.price : 0;
                 const totalBought = token.trades
@@ -375,11 +383,11 @@ export default function GameViewPage() {
                     </div>
                     <div className="text-right">
                       <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>
-                        ${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        ${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
                       {totalBought > 0 && (
                         <div className="text-xs" style={{ color: tokenPnl >= 0 ? '#34c759' : '#ff6b6b' }}>
-                          {tokenPnl >= 0 ? '+' : '-'}${Math.abs(tokenPnl).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          {tokenPnl >= 0 ? '+' : '-'}${Math.abs(tokenPnl).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                       )}
                     </div>
@@ -432,7 +440,7 @@ export default function GameViewPage() {
                         {isCurrent ? (session?.data?.user?.username || shortenAddress(player.player)) : shortenAddress(player.player)}
                         {isCurrent && <span className="text-xs ml-1" style={{ color: '#6a6a7a' }}>(you)</span>}
                       </div>
-                      <div className="text-xs" style={{ color: '#9898aa' }}>${playerValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      <div className="text-xs" style={{ color: '#9898aa' }}>${playerValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                     </div>
                   </div>
                   <div className="text-right">
@@ -440,7 +448,7 @@ export default function GameViewPage() {
                       {playerPnl >= 0 ? '+' : ''}{playerPnl.toFixed(1)}%
                     </div>
                     <div className="text-xs" style={{ color: playerPnl >= 0 ? '#34c759' : '#ff6b6b' }}>
-                      {playerPnl >= 0 ? '+' : '-'}${Math.abs(playerValue - startingWip).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {playerPnl >= 0 ? '+' : '-'}${Math.abs(playerValue - startingWip).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                   </div>
                 </div>
@@ -472,10 +480,10 @@ export default function GameViewPage() {
         preselectedAsset={preselectedAsset}
         walletAddress={walletAddress}
         positions={portfolio?.tokens.map((t) => {
-          const dec = tokenPrices[t.asset_address.toLowerCase()]?.decimals ?? 18;
+          const dec = tokenPrices[t.asset_address.toLowerCase()]?.decimals ?? 6;
           return { symbol: t.asset_address, quantity: Number(t.balance) / 10 ** dec };
         }) ?? []}
-        onTradeSuccess={refreshPortfolio}
+        onTradeSuccess={() => { refreshPortfolio(); refreshLeaderboard(); }}
       />
     </>
   );

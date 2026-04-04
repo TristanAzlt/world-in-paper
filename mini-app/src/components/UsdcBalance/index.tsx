@@ -37,7 +37,7 @@ export function UsdcBalance() {
   const [selectedToken, setSelectedToken] = useState<TokenBalance | null>(null);
   const [amount, setAmount] = useState('');
 
-  const displayBalance = loading ? '...' : usdcBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const displayBalance = loading ? '...' : usdcBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const amountNum = Number(amount) || 0;
 
@@ -172,7 +172,7 @@ export function UsdcBalance() {
                       </div>
                       <div className="text-right">
                         <div className="text-[15px] font-bold" style={{ color: token.formatted > 0 ? '#ffffff' : '#6a6a7a' }}>
-                          {token.formatted.toLocaleString(undefined, { maximumFractionDigits: 4 })}
+                          {token.formatted.toLocaleString('en-US', { maximumFractionDigits: 4 })}
                         </div>
                         <div className="text-xs" style={{ color: canSwap ? '#2470ff' : '#6a6a7a' }}>
                           {canSwap ? 'Swap →' : token.formatted > 0 ? '' : 'No balance'}
@@ -237,7 +237,7 @@ export function UsdcBalance() {
                       <span className="text-lg font-bold" style={{ color: '#6a6a7a' }}>{selectedToken.symbol}</span>
                     </div>
                     <div className="mt-2 text-xs" style={{ color: '#6a6a7a' }}>
-                      Balance: {selectedToken.formatted.toLocaleString(undefined, { maximumFractionDigits: 6 })}
+                      Balance: {selectedToken.formatted.toLocaleString('en-US', { maximumFractionDigits: 6 })}
                     </div>
                   </div>
 
@@ -279,7 +279,7 @@ export function UsdcBalance() {
                     <span className="text-sm" style={{ color: '#6a6a7a' }}>You receive</span>
                     <div className="flex items-center gap-1.5">
                       <AnimatedText className="text-sm font-bold" style={{ color: '#ffffff' }}>
-                        {`~$${usdcOut.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                        {`~$${usdcOut.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                       </AnimatedText>
                       <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={14} height={14} />
                     </div>

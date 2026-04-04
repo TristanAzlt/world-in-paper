@@ -64,7 +64,7 @@ function ExploreCard({ game, onClick }: { game: GameView; onClick: () => void })
           label={isActive ? 'Ends in' : 'Starts in'}
         />
         <span className="text-sm font-bold" style={{ color: '#ffffff' }}>
-          ${startingCapital.toLocaleString()}
+          ${startingCapital.toLocaleString('en-US')}
         </span>
       </div>
     </button>
@@ -226,7 +226,7 @@ export default function ExplorePage() {
                   <Group width={16} height={16} />
                   {joinTarget?.playerCount}/{joinTarget?.maxPlayers}
                 </span>
-                <span>${startingCapital.toLocaleString()} capital</span>
+                <span>${startingCapital.toLocaleString('en-US')} capital</span>
               </div>
             </div>
 
