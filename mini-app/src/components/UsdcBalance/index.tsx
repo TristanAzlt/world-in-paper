@@ -40,12 +40,7 @@ export function UsdcBalance() {
 
   const amountNum = Number(amount) || 0;
 
-  const _handleCopy = () => {
-    if (walletAddress) {
-      navigator.clipboard.writeText(walletAddress);
-      haptic.success();
-    }
-  };
+
 
   const handleSelectToken = async (token: TokenBalance) => {
     haptic.selection();
