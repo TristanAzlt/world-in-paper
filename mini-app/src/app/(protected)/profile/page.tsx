@@ -20,7 +20,7 @@ export default function ProfilePage() {
   return (
     <>
       <Page.Main>
-        <TopBar title="Profile" endAdornment={<UsdcBalance balance={142.50} />} />
+        <TopBar title="Profile" endAdornment={<UsdcBalance />} />
         <div className="mb-4" />
 
         {/* Avatar */}
