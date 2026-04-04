@@ -523,7 +523,7 @@ contract WorldInPaperTest is Test {
         assertEq(tradeToSettle.asset_address, "BTCUSD");
         assertEq(uint8(tradeToSettle.origin), uint8(WorldInPaper.Origin.Hyperliquid));
         assertEq(tradeToSettle.amountIn, 150 * 10 ** 6);
-        assertTrue(worldInPaper.nullifierUsed(123));
+        assertTrue(worldInPaper.nullifierUsed(gameId, 123));
     }
 
     function test_RevertWhen_JoinGameWithUsedNullifier() public {
@@ -611,8 +611,8 @@ contract WorldInPaperTest is Test {
 
         assertEq(tradeId, 1);
         assertEq(worldInPaperNoVerify.getTotalSettlementRequestsCreated(), 1);
-        assertFalse(worldInPaperNoVerify.nullifierUsed(creatorWorldId.nullifierHash));
-        assertFalse(worldInPaperNoVerify.nullifierUsed(joinerWorldId.nullifierHash));
+        assertFalse(worldInPaperNoVerify.nullifierUsed(gameId, creatorWorldId.nullifierHash));
+        assertFalse(worldInPaperNoVerify.nullifierUsed(gameId, joinerWorldId.nullifierHash));
         assertFalse(worldInPaperNoVerify.worldIdVerificationEnabled());
     }
 
