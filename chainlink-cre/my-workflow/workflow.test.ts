@@ -8,7 +8,7 @@ import {
   toHex,
   type Hex,
 } from "viem";
-import { initWorkflow, configSchema } from "./workflow";
+import { configSchema, initWorkflow } from "./workflow";
 
 const WORLD_CHAIN_SELECTOR_NAME = "ethereum-mainnet-worldchain-1";
 const CONTRACT_ADDRESS = "0x1234567890abcdef1234567890abcdef12345678";

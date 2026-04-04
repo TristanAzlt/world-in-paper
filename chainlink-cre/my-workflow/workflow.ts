@@ -173,13 +173,20 @@ const fetchUniswapQuote = (
   const lastHop = data.quote.route[0][data.quote.route[0].length - 1];
   const outDecimals = Number(lastHop.tokenOut.decimals);
 
+  console.log("Uniswap quote",
+    inAmt,
+    outAmt,
+    inDecimals,
+    outDecimals,
+  );
+
   if (isBuy) {
-    const usdcIn = inAmt / 10 ** inDecimals;
-    const tokensOut = outAmt / 10 ** outDecimals;
+    const usdcIn = inAmt;
+    const tokensOut = outAmt;
     return { price: usdcIn / tokensOut };
   } else {
-    const tokensIn = inAmt / 10 ** inDecimals;
-    const usdcOut = outAmt / 10 ** outDecimals;
+    const tokensIn = inAmt;
+    const usdcOut = outAmt;
     return { price: usdcOut / tokensIn };
   }
 };
