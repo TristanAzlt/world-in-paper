@@ -82,7 +82,9 @@ contract WorldInPaperTest is Test {
 
         vm.startPrank(CREATOR);
         usdc.approve(address(worldInPaper), ENTRY_AMOUNT);
-        uint256 gameId = worldInPaper.createGame(GAME_NAME, ENTRY_AMOUNT, STARTING_WIP_BALANCE, 3, startTime, endTime, _nextWorldId());
+        uint256 gameId = worldInPaper.createGame(
+            GAME_NAME, ENTRY_AMOUNT, STARTING_WIP_BALANCE, 3, startTime, endTime, _nextWorldId()
+        );
         vm.stopPrank();
 
         assertEq(gameId, 1);
@@ -126,15 +128,13 @@ contract WorldInPaperTest is Test {
         uint256 gameId = _createStartedGameWithPlayer(PLAYER_1);
 
         vm.prank(PLAYER_1);
-        uint256 buyTradeId =
-            worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, true, 200 * 10 ** 6);
+        uint256 buyTradeId = worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, true, 200 * 10 ** 6);
 
         vm.prank(FORWARDER);
         worldInPaper.onReport("", abi.encode(buyTradeId, 1000 * 10 ** 18));
 
         vm.prank(PLAYER_1);
-        uint256 sellTradeId =
-            worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, false, 200_000);
+        uint256 sellTradeId = worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, false, 200_000);
 
         vm.prank(FORWARDER);
         worldInPaper.onReport("", abi.encode(sellTradeId, 1200 * 10 ** 18));
@@ -190,14 +190,34 @@ contract WorldInPaperTest is Test {
         vm.warp(worldInPaper.getGame(gameId).startTime + 1);
 
         vm.prank(PLAYER_1);
-        worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, true, 100 * 10 ** 6);
+        uint256 player1TradeId =
+            worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, true, 100 * 10 ** 6);
 
         vm.prank(PLAYER_2);
-        worldInPaper.submitTrade(gameId, "BTCUSD", WorldInPaper.Origin.Base, true, 300 * 10 ** 6);
+        uint256 player2TradeId =
+            worldInPaper.submitTrade(gameId, "BTCUSD", WorldInPaper.Origin.Base, true, 300 * 10 ** 6);
 
         WorldInPaper.GameRankingEntryView[] memory ranking = observer.getGameRanking(worldInPaper, gameId);
 
         assertEq(ranking.length, 3);
+        assertEq(ranking[0].player, CREATOR);
+        assertEq(ranking[0].place, 1);
+        assertEq(ranking[0].wipBalance, 5_000_000_000);
+        assertEq(ranking[1].player, PLAYER_1);
+        assertEq(ranking[1].place, 2);
+        assertEq(ranking[1].wipBalance, 5_000_000_000);
+        assertEq(ranking[2].player, PLAYER_2);
+        assertEq(ranking[2].place, 3);
+        assertEq(ranking[2].wipBalance, 5_000_000_000);
+
+        vm.prank(FORWARDER);
+        worldInPaper.onReport("", abi.encode(player1TradeId, 1000 * 10 ** 18));
+
+        vm.prank(FORWARDER);
+        worldInPaper.onReport("", abi.encode(player2TradeId, 1000 * 10 ** 18));
+
+        ranking = observer.getGameRanking(worldInPaper, gameId);
+
         assertEq(ranking[0].player, CREATOR);
         assertEq(ranking[0].place, 1);
         assertEq(ranking[0].wipBalance, 5_000_000_000);
@@ -314,22 +334,19 @@ contract WorldInPaperTest is Test {
 
         vm.prank(PLAYER_1);
         uint256 tradeId1 = worldInPaper.submitTrade(
-            gameId,
-            "0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-            WorldInPaper.Origin.Base,
-            true,
-            100 * 10 ** 6
+            gameId, "0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", WorldInPaper.Origin.Base, true, 100 * 10 ** 6
         );
 
         vm.prank(CREATOR);
-        uint256 tradeId2 =
-            worldInPaper.submitTrade(gameId, "BTCUSD", WorldInPaper.Origin.Ethereum, true, 50 * 10 ** 6);
+        uint256 tradeId2 = worldInPaper.submitTrade(gameId, "BTCUSD", WorldInPaper.Origin.Ethereum, true, 50 * 10 ** 6);
 
         assertEq(tradeId1, 1);
         assertEq(tradeId2, 2);
 
         // Trade is only registered once Chainlink reports settlement.
         assertEq(worldInPaper.getGameTradeCount(gameId), 0);
+        assertEq(observer.getPlayerPortfolio(worldInPaper, gameId, PLAYER_1).wipBalance, STARTING_WIP_BALANCE);
+        assertEq(observer.getPlayerPortfolio(worldInPaper, gameId, CREATOR).wipBalance, STARTING_WIP_BALANCE);
 
         vm.prank(FORWARDER);
         worldInPaper.onReport("", abi.encode(tradeId1, 1500 * 10 ** 18));
@@ -361,12 +378,10 @@ contract WorldInPaperTest is Test {
         vm.warp(earliest + 1);
 
         vm.prank(CREATOR);
-        uint256 tradeId1 =
-            worldInPaper.submitTrade(gameId1, "ETHUSD", WorldInPaper.Origin.Ethereum, true, 1);
+        uint256 tradeId1 = worldInPaper.submitTrade(gameId1, "ETHUSD", WorldInPaper.Origin.Ethereum, true, 1);
 
         vm.prank(CREATOR);
-        uint256 tradeId2 =
-            worldInPaper.submitTrade(gameId2, "BTCUSD", WorldInPaper.Origin.Base, true, 1);
+        uint256 tradeId2 = worldInPaper.submitTrade(gameId2, "BTCUSD", WorldInPaper.Origin.Base, true, 1);
 
         assertEq(tradeId1, 1);
         assertEq(tradeId2, 2);
@@ -422,10 +437,14 @@ contract WorldInPaperTest is Test {
         worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, true, 0);
     }
 
-    function test_RevertWhen_SubmitTradeGameBuyWithInsufficientWIPBalance() public {
+    function test_RevertWhen_SettleBuyTradeWithInsufficientWIPBalance() public {
         uint256 gameId = _createStartedGameWithPlayer(PLAYER_1);
 
         vm.prank(PLAYER_1);
+        uint256 tradeId =
+            worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, true, STARTING_WIP_BALANCE + 1);
+
+        vm.prank(FORWARDER);
         vm.expectRevert(
             abi.encodeWithSelector(
                 WorldInPaper.InsufficientWIPBalance.selector,
@@ -435,23 +454,25 @@ contract WorldInPaperTest is Test {
                 STARTING_WIP_BALANCE + 1
             )
         );
-        worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, true, STARTING_WIP_BALANCE + 1);
+        worldInPaper.onReport("", abi.encode(tradeId, 1000 * 10 ** 18));
     }
 
-    function test_RevertWhen_SubmitTradeGameSellWithInsufficientTokenBalance() public {
+    function test_RevertWhen_SettleSellTradeWithInsufficientTokenBalance() public {
         uint256 gameId = _createStartedGameWithPlayer(PLAYER_1);
 
         vm.prank(PLAYER_1);
+        uint256 tradeId = worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, false, 1);
+
+        vm.prank(FORWARDER);
         vm.expectRevert(abi.encodeWithSelector(WorldInPaper.InsufficientTokenBalance.selector, gameId, PLAYER_1, 0, 1));
-        worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, false, 1);
+        worldInPaper.onReport("", abi.encode(tradeId, 1000 * 10 ** 18));
     }
 
-    function test_SubmitTradeSellDebitsTokenBalanceAndSettlementCreditsWip() public {
+    function test_SubmitTradeSellSettlementDebitsTokenBalanceAndCreditsWip() public {
         uint256 gameId = _createStartedGameWithPlayer(PLAYER_1);
 
         vm.prank(PLAYER_1);
-        uint256 buyTradeId =
-            worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, true, 200 * 10 ** 6);
+        uint256 buyTradeId = worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, true, 200 * 10 ** 6);
 
         vm.prank(FORWARDER);
         worldInPaper.onReport("", abi.encode(buyTradeId, 1000 * 10 ** 18));
@@ -459,8 +480,10 @@ contract WorldInPaperTest is Test {
         assertEq(_getPortfolioTokenBalance(gameId, PLAYER_1, "ETHUSD"), 200_000);
 
         vm.prank(PLAYER_1);
-        uint256 sellTradeId =
-            worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, false, 120_000);
+        uint256 sellTradeId = worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, false, 120_000);
+
+        assertEq(observer.getPlayerPortfolio(worldInPaper, gameId, PLAYER_1).wipBalance, 4_800_000_000);
+        assertEq(_getPortfolioTokenBalance(gameId, PLAYER_1, "ETHUSD"), 200_000);
 
         vm.prank(FORWARDER);
         worldInPaper.onReport("", abi.encode(sellTradeId, 1200 * 10 ** 18));
@@ -470,24 +493,29 @@ contract WorldInPaperTest is Test {
         assertEq(worldInPaper.getGameTradeCount(gameId), 2);
     }
 
-    function test_RevertWhen_SubmitTradeSellExceedsAvailableAfterPendingSell() public {
+    function test_RevertWhen_SettleSellTradeExceedsAvailableAfterPriorSettlement() public {
         uint256 gameId = _createStartedGameWithPlayer(PLAYER_1);
 
         vm.prank(PLAYER_1);
-        uint256 buyTradeId =
-            worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, true, 200 * 10 ** 6);
+        uint256 buyTradeId = worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, true, 200 * 10 ** 6);
 
         vm.prank(FORWARDER);
         worldInPaper.onReport("", abi.encode(buyTradeId, 1000 * 10 ** 18));
 
         vm.prank(PLAYER_1);
-        worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, false, 150_000);
+        uint256 firstSellTradeId = worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, false, 150_000);
 
         vm.prank(PLAYER_1);
+        uint256 secondSellTradeId = worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, false, 60_000);
+
+        vm.prank(FORWARDER);
+        worldInPaper.onReport("", abi.encode(firstSellTradeId, 1200 * 10 ** 18));
+
+        vm.prank(FORWARDER);
         vm.expectRevert(
             abi.encodeWithSelector(WorldInPaper.InsufficientTokenBalance.selector, gameId, PLAYER_1, 50_000, 60_000)
         );
-        worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, false, 60_000);
+        worldInPaper.onReport("", abi.encode(secondSellTradeId, 1200 * 10 ** 18));
     }
 
     function test_SubmitTradeStoresGlobalTradeToSettle() public {
@@ -594,8 +622,9 @@ contract WorldInPaperTest is Test {
 
         vm.startPrank(CREATOR);
         usdc.approve(address(worldInPaperNoVerify), ENTRY_AMOUNT);
-        uint256 gameId =
-            worldInPaperNoVerify.createGame(GAME_NAME, ENTRY_AMOUNT, STARTING_WIP_BALANCE, 3, startTime, endTime, creatorWorldId);
+        uint256 gameId = worldInPaperNoVerify.createGame(
+            GAME_NAME, ENTRY_AMOUNT, STARTING_WIP_BALANCE, 3, startTime, endTime, creatorWorldId
+        );
         vm.stopPrank();
 
         vm.startPrank(PLAYER_1);
@@ -606,8 +635,7 @@ contract WorldInPaperTest is Test {
         vm.warp(startTime + 1);
 
         vm.prank(PLAYER_1);
-        uint256 tradeId =
-            worldInPaperNoVerify.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Ethereum, true, 10);
+        uint256 tradeId = worldInPaperNoVerify.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Ethereum, true, 10);
 
         assertEq(tradeId, 1);
         assertEq(worldInPaperNoVerify.getTotalSettlementRequestsCreated(), 1);
@@ -663,10 +691,18 @@ contract WorldInPaperTest is Test {
         vm.warp(worldInPaper.getGame(gameId).startTime + 1);
 
         vm.prank(PLAYER_1);
-        worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, true, 200 * 10 ** 6);
+        uint256 player1TradeId =
+            worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, true, 200 * 10 ** 6);
 
         vm.prank(PLAYER_2);
-        worldInPaper.submitTrade(gameId, "BTCUSD", WorldInPaper.Origin.Base, true, 100 * 10 ** 6);
+        uint256 player2TradeId =
+            worldInPaper.submitTrade(gameId, "BTCUSD", WorldInPaper.Origin.Base, true, 100 * 10 ** 6);
+
+        vm.prank(FORWARDER);
+        worldInPaper.onReport("", abi.encode(player1TradeId, 1000 * 10 ** 18));
+
+        vm.prank(FORWARDER);
+        worldInPaper.onReport("", abi.encode(player2TradeId, 1000 * 10 ** 18));
 
         uint256 endTime = worldInPaper.getGame(gameId).endTime;
         vm.warp(endTime);
@@ -708,13 +744,25 @@ contract WorldInPaperTest is Test {
         vm.warp(worldInPaper.getGame(gameId).startTime + 1);
 
         vm.prank(PLAYER_1);
-        worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, true, 100 * 10 ** 6);
+        uint256 player1TradeId =
+            worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, true, 100 * 10 ** 6);
 
         vm.prank(PLAYER_2);
-        worldInPaper.submitTrade(gameId, "BTCUSD", WorldInPaper.Origin.Base, true, 200 * 10 ** 6);
+        uint256 player2TradeId =
+            worldInPaper.submitTrade(gameId, "BTCUSD", WorldInPaper.Origin.Base, true, 200 * 10 ** 6);
 
         vm.prank(PLAYER_3);
-        worldInPaper.submitTrade(gameId, "SOLUSD", WorldInPaper.Origin.Base, true, 300 * 10 ** 6);
+        uint256 player3TradeId =
+            worldInPaper.submitTrade(gameId, "SOLUSD", WorldInPaper.Origin.Base, true, 300 * 10 ** 6);
+
+        vm.prank(FORWARDER);
+        worldInPaper.onReport("", abi.encode(player1TradeId, 1000 * 10 ** 18));
+
+        vm.prank(FORWARDER);
+        worldInPaper.onReport("", abi.encode(player2TradeId, 1000 * 10 ** 18));
+
+        vm.prank(FORWARDER);
+        worldInPaper.onReport("", abi.encode(player3TradeId, 1000 * 10 ** 18));
 
         uint256 endTime = worldInPaper.getGame(gameId).endTime;
         vm.warp(endTime);
@@ -790,10 +838,18 @@ contract WorldInPaperTest is Test {
         vm.warp(worldInPaper.getGame(gameId).startTime + 1);
 
         vm.prank(PLAYER_1);
-        worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, true, 100 * 10 ** 6);
+        uint256 player1TradeId =
+            worldInPaper.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Base, true, 100 * 10 ** 6);
 
         vm.prank(PLAYER_2);
-        worldInPaper.submitTrade(gameId, "BTCUSD", WorldInPaper.Origin.Base, true, 200 * 10 ** 6);
+        uint256 player2TradeId =
+            worldInPaper.submitTrade(gameId, "BTCUSD", WorldInPaper.Origin.Base, true, 200 * 10 ** 6);
+
+        vm.prank(FORWARDER);
+        worldInPaper.onReport("", abi.encode(player1TradeId, 1000 * 10 ** 18));
+
+        vm.prank(FORWARDER);
+        worldInPaper.onReport("", abi.encode(player2TradeId, 1000 * 10 ** 18));
 
         uint256 endTime = worldInPaper.getGame(gameId).endTime;
         vm.warp(endTime);
@@ -846,7 +902,9 @@ contract WorldInPaperTest is Test {
 
         vm.startPrank(CREATOR);
         usdc.approve(address(worldInPaper), ENTRY_AMOUNT);
-        gameId = worldInPaper.createGame(GAME_NAME, ENTRY_AMOUNT, STARTING_WIP_BALANCE, maxPlayers, startTime, endTime, _nextWorldId());
+        gameId = worldInPaper.createGame(
+            GAME_NAME, ENTRY_AMOUNT, STARTING_WIP_BALANCE, maxPlayers, startTime, endTime, _nextWorldId()
+        );
         vm.stopPrank();
     }
 

@@ -255,13 +255,10 @@ contract WorldInPaper is ReceiverTemplate {
         _joinGame(gameId, _msgSender(), worldId);
     }
 
-    function submitTrade(
-        uint256 gameId,
-        string calldata asset_address,
-        Origin origin,
-        bool isBuy,
-        uint256 amountIn
-    ) external returns (uint256 tradeId) {
+    function submitTrade(uint256 gameId, string calldata asset_address, Origin origin, bool isBuy, uint256 amountIn)
+        external
+        returns (uint256 tradeId)
+    {
         Game storage game = _games[gameId];
         address trader = _msgSender();
 
@@ -282,26 +279,6 @@ contract WorldInPaper is ReceiverTemplate {
         }
         if (amountIn == 0) {
             revert InvalidAmountIn();
-        }
-
-        if (isBuy) {
-            uint256 currentBalance = game.wipBalances[trader];
-            if (currentBalance < amountIn) {
-                revert InsufficientWIPBalance(gameId, trader, currentBalance, amountIn);
-            }
-
-            unchecked {
-                game.wipBalances[trader] = currentBalance - amountIn;
-            }
-        } else {
-            uint256 currentTokenBalance = game.tokenBalances[trader][asset_address];
-            if (currentTokenBalance < amountIn) {
-                revert InsufficientTokenBalance(gameId, trader, currentTokenBalance, amountIn);
-            }
-
-            unchecked {
-                game.tokenBalances[trader][asset_address] = currentTokenBalance - amountIn;
-            }
         }
 
         tradeId = nextTradeToSettleId;
@@ -641,8 +618,29 @@ contract WorldInPaper is ReceiverTemplate {
         }
 
         if (tradeToSettle.isBuy) {
+            uint256 currentWipBalance = game.wipBalances[tradeToSettle.trader];
+            if (currentWipBalance < tradeToSettle.amountIn) {
+                revert InsufficientWIPBalance(
+                    tradeToSettle.gameId, tradeToSettle.trader, currentWipBalance, tradeToSettle.amountIn
+                );
+            }
+
+            unchecked {
+                game.wipBalances[tradeToSettle.trader] = currentWipBalance - tradeToSettle.amountIn;
+            }
             game.tokenBalances[tradeToSettle.trader][tradeToSettle.asset_address] += amountOut;
         } else {
+            uint256 currentTokenBalance = game.tokenBalances[tradeToSettle.trader][tradeToSettle.asset_address];
+            if (currentTokenBalance < tradeToSettle.amountIn) {
+                revert InsufficientTokenBalance(
+                    tradeToSettle.gameId, tradeToSettle.trader, currentTokenBalance, tradeToSettle.amountIn
+                );
+            }
+
+            unchecked {
+                game.tokenBalances[tradeToSettle.trader][tradeToSettle.asset_address] =
+                    currentTokenBalance - tradeToSettle.amountIn;
+            }
             game.wipBalances[tradeToSettle.trader] += amountOut;
         }
 
