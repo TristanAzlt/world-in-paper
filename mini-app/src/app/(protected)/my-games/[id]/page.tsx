@@ -118,7 +118,7 @@ export default function GameViewPage() {
   const pricesReady = !hasTokens || Object.keys(tokenPrices).length > 0;
   const currentWip = cashBalance + positionsValue;
   const pnl = startingWip > 0 ? ((currentWip - startingWip) / startingWip) * 100 : 0;
-  const myRank = ranking.find((r) => r.player.toLowerCase() === walletAddress?.toLowerCase());
+
   const claimableAmount = portfolio ? formatWipBalance(portfolio.claimableAmount) : 0;
   const alreadyClaimed = portfolio?.claimed || claimed;
   const handleClaim = async () => {
@@ -174,8 +174,8 @@ export default function GameViewPage() {
         />
       </Page.Header>
 
-      <Page.Main
-        className="animate-fade-in"
+      <Page.Main className="animate-fade-in">
+      <div
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -470,6 +470,7 @@ export default function GameViewPage() {
             </button>
           </div>
         )}
+      </div>
       </Page.Main>
 
       <TradeDrawer
