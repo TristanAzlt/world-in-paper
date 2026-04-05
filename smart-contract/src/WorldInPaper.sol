@@ -115,7 +115,6 @@ contract WorldInPaper is ReceiverTemplate {
 
     IERC20 public immutable USDC;
     IWorldID public immutable worldIdRouter;
-    bool public immutable worldIdVerificationEnabled;
     uint256 public nextGameId = 1;
     uint256 public nextTradeToSettleId = 1;
     mapping(uint256 gameId => mapping(uint256 nullifierHash => bool)) public nullifierUsed;
@@ -199,18 +198,16 @@ contract WorldInPaper is ReceiverTemplate {
     constructor(
         address _forwarderAddress,
         address _usdcAddress,
-        IWorldID _worldIdRouter,
-        bool _worldIdVerificationEnabled
+        IWorldID _worldIdRouter
     ) ReceiverTemplate(_forwarderAddress) {
         if (_usdcAddress == address(0)) {
             revert InvalidUSDCAddress();
         }
-        if (_worldIdVerificationEnabled && address(_worldIdRouter) == address(0)) {
+        if (address(_worldIdRouter) == address(0)) {
             revert InvalidVerifierAddress();
         }
         USDC = IERC20(_usdcAddress);
         worldIdRouter = _worldIdRouter;
-        worldIdVerificationEnabled = _worldIdVerificationEnabled;
     }
 
     // =====================================================
@@ -465,10 +462,6 @@ contract WorldInPaper is ReceiverTemplate {
     }
 
     function _verifyAndConsumeWorldId(uint256 gameId, WorldIdVerification calldata worldId) internal {
-        if (!worldIdVerificationEnabled) {
-            return;
-        }
-
         if (nullifierUsed[gameId][worldId.nullifierHash]) {
             revert InvalidNullifier();
         }

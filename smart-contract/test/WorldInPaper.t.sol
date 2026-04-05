@@ -66,7 +66,7 @@ contract WorldInPaperTest is Test {
     function setUp() public {
         usdc = new MockUSDC();
         verifier = new MockWorldIDVerifier();
-        worldInPaper = new WorldInPaper(FORWARDER, address(usdc), verifier, true);
+        worldInPaper = new WorldInPaper(FORWARDER, address(usdc), verifier);
         observer = new WorldInPaperObserver();
         nextNullifier = 1;
 
@@ -609,39 +609,9 @@ contract WorldInPaperTest is Test {
         vm.stopPrank();
     }
 
-    function test_SubmitTradeWorksWhenWorldIdVerificationDisabled() public {
-        verifier.setShouldRevert(true);
-
-        WorldInPaper worldInPaperNoVerify = new WorldInPaper(FORWARDER, address(usdc), verifier, false);
-
-        WorldInPaper.WorldIdVerification memory creatorWorldId = _nextWorldId();
-        WorldInPaper.WorldIdVerification memory joinerWorldId = _nextWorldId();
-
-        uint256 startTime = block.timestamp + 1 hours;
-        uint256 endTime = startTime + 1 days;
-
-        vm.startPrank(CREATOR);
-        usdc.approve(address(worldInPaperNoVerify), ENTRY_AMOUNT);
-        uint256 gameId = worldInPaperNoVerify.createGame(
-            GAME_NAME, ENTRY_AMOUNT, STARTING_WIP_BALANCE, 3, startTime, endTime, creatorWorldId
-        );
-        vm.stopPrank();
-
-        vm.startPrank(PLAYER_1);
-        usdc.approve(address(worldInPaperNoVerify), ENTRY_AMOUNT);
-        worldInPaperNoVerify.joinGame(gameId, joinerWorldId);
-        vm.stopPrank();
-
-        vm.warp(startTime + 1);
-
-        vm.prank(PLAYER_1);
-        uint256 tradeId = worldInPaperNoVerify.submitTrade(gameId, "ETHUSD", WorldInPaper.Origin.Ethereum, true, 10);
-
-        assertEq(tradeId, 1);
-        assertEq(worldInPaperNoVerify.getTotalSettlementRequestsCreated(), 1);
-        assertFalse(worldInPaperNoVerify.nullifierUsed(gameId, creatorWorldId.nullifierHash));
-        assertFalse(worldInPaperNoVerify.nullifierUsed(gameId, joinerWorldId.nullifierHash));
-        assertFalse(worldInPaperNoVerify.worldIdVerificationEnabled());
+    function test_RevertWhen_ConstructorVerifierIsZeroAddress() public {
+        vm.expectRevert(WorldInPaper.InvalidVerifierAddress.selector);
+        new WorldInPaper(FORWARDER, address(usdc), IWorldID(address(0)));
     }
 
     function test_SettleTradeDeletesFromMapping() public {
