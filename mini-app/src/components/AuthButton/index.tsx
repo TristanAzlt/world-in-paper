@@ -16,7 +16,6 @@ export const AuthButton = () => {
     setIsPending(true);
     try {
       await walletAuth();
-      // Keep pending — redirect is happening
     } catch (error) {
       console.error('Auth error', error);
       setIsPending(false);
@@ -35,6 +34,39 @@ export const AuthButton = () => {
     }
   }, [isInstalled, session.status]);
 
+  // Browser view — show QR code
+  if (isInstalled === false) {
+    return (
+      <div className="flex flex-col items-center gap-8">
+        <div className="flex flex-col items-center gap-4">
+          <img
+            src="/wip-logo.png"
+            alt="World In Paper"
+            className="h-[120px] w-[120px] rounded-3xl"
+          />
+          <div className="text-center">
+            <h1 className="text-3xl font-extrabold" style={{ color: '#ffffff' }}>
+              World In Paper
+            </h1>
+            <p className="mt-2 text-base" style={{ color: '#9898aa' }}>
+              Competitive paper trading
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-center gap-5">
+          <div className="rounded-3xl overflow-hidden" style={{ backgroundColor: '#ffffff', padding: '16px' }}>
+            <img src="/app-QR-CODE.png" alt="QR Code" className="h-[200px] w-[200px]" />
+          </div>
+          <p className="text-sm font-semibold text-center" style={{ color: '#9898aa' }}>
+            Scan with World App to play
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // World App view — sign in
   return (
     <div className="flex flex-col items-center gap-8">
       <div className="flex flex-col items-center gap-4">
