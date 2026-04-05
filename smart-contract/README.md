@@ -1,66 +1,31 @@
-## Foundry
+# World In Paper — Smart Contracts
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+Solidity contracts deployed on World Chain mainnet (chain ID 480).
 
-Foundry consists of:
+## Contracts
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+- **WorldInPaper** — game creation, joining (with World ID), trading, CRE settlement, claiming
+- **WorldInPaperObserver** — read-optimized views (ranking, portfolio, game lists)
 
-## Documentation
+## Build & Test
 
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
+```bash
+forge build
+forge test
 ```
 
-### Test
+## Deploy
 
-```shell
-$ forge test
+```bash
+cp .env.example .env
+# Fill in the values
+forge script script/WorldInPaper.s.sol --rpc-url $RPC_URL --broadcast
 ```
 
-### Format
+## Key Mechanics
 
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/WorldInPaper.s.sol:WorldInPaperScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+- **Buy-in** — players pay USDC to join, pooled in the contract
+- **Paper trading** — virtual balances, real prices via Chainlink CRE
+- **Settlement** — CRE fetches price, writes report via MockForwarder, contract settles trade
+- **Payout** — top 50% gets 2x buy-in, middle player (odd) gets refund, bottom 50% gets nothing
+- **World ID** — sybil protection per game (nullifier scoped by gameId)
