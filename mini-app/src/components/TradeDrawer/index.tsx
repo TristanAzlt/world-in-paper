@@ -10,7 +10,7 @@ import { NavArrowLeft, Xmark, Search } from 'iconoir-react';
 import { LoadingSpinner, SuccessState } from '@/components/LoadingState';
 import { haptic } from '@/lib/haptics';
 import { api } from '@/lib/api';
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { AssetToken, OriginKey, PlayerPortfolio } from '@/types';
 import { useAssets } from '@/hooks/useAssets';
 import { useContract } from '@/hooks/useContract';
@@ -57,7 +57,7 @@ const TRADFI_SUBS = ['stocks', 'indices', 'commodities'] as const;
 const QUICK_PERCENTS = [5, 10, 25, 50];
 
 function formatPrice(price: number): string {
-  if (price >= 1000) return `$${price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  if (price >= 1000) return `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   if (price >= 1) return `$${price.toFixed(2)}`;
   if (price >= 0.01) return `$${price.toFixed(4)}`;
   return `$${price.toPrecision(4)}`;
@@ -182,7 +182,7 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
   // Fetch quote from backend when amount changes
   useEffect(() => {
     if (!selectedAsset || !amount || amountNum === 0) return;
-    const decimals = side === 'buy' ? 6 : (selectedAsset.decimals ?? 18);
+    const decimals = side === 'buy' ? 6 : (selectedAsset.decimals ?? 6);
     const rawAmount = toRawAmount(amountNum, decimals);
     const origin = (ORIGIN_NUM_TO_KEY[selectedAsset.origin] || activeOrigin) as OriginKey;
     getQuote(selectedAsset.address, origin, side === 'buy', rawAmount);
@@ -251,7 +251,7 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
       const tradesBefore = await getAssetTradeCount(selectedAsset.address);
 
       // Buy: USDC 6 dec. Sell: token native decimals.
-      const dec = side === 'buy' ? 6 : (selectedAsset.decimals ?? 18);
+      const dec = side === 'buy' ? 6 : (selectedAsset.decimals ?? 6);
       const amountIn = BigInt(toRawAmount(amountNum, dec));
       const result = await submitTrade(
         BigInt(gameId),
@@ -487,7 +487,7 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
                 </div>
                 <div className="mt-2 text-xs" style={{ color: '#9898aa' }}>
                   Available: {side === 'buy'
-                    ? `$${availableBalance.toLocaleString()}`
+                    ? `$${availableBalance.toLocaleString('en-US')}`
                     : `${formatQty(tokenBalance)} ${selectedAsset.symbol}`
                   }
                 </div>
@@ -496,7 +496,7 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
               <div className="flex gap-2">
                 {QUICK_PERCENTS.map((pct) => {
                   const base = side === 'buy' ? availableBalance : tokenBalance;
-                  const pctVal = Math.floor(base * pct / 100).toString();
+                  const pctVal = side === 'buy' ? Math.floor(base * pct / 100).toString() : (base * pct / 100).toString();
                   const isSelected = amount === pctVal;
                   return (
                     <button
@@ -541,7 +541,7 @@ export function TradeDrawer({ isOpen, onClose, availableBalance, gameId, walletA
                   <AnimatedText className="mt-1 text-lg font-bold" style={{ color: '#ffffff', display: 'block' }}>
                     {side === 'buy'
                       ? `~${formatQty(estimatedTokens)} ${selectedAsset.symbol}`
-                      : `~$${estimatedTokens.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                      : `~$${estimatedTokens.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                     }
                   </AnimatedText>
                 )}

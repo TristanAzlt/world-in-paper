@@ -8,7 +8,7 @@ export function useQuote() {
   const [quote, setQuote] = useState<QuoteResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [failed, setFailed] = useState(false);
-  const debounceRef = useRef<NodeJS.Timeout>();
+  const debounceRef = useRef<NodeJS.Timeout>(undefined);
 
   const getQuote = useCallback(async (
     assetId: string,

@@ -4,7 +4,7 @@ import { Drawer, DrawerContent, DrawerTitle } from '@worldcoin/mini-apps-ui-kit-
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { LoadingSpinner, SuccessState } from '@/components/LoadingState';
 import { TokenIcon } from '@/components/TokenIcon';
-import { Plus, Xmark, Copy, NavArrowLeft } from 'iconoir-react';
+import { Plus, Xmark, NavArrowLeft } from 'iconoir-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
@@ -32,23 +32,15 @@ export function UsdcBalance() {
   const { getQuote, executeSwap, quote } = useSwap(walletAddress);
 
   const [open, setOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [state, setState] = useState<'main' | 'swap' | 'confirm' | 'swapping' | 'done' | 'error'>('main');
   const [selectedToken, setSelectedToken] = useState<TokenBalance | null>(null);
   const [amount, setAmount] = useState('');
 
-  const displayBalance = loading ? '...' : usdcBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const displayBalance = loading ? '...' : usdcBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const amountNum = Number(amount) || 0;
 
-  const handleCopy = () => {
-    if (walletAddress) {
-      navigator.clipboard.writeText(walletAddress);
-      haptic.success();
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
+
 
   const handleSelectToken = async (token: TokenBalance) => {
     haptic.selection();
@@ -171,11 +163,11 @@ export function UsdcBalance() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-[15px] font-bold" style={{ color: token.formatted > 0 ? '#ffffff' : '#6a6a7a' }}>
-                          {token.formatted.toLocaleString(undefined, { maximumFractionDigits: 4 })}
+                        <div className="text-[15px] font-bold" style={{ color: canSwap ? '#ffffff' : '#6a6a7a' }}>
+                          {canSwap ? token.formatted.toLocaleString('en-US', { maximumFractionDigits: 4 }) : '0'}
                         </div>
                         <div className="text-xs" style={{ color: canSwap ? '#2470ff' : '#6a6a7a' }}>
-                          {canSwap ? 'Swap →' : token.formatted > 0 ? '' : 'No balance'}
+                          {canSwap ? 'Swap →' : 'No balance'}
                         </div>
                       </div>
                     </button>
@@ -237,7 +229,7 @@ export function UsdcBalance() {
                       <span className="text-lg font-bold" style={{ color: '#6a6a7a' }}>{selectedToken.symbol}</span>
                     </div>
                     <div className="mt-2 text-xs" style={{ color: '#6a6a7a' }}>
-                      Balance: {selectedToken.formatted.toLocaleString(undefined, { maximumFractionDigits: 6 })}
+                      Balance: {selectedToken.formatted.toLocaleString('en-US', { maximumFractionDigits: 6 })}
                     </div>
                   </div>
 
@@ -279,7 +271,7 @@ export function UsdcBalance() {
                     <span className="text-sm" style={{ color: '#6a6a7a' }}>You receive</span>
                     <div className="flex items-center gap-1.5">
                       <AnimatedText className="text-sm font-bold" style={{ color: '#ffffff' }}>
-                        {`~$${usdcOut.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                        {`~$${usdcOut.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                       </AnimatedText>
                       <Image src="/usd-coin-usdc-logo.svg" alt="USDC" width={14} height={14} />
                     </div>

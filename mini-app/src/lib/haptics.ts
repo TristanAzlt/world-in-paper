@@ -2,7 +2,14 @@
 
 import { MiniKit } from '@worldcoin/minikit-js';
 
-const safe = (fn: () => void) => { try { fn(); } catch { /* noop */ } };
+const safe = (fn: () => unknown) => {
+  try {
+    const result = fn();
+    if (result && typeof (result as Promise<unknown>).catch === 'function') {
+      (result as Promise<unknown>).catch(() => {});
+    }
+  } catch { /* noop */ }
+};
 
 export const haptic = {
   light: () => safe(() => MiniKit.sendHapticFeedback({ hapticsType: 'impact', style: 'light' })),

@@ -61,7 +61,7 @@ function MyGameCard({ game, onClick }: { game: GameView; onClick: () => void }) 
         {isUpcoming && <CountdownTimer targetTime={Number(game.startTime) * 1000} label="Starts in" />}
         {isEnded && <span className="text-sm" style={{ color: '#6a6a7a' }}>Finished</span>}
         <span className="text-sm font-bold" style={{ color: '#ffffff' }}>
-          ${formatWipBalance(game.startingWIPBalance).toLocaleString()}
+          ${formatWipBalance(game.startingWIPBalance).toLocaleString('en-US')}
         </span>
       </div>
     </button>

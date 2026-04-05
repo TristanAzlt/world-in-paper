@@ -1,10 +1,11 @@
 'use client';
 
-import { TopBar } from '@worldcoin/mini-apps-ui-kit-react';
-import { NavArrowLeft, Plus, ShareIos, Trophy, Lock } from 'iconoir-react';
+import { TopBar, Drawer, DrawerContent, DrawerTitle } from '@worldcoin/mini-apps-ui-kit-react';
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
+import { NavArrowLeft, Plus, ShareIos, Trophy, Lock, Xmark } from 'iconoir-react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
-import { useState, useCallback, useRef } from 'react';
+import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { getGameStatus, GameStatus, formatWipBalance } from '@/types';
 import { useExploreGames, useMyGames } from '@/hooks/useGames';
@@ -46,48 +47,13 @@ export default function GameViewPage() {
   const { ranking, loading: rankingLoading, refetch: refreshRanking } = useGameRanking(gameId);
   const { portfolio, loading: portfolioLoading, refetch: refreshPortfolio } = usePlayerPortfolio(gameId, walletAddress);
 
-  // Pull to refresh
-  const [refreshing, setRefreshing] = useState(false);
-  const touchStart = useRef(0);
-  const pullDistance = useRef(0);
-  const [pullY, setPullY] = useState(0);
-
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if (window.scrollY === 0) {
-      touchStart.current = e.touches[0].clientY;
-    } else {
-      touchStart.current = 0;
-    }
-  }, []);
-
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!touchStart.current) return;
-    const diff = e.touches[0].clientY - touchStart.current;
-    if (diff > 0) {
-      pullDistance.current = Math.min(diff, 120);
-      setPullY(pullDistance.current);
-    }
-  }, []);
-
-  const handleTouchEnd = useCallback(async () => {
-    if (pullDistance.current > 60) {
-      setRefreshing(true);
-      haptic.light();
-      await Promise.all([refreshPortfolio(), refreshRanking()]);
-      setRefreshing(false);
-    }
-    touchStart.current = 0;
-    pullDistance.current = 0;
-    setPullY(0);
-  }, [refreshPortfolio, refreshRanking]);
 
   const { claimGame } = useContract();
-  // Collect all tokens from all players for price fetching
-  const allTokens = portfolio?.tokens ?? [];
-  const tokenPrices = useTokenPrices(allTokens);
-  const { entries: leaderboard } = useLeaderboard(gameId, ranking, tokenPrices);
+  const tokenPrices = useTokenPrices(portfolio?.tokens ?? []);
+  const { entries: leaderboard, refresh: refreshLeaderboard, playerPortfolios, priceMap: leaderboardPrices } = useLeaderboard(gameId, ranking);
   const [tradeOpen, setTradeOpen] = useState(false);
   const [preselectedAsset, setPreselectedAsset] = useState<{ address: string; origin: string } | null>(null);
+  const [viewPlayer, setViewPlayer] = useState<string | null>(null);
   const [claiming, setClaiming] = useState(false);
   const [claimed, setClaimed] = useState(false);
   const [claimedAmount, setClaimedAmount] = useState(0);
@@ -111,7 +77,7 @@ export default function GameViewPage() {
   const positionsValue = portfolio
     ? portfolio.tokens.reduce((sum, t) => {
         const info = tokenPrices[t.asset_address.toLowerCase()];
-        const dec = info?.decimals ?? 18;
+        const dec = info?.decimals ?? 6;
         const bal = Number(t.balance) / 10 ** dec;
         return sum + (info ? bal * info.price : 0);
       }, 0)
@@ -120,7 +86,7 @@ export default function GameViewPage() {
   const pricesReady = !hasTokens || Object.keys(tokenPrices).length > 0;
   const currentWip = cashBalance + positionsValue;
   const pnl = startingWip > 0 ? ((currentWip - startingWip) / startingWip) * 100 : 0;
-  const myRank = ranking.find((r) => r.player.toLowerCase() === walletAddress?.toLowerCase());
+
   const claimableAmount = portfolio ? formatWipBalance(portfolio.claimableAmount) : 0;
   const alreadyClaimed = portfolio?.claimed || claimed;
   const handleClaim = async () => {
@@ -176,22 +142,7 @@ export default function GameViewPage() {
         />
       </Page.Header>
 
-      <Page.Main
-        className="animate-fade-in"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        {/* Pull to refresh indicator */}
-        <div
-          className="flex justify-center overflow-hidden transition-all duration-200"
-          style={{ height: pullY > 0 || refreshing ? `${Math.max(pullY, refreshing ? 40 : 0)}px` : '0px', opacity: pullY > 20 || refreshing ? 1 : 0 }}
-        >
-          <div
-            className={`h-5 w-5 rounded-full border-2 ${refreshing ? 'animate-spin' : ''}`}
-            style={{ borderColor: '#2470ff', borderTopColor: 'transparent', marginTop: '12px' }}
-          />
-        </div>
+      <Page.Main className="animate-fade-in">
 
         {/* Status banner */}
         {isUpcoming && (
@@ -249,10 +200,7 @@ export default function GameViewPage() {
             <div className="flex items-center justify-center rounded-full" style={{ width: 36, height: 36, backgroundColor: '#34c75920' }}>
               <Trophy width={18} height={18} style={{ color: '#34c759' }} />
             </div>
-            <div>
-              <div className="text-sm font-bold" style={{ color: '#ffffff' }}>Reward claimed</div>
-              <div className="text-xs" style={{ color: '#9898aa' }}>{claimedAmount || claimableAmount} USDC</div>
-            </div>
+            <div className="text-sm font-bold" style={{ color: '#ffffff' }}>Reward claimed</div>
           </div>
         )}
 
@@ -281,7 +229,7 @@ export default function GameViewPage() {
           ) : (
             <>
               <AnimatedText className="text-4xl font-extrabold" style={{ color: '#ffffff' }}>
-                {`$${currentWip.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                {`$${currentWip.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
               </AnimatedText>
               <AnimatedText className="text-lg font-bold mt-1" style={{ color: pnl >= 0 ? '#34c759' : '#ff6b6b' }}>
                 {`${pnl >= 0 ? '+' : ''}${pnl.toFixed(1)}%`}
@@ -311,7 +259,7 @@ export default function GameViewPage() {
           </div>
           <div className="flex-1 rounded-2xl p-3 text-center" style={{ backgroundColor: '#1c1c24' }}>
             <div className="text-xs" style={{ color: '#6a6a7a' }}>Start with</div>
-            <div className="text-lg font-extrabold" style={{ color: '#ffffff' }}>${startingWip.toLocaleString()}</div>
+            <div className="text-lg font-extrabold" style={{ color: '#ffffff' }}>${startingWip.toLocaleString('en-US')}</div>
           </div>
           <div className="flex-1 rounded-2xl p-3 text-center" style={{ backgroundColor: '#1c1c24' }}>
             <div className="text-xs" style={{ color: '#6a6a7a' }}>Players</div>
@@ -335,11 +283,28 @@ export default function GameViewPage() {
                 </div>
               ))}
             </div>
-          ) : portfolio && portfolio.tokens.filter((t) => Number(t.balance) > 0).length > 0 ? (
+          ) : (
             <div className="space-y-2">
-              {portfolio.tokens.filter((t) => Number(t.balance) > 0).map((token) => {
+              {/* Cash */}
+              <div className="flex items-center justify-between rounded-2xl p-4" style={{ backgroundColor: '#1c1c24' }}>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center rounded-full" style={{ width: 40, height: 40, backgroundColor: '#24242e' }}>
+                    <span className="text-lg font-extrabold" style={{ color: '#ffffff' }}>$</span>
+                  </div>
+                  <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>Cash</div>
+                </div>
+                <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>${cashBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+              </div>
+
+              {/* Token positions */}
+              {portfolio && portfolio.tokens.filter((t) => {
+                const i = tokenPrices[t.asset_address.toLowerCase()];
+                const d = i?.decimals ?? 6;
+                const v = i ? (Number(t.balance) / 10 ** d) * i.price : 0;
+                return v >= 1;
+              }).map((token) => {
                 const info = tokenPrices[token.asset_address.toLowerCase()];
-                const dec = info?.decimals ?? 18;
+                const dec = info?.decimals ?? 6;
                 const bal = Number(token.balance) / 10 ** dec;
                 const value = info ? bal * info.price : 0;
                 const totalBought = token.trades
@@ -375,21 +340,17 @@ export default function GameViewPage() {
                     </div>
                     <div className="text-right">
                       <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>
-                        ${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        ${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
                       {totalBought > 0 && (
                         <div className="text-xs" style={{ color: tokenPnl >= 0 ? '#34c759' : '#ff6b6b' }}>
-                          {tokenPnl >= 0 ? '+' : '-'}${Math.abs(tokenPnl).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          {tokenPnl >= 0 ? '+' : '-'}${Math.abs(tokenPnl).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                       )}
                     </div>
                   </button>
                 );
               })}
-            </div>
-          ) : (
-            <div className="py-8 text-center">
-              <p className="text-sm" style={{ color: '#6a6a7a' }}>No positions yet</p>
             </div>
           )}
         </div>
@@ -422,7 +383,8 @@ export default function GameViewPage() {
               return (
                 <div
                   key={player.player}
-                  className="flex items-center justify-between"
+                  onClick={() => { setViewPlayer(player.player.toLowerCase()); haptic.light(); }}
+                  className="flex items-center justify-between cursor-pointer active:scale-[0.98] transition-all"
                   style={{ padding: '14px 0', borderBottom: '1px solid #24242e', fontWeight: isCurrent ? 700 : 400 }}
                 >
                   <div className="flex items-center gap-3">
@@ -432,7 +394,7 @@ export default function GameViewPage() {
                         {isCurrent ? (session?.data?.user?.username || shortenAddress(player.player)) : shortenAddress(player.player)}
                         {isCurrent && <span className="text-xs ml-1" style={{ color: '#6a6a7a' }}>(you)</span>}
                       </div>
-                      <div className="text-xs" style={{ color: '#9898aa' }}>${playerValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      <div className="text-xs" style={{ color: '#9898aa' }}>${playerValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                     </div>
                   </div>
                   <div className="text-right">
@@ -440,7 +402,7 @@ export default function GameViewPage() {
                       {playerPnl >= 0 ? '+' : ''}{playerPnl.toFixed(1)}%
                     </div>
                     <div className="text-xs" style={{ color: playerPnl >= 0 ? '#34c759' : '#ff6b6b' }}>
-                      {playerPnl >= 0 ? '+' : '-'}${Math.abs(playerValue - startingWip).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {playerPnl >= 0 ? '+' : '-'}${Math.abs(playerValue - startingWip).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                   </div>
                 </div>
@@ -464,6 +426,75 @@ export default function GameViewPage() {
         )}
       </Page.Main>
 
+      {/* Player portfolio drawer */}
+      <Drawer open={!!viewPlayer} onOpenChange={(open) => !open && setViewPlayer(null)} dismissible={true} height="fit">
+        <DrawerContent>
+          <VisuallyHidden.Root><DrawerTitle>Player Portfolio</DrawerTitle></VisuallyHidden.Root>
+          {viewPlayer && (() => {
+            const p = playerPortfolios[viewPlayer];
+            const entry = leaderboard.find((e) => e.player.toLowerCase() === viewPlayer);
+            const wip = p ? formatWipBalance(p.wipBalance) : 0;
+
+            return (
+              <div className="px-5 pt-5 pb-8">
+                <div className="flex items-center justify-between mb-5">
+                  <div>
+                    <div className="text-lg font-extrabold" style={{ color: '#ffffff' }}>{shortenAddress(viewPlayer)}</div>
+                    {entry && <div className="text-sm" style={{ color: '#9898aa' }}>Rank {entry.place} · ${entry.totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>}
+                  </div>
+                  <button onClick={() => setViewPlayer(null)} className="flex h-9 w-9 items-center justify-center rounded-full active:scale-90 transition-transform" style={{ backgroundColor: '#24242e' }}>
+                    <Xmark width={18} height={18} style={{ color: '#9898aa' }} />
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  {/* Cash */}
+                  <div className="flex items-center justify-between rounded-2xl p-4" style={{ backgroundColor: '#1c1c24' }}>
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center rounded-full" style={{ width: 40, height: 40, backgroundColor: '#24242e' }}>
+                        <span className="text-lg font-extrabold" style={{ color: '#ffffff' }}>$</span>
+                      </div>
+                      <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>Cash</div>
+                    </div>
+                    <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>${wip.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  </div>
+
+                  {/* Positions */}
+                  {p?.tokens.filter((t) => {
+                    const info = leaderboardPrices[t.asset_address.toLowerCase()];
+                    const dec = info?.decimals ?? 6;
+                    const v = info ? (Number(t.balance) / 10 ** dec) * info.price : 0;
+                    return v >= 1;
+                  }).map((t) => {
+                    const info = leaderboardPrices[t.asset_address.toLowerCase()];
+                    const dec = info?.decimals ?? 6;
+                    const bal = Number(t.balance) / 10 ** dec;
+                    const value = info ? bal * info.price : 0;
+
+                    return (
+                      <div key={t.asset_address} className="flex items-center justify-between rounded-2xl p-4" style={{ backgroundColor: '#1c1c24' }}>
+                        <div className="flex items-center gap-3">
+                          <TokenIcon src={info?.image || ''} alt={info?.symbol || t.asset_address} />
+                          <div>
+                            <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>{info?.symbol || t.asset_address}</div>
+                            <div className="text-xs" style={{ color: '#9898aa' }}>{formatQty(bal)}</div>
+                          </div>
+                        </div>
+                        <div className="text-[15px] font-bold" style={{ color: '#ffffff' }}>${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      </div>
+                    );
+                  })}
+
+                  {(!p || p.tokens.filter((t) => Number(t.balance) > 0).length === 0) && (
+                    <div className="py-4 text-center text-sm" style={{ color: '#6a6a7a' }}>No positions</div>
+                  )}
+                </div>
+              </div>
+            );
+          })()}
+        </DrawerContent>
+      </Drawer>
+
       <TradeDrawer
         isOpen={tradeOpen}
         onClose={() => { setTradeOpen(false); setPreselectedAsset(null); }}
@@ -472,10 +503,10 @@ export default function GameViewPage() {
         preselectedAsset={preselectedAsset}
         walletAddress={walletAddress}
         positions={portfolio?.tokens.map((t) => {
-          const dec = tokenPrices[t.asset_address.toLowerCase()]?.decimals ?? 18;
+          const dec = tokenPrices[t.asset_address.toLowerCase()]?.decimals ?? 6;
           return { symbol: t.asset_address, quantity: Number(t.balance) / 10 ** dec };
         }) ?? []}
-        onTradeSuccess={refreshPortfolio}
+        onTradeSuccess={() => { refreshPortfolio(); refreshLeaderboard(); }}
       />
     </>
   );

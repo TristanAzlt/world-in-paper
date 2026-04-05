@@ -14,7 +14,7 @@ import { CountdownTimer } from '@/components/CountdownTimer';
 import { SkeletonList } from '@/components/Skeleton';
 import { UsdcBalance } from '@/components/UsdcBalance';
 import { haptic } from '@/lib/haptics';
-import { getWorldIdProof, EMPTY_PROOF } from '@/lib/worldid';
+import { getWorldIdProof } from '@/lib/worldid';
 import { Page } from '@/components/PageLayout';
 
 function ExploreCard({ game, onClick }: { game: GameView; onClick: () => void }) {
@@ -64,7 +64,7 @@ function ExploreCard({ game, onClick }: { game: GameView; onClick: () => void })
           label={isActive ? 'Ends in' : 'Starts in'}
         />
         <span className="text-sm font-bold" style={{ color: '#ffffff' }}>
-          ${startingCapital.toLocaleString()}
+          ${startingCapital.toLocaleString('en-US')}
         </span>
       </div>
     </button>
@@ -226,7 +226,7 @@ export default function ExplorePage() {
                   <Group width={16} height={16} />
                   {joinTarget?.playerCount}/{joinTarget?.maxPlayers}
                 </span>
-                <span>${startingCapital.toLocaleString()} capital</span>
+                <span>${startingCapital.toLocaleString('en-US')} capital</span>
               </div>
             </div>
 

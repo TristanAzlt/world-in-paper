@@ -47,11 +47,6 @@ function formatStartTime(minutes: number): string {
   return `${date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })} at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
 }
 
-function formatDuration(minutes: number): string {
-  if (minutes < 60) return `${minutes} min`;
-  if (minutes < 1440) return `${minutes / 60} hour${minutes > 60 ? 's' : ''}`;
-  return `${minutes / 1440} day${minutes > 1440 ? 's' : ''}`;
-}
 
 export default function CreateGamePage() {
   const router = useRouter();
@@ -62,7 +57,7 @@ export default function CreateGamePage() {
   const [maxPlayers, setMaxPlayers] = useState(10);
   const [startingCapital, setStartingCapital] = useState(5000);
   const [customCapital, setCustomCapital] = useState('');
-  const [startDelay, setStartDelay] = useState(15);
+  const [startDelay, setStartDelay] = useState(5);
   const [duration, setDuration] = useState(180);
   const [state, setState] = useState<'idle' | 'pending' | 'success'>('idle');
 
@@ -74,7 +69,7 @@ export default function CreateGamePage() {
     step === 1 ? buyInNum > 0 :
     step === 2 ? maxPlayers >= 2 :
     step === 3 ? (customCapital ? Number(customCapital) >= 100 : startingCapital >= 100) :
-    step === 4 ? startDelay >= 5 :
+    step === 4 ? startDelay >= 1 :
     duration > 0;
 
   const handleNext = () => {
@@ -384,9 +379,9 @@ export default function CreateGamePage() {
                     ))}
                   </div>
 
-                  {startDelay < 5 && (
+                  {startDelay < 1 && (
                     <div className="rounded-2xl px-4 py-3 mt-4" style={{ backgroundColor: '#ff6b6b15', border: '1px solid #ff6b6b30' }}>
-                      <span className="text-[13px]" style={{ color: '#ff6b6b' }}>Minimum 5 minutes</span>
+                      <span className="text-[13px]" style={{ color: '#ff6b6b' }}>Minimum 1 minute</span>
                     </div>
                   )}
                 </div>

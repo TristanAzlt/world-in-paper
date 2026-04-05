@@ -46,7 +46,7 @@ export function GameCard({ game, userPnlPercent, userRank, onClick }: GameCardPr
           {game.playerCount}/{game.maxPlayers}
         </span>
         <span className="text-[#2e2e3a]">|</span>
-        <span>${game.startingCapital.toLocaleString()} capital</span>
+        <span>${game.startingCapital.toLocaleString('en-US')} capital</span>
       </div>
 
       {/* User P&L */}

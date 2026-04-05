@@ -10,7 +10,7 @@ export function PositionRow({ position }: PositionRowProps) {
   return (
     <ListItem
       label={position.asset.symbol}
-      description={`${position.quantity} @ $${position.entryPrice.toLocaleString()}`}
+      description={`${position.quantity} @ $${position.entryPrice.toLocaleString('en-US')}`}
       startAdornment={
         <img
           src={position.asset.iconUrl}
@@ -24,7 +24,7 @@ export function PositionRow({ position }: PositionRowProps) {
       endAdornment={
         <div className="text-right">
           <div className="text-sm font-medium text-white">
-            ${position.value.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            ${position.value.toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </div>
           <div className={`text-xs ${isPositive ? 'text-[#34c759]' : 'text-[#ff6b6b]'}`}>
             {isPositive ? '+' : ''}{position.pnlPercent.toFixed(1)}%

@@ -14,7 +14,7 @@ export function LeaderboardRow({ player, isCurrentUser }: LeaderboardRowProps) {
     <div className={clsx(isCurrentUser && 'rounded-xl bg-blue-50/40')}>
     <ListItem
       label={player.username}
-      description={`$${player.portfolioValue.toLocaleString()}`}
+      description={`$${player.portfolioValue.toLocaleString('en-US')}`}
       startAdornment={
         <div className="flex items-center gap-2">
           <span
