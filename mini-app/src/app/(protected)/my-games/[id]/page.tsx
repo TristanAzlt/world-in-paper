@@ -200,10 +200,7 @@ export default function GameViewPage() {
             <div className="flex items-center justify-center rounded-full" style={{ width: 36, height: 36, backgroundColor: '#34c75920' }}>
               <Trophy width={18} height={18} style={{ color: '#34c759' }} />
             </div>
-            <div>
-              <div className="text-sm font-bold" style={{ color: '#ffffff' }}>Reward claimed</div>
-              <div className="text-xs" style={{ color: '#9898aa' }}>{claimedAmount || claimableAmount} USDC</div>
-            </div>
+            <div className="text-sm font-bold" style={{ color: '#ffffff' }}>Reward claimed</div>
           </div>
         )}
 
