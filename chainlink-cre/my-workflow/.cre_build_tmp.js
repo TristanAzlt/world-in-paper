@@ -17211,7 +17211,6 @@ var fetchUniswapQuote = (sendRequester, tokenAddress, isBuy, amount, apiKey, ori
   const inDecimals = Number(firstHop.tokenIn.decimals);
   const lastHop = data.quote.route[0][data.quote.route[0].length - 1];
   const outDecimals = Number(lastHop.tokenOut.decimals);
-  console.log("Uniswap quote", inAmt, outAmt, inDecimals, outDecimals);
   if (isBuy) {
     const usdcIn = inAmt;
     const tokensOut = outAmt;
